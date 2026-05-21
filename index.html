@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SQL Item Shop</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/ambiance.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/sql/sql.min.js"></script>
+    <link href="https://fonts.cdnfonts.com/css/superhelio" rel="stylesheet">
+    <link href="https://fonts.cdnfonts.com/css/kemco-pixel" rel="stylesheet">
+    <link rel="icon" type="image/png" href="./assets/icon.png">
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <h1>SQL Item Shop</h1>
+    <div class="top-layout">
+      <div id="mission-panel">
+        <div class="mission-header">
+          <h3>Aktuelle Mission</h3>
+        </div>
+        <div id="mission-text"></div>
+        <div id="mission-status"></div>
+      </div>
+        <div id="shop-screen">
+          <img id="shop-background" src="./assets/shopBackground.png">
+          <img id="shelf-left" src="./assets/shelve_left.png">
+          <img id="shelf-right" src="./assets/shelve_right.png">
+          <div id="shop-items"></div>
+          <div id="shopkeeper-dialogue"></div>
+          <img id="shopkeeper" src="./assets/shopkeeper.png">
+          <div id="shopkeeper-hint"></div>
+          <div class="counter-warm-overlay"></div>
+          <img id="shop-counter" src="./assets/counter.png">
+          <div class="lamp-glow"></div>
+          <img id="lamp" src="./assets/lamp.png" />
+          <div id="money-display"></div>
+        </div>
+        <div id="result-panel">
+          <h3>SQL OUTPUT</h3>
+        <div id="result"></div>
+  </div>
+      </div>
+      <div class="bottom-layout">
+        <div class="editor-container">
+          <textarea id="sql-input"></textarea>
+
+          <button id="run-btn">Ausführen</button>
+        </div>
+      </div>
+    <div id="error-box"></div>
+    <script type="module" src="itemshop.js"></script>
+  </body>
+</html>
