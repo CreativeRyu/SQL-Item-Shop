@@ -241,7 +241,7 @@ function renderQuestHint(text) {
     const hintBox = document.getElementById("quest-hint");
     hintBox.innerHTML = `
         <div class="quest-hint-title">
-            HINT
+            Shopkeeper's HINT
         </div>
         <div class="quest-hint">
             ${text}
