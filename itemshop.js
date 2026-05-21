@@ -206,7 +206,7 @@ function refreshMission() {
 function refreshMoneyDisplay() {
     const moneyDisplay = document.getElementById("money-display");
     moneyDisplay.innerHTML = `
-        <img src="./assets/sprites/Coin_spin.gif">
+        <img src="./assets/sprites/Coin_Spin.gif">
         <span>${gameState.money}$</span>`;
 }
 
