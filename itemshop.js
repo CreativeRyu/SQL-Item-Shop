@@ -182,9 +182,13 @@ function renderTable(results) {
 }
 
 function refreshMission() {
+    clearQuestHint();
     const missionText = document.getElementById("mission-text");
-    const missionStatus = document.getElementById("mission-status");
+    const panelHeader = document.querySelector(".quest-panel-header");
     const mission = getCurrentMission();
+    panelHeader.innerHTML = `
+        QUEST ${currentMissionIndex + 1}
+        von ${currentLevel.missions.length}`;
     missionText.innerHTML = `
         <div class="quest-card">
         <div class="quest-title">
@@ -194,14 +198,8 @@ function refreshMission() {
             ${mission.description}
         </div>
     </div>
-`;
+    `;
 
-    if(currentMissionIndex >= currentLevel.missions.length) {
-        missionStatus.innerHTML = `✅ Level abgeschlossen`;
-    } else {
-        missionStatus.innerHTML = `Mission ${currentMissionIndex + 1}
-        / ${currentLevel.missions.length}`;
-    }
     startMissionHintTimer();
 }
 
@@ -234,11 +232,25 @@ function startMissionHintTimer() {
     if(!mission.hint)
         return;
     hintTimeout = setTimeout(() => {
-        showHintMessage(
-            mission.hint,
-            true
-        );
-    }, 35000);
+        showHintMessage(mission.hint,true);
+        renderQuestHint(mission.hint);
+    }, 30000);
+}
+
+function renderQuestHint(text) {
+    const hintBox = document.getElementById("quest-hint");
+    hintBox.innerHTML = `
+        <div class="quest-hint-title">
+            HINT
+        </div>
+        <div class="quest-hint">
+            ${text}
+        </div>`;
+}
+
+function clearQuestHint() {
+    const hintBox = document.getElementById("quest-hint");
+    hintBox.innerHTML = "";
 }
 
 function showRandomQuote() {
@@ -255,7 +267,7 @@ function showRandomQuote() {
 
 setInterval(() => {
     const chance = Math.random();
-    if(chance < 0.35) {
+    if(chance < 0.4) {
         showRandomQuote();
     }
 }, 12000);

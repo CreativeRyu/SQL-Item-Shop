@@ -5,7 +5,7 @@ const level0 = {
       id: "first_query",
       title: "Die Datenbank erwacht",
       description: "Führe deine erste SQL Query aus.",
-      hint: "Versuche etwas Einfaches wie SELECT 1",
+      hint: "Versuche etwas Einfaches wie SELECT 1;",
       reward: {
         money: 5,
       },
@@ -70,7 +70,7 @@ const level0 = {
       title: "Das alte SQL Notebook",
       description:
         "Du hast genug Gold verdient.<br>Kaufe das SQL Notebook im Shop.",
-      hint: "Der Händler verkauft manchmal nützliche Werkzeuge.",
+      hint: "Ich verkaufe manchmal nützliche Werkzeuge.",
       reward: {
         money: 0,
       },
