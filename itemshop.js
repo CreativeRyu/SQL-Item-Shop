@@ -3,15 +3,18 @@ import level0 from "./levels/level0.js";
 let db;
 let editor;
 let databaseReady = false;
-let gameState = {
-    money: 0,
-    hasNotebook: false
-};
 let currentLevel = level0;
 let currentMissionIndex = 0;
 let hintTimeout;
-const shopItems = document.getElementById("shop-items");
 let quotes = [];
+let gameState = {
+    money: 0,
+    hasNotebook: false,
+    is_notebook_unnlocked: false
+};
+
+const shopItems = document.getElementById("shop-items");
+const tooltip = document.getElementById("shop-tooltip");
 
 async function loadQuotes() {
     quotes = await fetch("./shopkeeperQuotes.json")
@@ -82,15 +85,17 @@ function renderShopVisuals() {
         const scale = row[4];
         const stock = row[5];
 
+        const isNotebook = name === "SQL Notebook";
+
         const html = `
-        <div class="item-stack"
+        <div class="item-stack ${isNotebook ? "shop-key-item" : ""}"
             style="
             left:${posX}px;
             top:${posY}px;">
 
-            <img class="shop-item"
-                src="${sprite}"
-                style="transform: scale(${scale});">
+            <div class="shop-item-wrapper" style="transform: scale(${scale});">
+                <img class="shop-item"src="${sprite}">
+            </div>
 
             <div class="item-count"
             style="
@@ -101,6 +106,26 @@ function renderShopVisuals() {
         </div>`;
 
         shopItems.innerHTML += html;
+
+    if(isNotebook) {
+        const notebook = shopItems.lastElementChild;
+        notebook.addEventListener("mouseenter",() => {
+            tooltip.style.display = "block";
+            tooltip.style.left = "170px";
+            tooltip.style.top = "265px";
+            tooltip.innerHTML = `
+                SQL NOTEBOOK<br>
+                30$<br>
+                Kaufen ?`;
+        });
+        notebook.addEventListener("mouseleave", () => {
+            tooltip.style.display = "none";
+        });
+        notebook.addEventListener("click", () => {
+            buyNotebook();
+        });
+}
+
     });
 }
 
@@ -137,6 +162,14 @@ function checkMission(query, result) {
     refreshMoneyDisplay();
 
     currentMissionIndex++;
+
+    if(mission.id === "only_names") {
+        unlockNotebook();
+    }
+
+    if(mission.id === "hello_shopkeeper") {
+        showHintMessage("Na hi..du lernst schnell.");
+}
 
     // Level Ende
     if(currentMissionIndex >= currentLevel.missions.length) {
@@ -263,6 +296,39 @@ function showRandomQuote() {
     setTimeout(() => {
         bubble.style.opacity = 0;
     }, 4000);
+}
+
+function unlockNotebook() {
+    if(gameState.notebookUnlocked)
+        return;
+    gameState.notebookUnlocked = true;
+
+    db.run(`
+        INSERT INTO inventory
+        (product_id, stock)
+        VALUES (7, 1)
+    `);
+    renderShopVisuals();
+}
+
+function buyNotebook() {
+    if(gameState.hasNotebook)
+        return;
+    if(gameState.money < 30) {
+        showHintMessage("Du brauchst mehr Gold.");
+        return;
+    }
+    gameState.money -= 30;
+    gameState.hasNotebook = true;
+    db.run(`
+        DELETE FROM inventory
+        WHERE product_id = 7
+    `);
+    refreshMoneyDisplay();
+    renderShopVisuals();
+    tooltip.style.display = "none";
+    showHintMessage("Starke Queries brauchen starke Notizen.");
+    refreshMission();
 }
 
 setInterval(() => {
