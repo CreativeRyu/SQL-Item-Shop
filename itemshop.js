@@ -1,4 +1,5 @@
 import level0 from "./levels/level0.js";
+import {initNotebook, showNotebookUI} from "./notebook.js";
 
 let db;
 let editor;
@@ -8,7 +9,7 @@ let currentMissionIndex = 0;
 let hintTimeout;
 let quotes = [];
 let gameState = {
-    money: 0,
+    money: 30,
     hasNotebook: false,
     is_notebook_unnlocked: false
 };
@@ -47,6 +48,7 @@ startApp();
 async function startApp() {
     await initDatabase();
     await loadQuotes();
+    initNotebook();
     renderShopVisuals();
     refreshMoneyDisplay();
     refreshMission();
@@ -326,9 +328,22 @@ function buyNotebook() {
     `);
     refreshMoneyDisplay();
     renderShopVisuals();
+    showItemPopup("SQL NOTEBOOK","./assets/sprites/shopItems/notebook.png","Speichert deine neuen\nSQL Befehle und\nTabellenschemata.");
     tooltip.style.display = "none";
     showHintMessage("Starke Queries brauchen starke Notizen.");
     refreshMission();
+}
+
+function showItemPopup(title,icon,description) {
+    const overlay = document.getElementById("item-popup-overlay");
+    document.getElementById("item-popup-title").innerText = title;
+    document.getElementById("item-popup-icon").src = icon;
+    document.getElementById("item-popup-description").innerText = description;
+    overlay.style.display = "flex";
+    overlay.onclick = () => {
+        overlay.style.display = "none";
+        showNotebookUI()
+    };
 }
 
 setInterval(() => {

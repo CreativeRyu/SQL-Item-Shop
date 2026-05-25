@@ -17,7 +17,7 @@ const level0 = {
     },
     {
       id: "hello_shopkeeper",
-      title: "Gruß an den Händler",
+      title: "Gruss an den Händler",
       description: "Sende eine Nachricht an den Händler.",
       hint: "SQL kann auch Texte zurückgeben.",
       reward: {
