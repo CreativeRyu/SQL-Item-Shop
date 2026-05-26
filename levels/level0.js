@@ -5,11 +5,7 @@ const level0 = {
       id: "welcome",
       title: "Willkommen im SQL Item Shop",
       description: "Führe deine erste SQL Query aus.",
-      hint: "Tippe SELECT 1; in das Eingabefeld.",
-      tutorial: {
-        target: "#sql-input",
-        text: "Hier schreibst du deine SQL Queries."
-      },
+      hint: "",
       reward: {
         money: 5,
       },

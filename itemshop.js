@@ -1,3 +1,4 @@
+import { startTutorial } from "./tutorial.js";
 import level0 from "./levels/level0.js";
 import {initNotebook, showNotebookUI, unlockNotebookEntry} from "./notebook.js";
 import { renderShopVisuals, hideTooltip} from "./shop.js";
@@ -5,6 +6,7 @@ import { renderShopVisuals, hideTooltip} from "./shop.js";
 let db;
 let editor;
 let databaseReady = false;
+let tutorialActive = true;
 let currentLevel = level0;
 let currentMissionIndex = 0;
 let hintTimeout;
@@ -46,6 +48,10 @@ startApp();
 async function startApp() {
     await initDatabase();
     await loadQuotes();
+    startTutorial(() => {
+        tutorialActive = false;
+        startMissionHintTimer();
+    });
     initNotebook();
     renderShopVisuals(db, buyNotebook);
     refreshMoneyDisplay();
@@ -183,6 +189,8 @@ function getCurrentMission() {
 }
 
 function showHintMessage(text) {
+    if(tutorialActive)
+        return;
     const bubble = document.getElementById("shopkeeper-hint");
     bubble.innerHTML = text;
     bubble.classList.add("visible");
@@ -194,6 +202,8 @@ function showHintMessage(text) {
 }
 
 function startMissionHintTimer() {
+    if(tutorialActive)
+        return;
     clearTimeout(hintTimeout);
     const mission = getCurrentMission();
     if(!mission.hint)
@@ -221,6 +231,8 @@ function clearQuestHint() {
 }
 
 function showRandomQuote() {
+    if(tutorialActive)
+        return;
     if(quotes.length === 0)
         return;
     const bubble = document.getElementById("shopkeeper-dialogue");

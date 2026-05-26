@@ -842,3 +842,60 @@ tr:hover td {
         transform: scale(1);
     }
 }
+
+/* =======================================================
+    Tutorial
+======================================================= */
+
+#tutorial-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0);
+    z-index: 9999;
+}
+
+#tutorial-highlight {
+    position: absolute;
+    border-radius: 8px;
+    box-shadow:
+        0 0 0 9999px rgba(0, 0, 0, 0.89);
+    pointer-events: none;
+    transition: all 0.35s ease;
+}
+
+#tutorial-shopkeeper-highlight {
+    position: absolute;
+    border-radius: 12px;
+    box-shadow: 0 0 0 9999px rgba(0,0,0,0.72);
+    pointer-events: none;
+    z-index: 9998;
+}
+
+#tutorial-text-box {
+    position: absolute;
+    bottom: 380px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 420px;
+    padding: 18px;
+    background: #2e241b;
+    border: 4px solid #7b5d3b;
+    border-radius: 8px;
+    color: #f3dfb6;
+    font-family: 'superhelio _regular', sans-serif;
+    z-index: 10000;
+}
+
+#tutorial-button-box {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10000;
+}
+
+#tutorial-text {
+    width: 100%;
+    text-align: left;
+    line-height: 1.5;
+}
