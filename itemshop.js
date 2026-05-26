@@ -1,6 +1,6 @@
 import level0 from "./levels/level0.js";
-import {initNotebook, showNotebookUI} from "./notebook.js";
-import { renderShopVisuals, hideTooltip } from "./shop.js";
+import {initNotebook, showNotebookUI, unlockNotebookEntry} from "./notebook.js";
+import { renderShopVisuals, hideTooltip} from "./shop.js";
 
 let db;
 let editor;
@@ -10,9 +10,9 @@ let currentMissionIndex = 0;
 let hintTimeout;
 let quotes = [];
 let gameState = {
-    money: 30,
+    money: 0,
     hasNotebook: false,
-    is_notebook_unnlocked: false
+    is_notebook_unlocked: false
 };
 
 async function loadQuotes() {
@@ -92,6 +92,7 @@ function checkMission(query, result) {
     
     const rewardMoney = mission.reward?.money || 0;
     gameState.money += rewardMoney;
+    mission.unlocks.forEach(unlock => {unlockNotebookEntry(unlock);});
     refreshMoneyDisplay();
 
     currentMissionIndex++;
@@ -102,7 +103,7 @@ function checkMission(query, result) {
 
     if(mission.id === "hello_shopkeeper") {
         showHintMessage("Na hi..du lernst schnell.");
-}
+    }
 
     // Level Ende
     if(currentMissionIndex >= currentLevel.missions.length) {
@@ -232,9 +233,9 @@ function showRandomQuote() {
 }
 
 function unlockNotebook() {
-    if(gameState.notebookUnlocked)
+    if(gameState.is_notebook_unlocked)
         return;
-    gameState.notebookUnlocked = true;
+    gameState.is_notebook_unlocked = true;
 
     db.run(`
         INSERT INTO inventory

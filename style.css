@@ -728,6 +728,22 @@ tr:hover td {
     filter: drop-shadow(0 8px 12px rgba(0,0,0,0.35));
 }
 
+#notebook-content {
+    position: absolute;
+    top: 42px;
+    left: 40px;
+    width: 340px;
+    height: 220px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-family: 'superhelio _regular', sans-serif;
+    font-size: 12px;
+    color: #4b3824;
+    pointer-events: none;
+}
+
 /* =======================================================
     NOTEBOOK TABS
 ======================================================= */
