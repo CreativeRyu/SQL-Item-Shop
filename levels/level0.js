@@ -2,10 +2,14 @@ const level0 = {
   title: "Shop Training",
   missions: [
     {
-      id: "first_query",
-      title: "Die Datenbank erwacht",
+      id: "welcome",
+      title: "Willkommen im SQL Item Shop",
       description: "Führe deine erste SQL Query aus.",
-      hint: "Versuche etwas Einfaches wie SELECT 1;",
+      hint: "Tippe SELECT 1; in das Eingabefeld.",
+      tutorial: {
+        target: "#sql-input",
+        text: "Hier schreibst du deine SQL Queries."
+      },
       reward: {
         money: 5,
       },

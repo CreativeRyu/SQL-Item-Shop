@@ -10,7 +10,7 @@ let currentMissionIndex = 0;
 let hintTimeout;
 let quotes = [];
 let gameState = {
-    money: 0,
+    money: 30,
     hasNotebook: false,
     is_notebook_unlocked: false
 };
