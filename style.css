@@ -854,6 +854,10 @@ tr:hover td {
     z-index: 9999;
 }
 
+#tutorial-overlay.waiting-for-mission {
+    pointer-events: none;
+}
+
 #tutorial-highlight {
     position: absolute;
     border-radius: 8px;
@@ -898,4 +902,28 @@ tr:hover td {
     width: 100%;
     text-align: left;
     line-height: 1.5;
+}
+
+/* =======================================================
+    Tutorial Texte
+======================================================= */
+
+.sql-keyword {
+    color: #f2c572;
+}
+
+.sql-table {
+    color: #5fd7d3;
+}
+
+.sql-value {
+    color: #85c26b;
+}
+
+.sql-symbol {
+    color: #d89bff;
+}
+
+.sql-string {
+    color: #ff9e7a;
 }

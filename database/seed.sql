@@ -15,8 +15,7 @@ VALUES
 (3, 1),
 (4, 1),
 (5, 3),
-(6, 8),
-(7,1);
+(6, 8);
 
 INSERT INTO customers (name, money)
 VALUES

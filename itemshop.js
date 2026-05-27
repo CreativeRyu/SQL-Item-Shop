@@ -1,4 +1,4 @@
-import { startTutorial } from "./tutorial.js";
+import {loadTutorialSteps } from "./tutorial.js";
 import level0 from "./levels/level0.js";
 import {initNotebook, showNotebookUI, unlockNotebookEntry} from "./notebook.js";
 import { renderShopVisuals, hideTooltip} from "./shop.js";
@@ -12,7 +12,7 @@ let currentMissionIndex = 0;
 let hintTimeout;
 let quotes = [];
 let gameState = {
-    money: 30,
+    money: 0,
     hasNotebook: false,
     is_notebook_unlocked: false
 };
@@ -48,10 +48,7 @@ startApp();
 async function startApp() {
     await initDatabase();
     await loadQuotes();
-    startTutorial(() => {
-        tutorialActive = false;
-        startMissionHintTimer();
-    });
+    loadTutorialSteps(currentLevel.missions[0].tutorialSteps);
     initNotebook();
     renderShopVisuals(db, buyNotebook);
     refreshMoneyDisplay();
@@ -102,6 +99,10 @@ function checkMission(query, result) {
     refreshMoneyDisplay();
 
     currentMissionIndex++;
+    const nextMission = getCurrentMission();
+    if(nextMission?.tutorialSteps) {
+        loadTutorialSteps(nextMission.tutorialSteps);
+        }      
 
     if(mission.id === "only_names") {
         unlockNotebook();
