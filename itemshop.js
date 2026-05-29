@@ -1,6 +1,7 @@
 import {loadTutorialSteps } from "./tutorial.js";
 import level0 from "./levels/level0.js";
-import {initNotebook, showNotebookUI, unlockNotebookEntry} from "./notebook.js";
+import level1 from "./levels/level1.js";
+import {initNotebook, showNotebookUI, unlockNotebookEntry, completeNotebookEntry} from "./notebook.js";
 import { renderShopVisuals, hideTooltip} from "./shop.js";
 
 let db;
@@ -48,7 +49,7 @@ startApp();
 async function startApp() {
     await initDatabase();
     await loadQuotes();
-    loadTutorialSteps(currentLevel.missions[0].tutorialSteps);
+    loadTutorialSteps(currentLevel.missions[0].tutorialSteps, currentLevel.missions[0].softTutorial);
     initNotebook();
     renderShopVisuals(db, buyNotebook);
     refreshMoneyDisplay();
@@ -68,8 +69,8 @@ async function startApp() {
 function runQuery() {
     if (!databaseReady) {
         alert("Datenbank lädt noch...");
-    return;
-}
+        return;
+    }
     const query = editor.getValue();
     const resultDiv = document.getElementById("result");
     const errorBox = document.getElementById("error-box");
@@ -78,6 +79,11 @@ function runQuery() {
     errorBox.innerHTML = "";
 
     try {
+        if(tutorialActive && !isTutorialQueryAllowed(query)) {
+            errorBox.innerText = "Langsam, Azubi. Für solche Befehle fehlt dir noch die Ausbildung.";
+        return;
+}
+
         const result = db.exec(query);
         renderTable(result);
         checkMission(query, result);
@@ -87,29 +93,58 @@ function runQuery() {
     }
 }
 
+function isTutorialQueryAllowed(query) {
+    const forbidden = [
+        "insert",
+        "update",
+        "delete",
+        "drop",
+        "alter",
+        "create"
+    ];
+    const normalized = query.toLowerCase().trim();
+    return !forbidden.some(keyword =>
+        normalized.includes(keyword)
+    );
+}
+
 function checkMission(query, result) {
     const mission = getCurrentMission();
-    const solved = mission.validator(query, result);
+    const solved = mission.validator(query, result, gameState);
     if(!solved)
         return;
     
     const rewardMoney = mission.reward?.money || 0;
     gameState.money += rewardMoney;
-    mission.unlocks.forEach(unlock => {unlockNotebookEntry(unlock);});
+    mission.unlocks?.forEach(entry => {
+        unlockNotebookEntry(entry);
+    });
+
+    mission.completes?.forEach(entry => {
+        completeNotebookEntry(entry);
+    });
     refreshMoneyDisplay();
+
 
     currentMissionIndex++;
     const nextMission = getCurrentMission();
     if(nextMission?.tutorialSteps) {
-        loadTutorialSteps(nextMission.tutorialSteps);
+        loadTutorialSteps(nextMission.tutorialSteps, nextMission.softTutorial);
         }      
 
     if(mission.id === "only_names") {
         unlockNotebook();
     }
 
-    if(mission.id === "hello_shopkeeper") {
-        showHintMessage("Na hi..du lernst schnell.");
+    if(mission.id === "notebook_intro") {
+        tutorialActive = false;
+        document.getElementById("tutorial-overlay").style.display = "none";
+        currentLevel = level1;
+        currentMissionIndex = 0;
+        refreshMission();
+        showHintMessage("Willkommen im Ladenbetrieb, Azubi.");
+
+        return;
     }
 
     // Level Ende
@@ -275,8 +310,6 @@ function buyNotebook() {
     renderShopVisuals(db, buyNotebook);
     showItemPopup("SQL NOTEBOOK","./assets/sprites/shopItems/notebook.png","Speichert deine neuen\nSQL Befehle und\nTabellenschemata.");
     hideTooltip();
-    showHintMessage("Starke Queries brauchen starke Notizen.");
-    refreshMission();
 }
 
 function showItemPopup(title,icon,description) {
@@ -288,6 +321,9 @@ function showItemPopup(title,icon,description) {
     overlay.onclick = () => {
         overlay.style.display = "none";
         showNotebookUI()
+        if(getCurrentMission().id === "buy_notebook") {
+        checkMission("", []);
+    }
     };
 }
 
@@ -297,3 +333,42 @@ setInterval(() => {
         showRandomQuote();
     }
 }, 12000);
+
+
+// DEBUG FEATURES
+
+window.jumpToMission = (index) => {
+    currentMissionIndex = index;
+    refreshMission();
+    const mission = getCurrentMission();
+    if(mission?.tutorialSteps) {
+        loadTutorialSteps(mission.tutorialSteps);
+    }
+};
+
+window.debugNotebook = () => {
+    gameState.money = 999;
+    unlockNotebook();
+    currentMissionIndex = 5;
+    refreshMoneyDisplay();
+    refreshMission();
+    loadTutorialSteps(
+        currentLevel.missions[5].tutorialSteps
+    );
+};
+
+window.debugLevel1 = function() {
+    currentLevel = level1;
+    currentMissionIndex = 0;
+    gameState.money = 999;
+    gameState.hasNotebook = true;
+    gameState.is_notebook_unlocked = true;
+    showNotebookUI();
+    tutorialActive = false;
+    document.getElementById(
+        "tutorial-overlay"
+    ).style.display = "none";
+    refreshMoneyDisplay();
+    refreshMission();
+    console.log("Level 1 Debug gestartet");
+};

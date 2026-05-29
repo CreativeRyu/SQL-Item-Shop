@@ -60,7 +60,8 @@ const level0 = {
       reward: {
         money: 5,
       },
-      unlocks: ["SELECT"],
+      unlocks: [],
+      completes: ["SELECT"],
       validator: (query, result) => {
         const normalized = query.toLowerCase().trim();
         return normalized.includes("select");
@@ -101,7 +102,7 @@ const level0 = {
       reward: {
         money: 10,
       },
-      unlocks: ["TEXT_VALUES"],
+      unlocks: [],
       validator: (query, result) => {
         const normalized = query.toLowerCase();
         return normalized.includes("select") && result.length > 0;
@@ -150,7 +151,8 @@ const level0 = {
       reward: {
         money: 15,
       },
-      unlocks: ["FROM"],
+      unlocks: [],
+      completes: ["FROM"],
       validator: (query, result) => {
         const normalized = query.toLowerCase();
         return normalized.includes("from shop_items");
@@ -195,7 +197,7 @@ const level0 = {
       reward: {
         money: 20,
       },
-      unlocks: ["COLUMN_SELECTION"],
+      unlocks: [],
       validator: (query, result) => {
         const normalized = query.toLowerCase();
         if (!normalized.includes("from shop_items")) {
@@ -214,12 +216,12 @@ const level0 = {
   description: "Zeige Namen und Preise aller Produkte an.",
   tutorialSteps: [
           {
-              target: "#shopkeeper",
+              target: "#result",
               text: "Sehr gut. Du musst dich natürlich nicht auf eine einzelne Spalte beschränken."
           },
           {
-              target: "#result",
-              text: "Mehrere Spalten können auch abgefragt werden. Man trennt sie einfach mit Kommas."
+              target: "#shopkeeper",
+              text: "Mehrere Spalten können auch abgefragt werden. Man trennt sie einfach mit einem Komma."
           },
           {
               target: "#result-panel",
@@ -244,7 +246,7 @@ const level0 = {
       reward: {
           money: 25,
       },
-      unlocks: ["MULTI_COLUMN_SELECTION"],
+      unlocks: [],
       validator: (query, result) => {
           const normalized = query.toLowerCase();
           if(!normalized.includes("from shop_items")) {
@@ -295,8 +297,8 @@ const level0 = {
                 text: "Du hast genug Gold durch deine Aufgaben verdient."
             },
             {
-                target: "#shop-screen",
-                text: "Also hol es dir. Denn gute Queries beginnen sauber, organisiert, diszipliniert.",
+                target: "body",
+                text: "Also hol es dir. Denn starke Queries brauchen starke Notizen.",
                 position: "bottom",
                 waitForMission: true
             }
@@ -306,10 +308,91 @@ const level0 = {
         money: 0,
       },
       unlocks: ["SQL_NOTEBOOK"],
-      validator: () => {
+      validator: (query, result, gameState) => {
         return gameState.hasNotebook === true;
       },
     },
+    {
+    id: "notebook_intro",
+    title: "Das SQL Notebook",
+    description: "Lerne dein neues Werkzeug kennen.",
+    softTutorial: true,
+    tutorialSteps: [
+        {
+            target: "#sql-notebook-ui",
+            text: "Jawoll. Das ist dein SQL Notebook.",
+            padding: 20
+        },
+        {
+            target: "#sql-notebook-ui",
+            text: "Jedes Mal wenn du etwas Neues lernst, landet es hier. Neue SQL Befehle. Neue Tabellen. Neue Strukturen.",
+            padding: 20
+        },
+        {
+            target: "#tables-tab",
+            text: "Auf dieser Seite findest du bekannte Tabellen und Tabellenschemata."
+        },
+        {
+            target: "#dql-tab",
+            text: "Weitere Seiten enthalten SQL Befehle, die du im Laufe deiner Ausbildung lernst."
+        },
+        {
+            target: "#sql-notebook-ui",
+            text: "Das hier ist nur die Schnellübersicht. Gelernt wird mit Primärliteratur.",
+            padding: 20
+        },
+        {
+            target: "body",
+            text: "Gute Händler merken sich nicht alles.",
+            disableHighlight: true
+        },
+        {
+            target: "body",
+            text: "Sie wissen wo es steht.",
+            disableHighlight: true
+        },
+        {
+            target: "body",
+            text: "Gut... weiter im Text.",
+            disableHighlight: true
+        },
+        {
+            target: "body",
+            text: "Bevor du Daten abfragst, solltest du wissen womit du arbeitest.",
+            disableHighlight: true
+        },
+        {
+            target: "body",
+            text: "Ein guter Händler schaut zuerst auf die Struktur. Erst dann auf den Inhalt.",
+            disableHighlight: true
+        },
+        {
+            target: "body",
+            text: "Dafür verwenden wir <span class='sql-keyword'>PRAGMA table_info</span>.",
+            disableHighlight: true
+        },
+        {
+            target: "body",
+            text: "Probiere es aus, mit:<br><br><span class='sql-keyword'>PRAGMA table_info</span>(<span class='sql-table'>shop_items</span>);",
+            disableHighlight: true,
+            waitForMission: true
+        }
+    ],
+    hint: "",
+    reward: {
+        money: 10
+    },
+    unlocks: [],
+    completes: ["shop_items", "PRAGMA table_info"],
+    validator: (query, result) => {
+        const normalized = query.toLowerCase();
+
+        return (
+            normalized.includes("pragma") &&
+            normalized.includes("shop_items")
+        );
+    }
+}
   ],
 };
 

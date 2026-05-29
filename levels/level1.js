@@ -1,23 +1,28 @@
 const level1 = {
   title: "SELECT Basics",
   missions: [
-    {
-      id: 1,
-      title: "Tabellen finden",
-      description: "Finde heraus welche Tabellen in der Datenbank existieren.<br> Wir verwenden SQLite.",
-      hint: "SQLite besitzt interne Tabellen mit Metadaten.",
-      reward: {
-        money: 15
-      },
+      {
+        id: "find_tables",
+        title: "Die letzen Tabellen",
+        description: "Finde heraus welche Tabellen im Laden noch übrig sind.",
+        hint: "Nutze SELECT name FROM sqlite_master WHERE type='table';",
+        reward: {
+            money: 15
+        },
+        unlocks: [
+            "products",
+            "inventory",
+            "customers",
+            "sales"
+        ],
+        validator: (query, result) => {
+            const normalized = query.toLowerCase();
 
-  unlocks: [
-    "SELECT",
-    "sqlite_master"
-  ],
-      validator: (query, result) => {
-        const normalized = query.toLowerCase();
-        return normalized.includes("sqlite_master");
-      },
+            return (
+                normalized.includes("sqlite_master") &&
+                result.length > 0
+            );
+        }
     },
     {
       id: 2,

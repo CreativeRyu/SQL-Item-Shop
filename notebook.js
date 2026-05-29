@@ -5,10 +5,9 @@ const ddlTab = document.getElementById("ddl-tab");
 const dclTab = document.getElementById("dcl-tab");
 const tclTab = document.getElementById("tcl-tab");
 const notebookContent = document.getElementById("notebook-content");
-
 const notebookState = {
-    commands: [],
-    tables: []
+    commands: {},
+    tables: {}
 };
 
 let currentPage = "TABLES";
@@ -97,6 +96,7 @@ function renderCategoryPage(category) {
         DDL: {
             description: "Data Definition Language<br><br>Tabellen und Struktur",
             commands: [
+                "PRAGMA table_info",
                 "CREATE TABLE",
                 "ALTER TABLE",
                 "DROP TABLE"
@@ -137,17 +137,14 @@ function renderCategoryPage(category) {
         <div class="notebook-right-page">
     `;
 
-    data.commands.forEach(command => {
-
-        const unlocked = notebookState.commands.includes(command);
-
+    data.commands.filter(command =>
+        command in notebookState.commands).forEach(command => {
+        const unlocked = notebookState.commands[command] === true;
         html += `
             <div class="notebook-list-entry">
-
                 <div class="notebook-list-text">
                     ${command}
                 </div>
-
                 <div class="notebook-list-status ${unlocked ? "unlocked" : "locked"}"></div>
             </div>
         `;
@@ -157,12 +154,6 @@ function renderCategoryPage(category) {
 }
 
 function renderTablesPage() {
-    const allTables = [
-        "products",
-        "inventory",
-        "customers",
-        "invoices"
-    ];
     let html = `
         <div class="notebook-left-page">
             <div class="notebook-category-title">
@@ -175,8 +166,8 @@ function renderTablesPage() {
         <div class="notebook-right-page">
     `;
 
-    allTables.forEach(table => {
-        const unlocked = notebookState.tables.includes(table);
+    Object.entries(notebookState.tables)
+    .forEach(([table, unlocked]) => {
         html += `
             <div class="notebook-list-entry">
 
@@ -198,15 +189,28 @@ function renderTablesPage() {
 export function unlockNotebookEntry(entry) {
     const isTable = entry === entry.toLowerCase();
     if(isTable) {
-        if(!notebookState.tables.includes(entry)) {
-            notebookState.tables.push(entry);
+        if(!(entry in notebookState.tables)) {
+            notebookState.tables[entry] = false;
         }
-    } else {
-        if(!notebookState.commands.includes(entry)) {
-            notebookState.commands.push(entry);
+        } else {
+        if(!(entry in notebookState.commands)) {
+            notebookState.commands[entry] = false;
         }
     }
+    if(currentPage === "TABLES") {
+        renderTablesPage();
+    } else {
+        renderCategoryPage(currentPage);
+    }
+}
 
+export function completeNotebookEntry(entry) {
+    const isTable = entry === entry.toLowerCase();
+    if(isTable) {
+        notebookState.tables[entry] = true;
+    } else {
+        notebookState.commands[entry] = true;
+    }
     if(currentPage === "TABLES") {
         renderTablesPage();
     } else {
