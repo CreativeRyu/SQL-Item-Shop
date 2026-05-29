@@ -15,8 +15,8 @@ const level0 = {
             text: "Ich verwalte diesen Laden schon seit über zehn Jahren. Items, Inventare. Kundendaten. Bestellungen. Alles läuft sauber."
           },
           {
-              target: "#shopkeeper",
-              text: "Naja... Zumindest bis die letzten beiden Azubis beschlossen haben, <span class='sql-keyword'>DELETE</span> ohne <span class='sql-keyword'>WHERE</span> auszuführen."
+            target: "#shopkeeper",
+            text: "Naja... Zumindest bis die letzten beiden Azubis beschlossen haben, <span class='sql-keyword'>DELETE</span> ohne <span class='sql-keyword'>WHERE</span> auszuführen."
           },
           {
             target: "#shopkeeper",
@@ -262,11 +262,46 @@ const level0 = {
       }
     },
     {
-      id: "buy_notebook",
-      title: "Das alte SQL Notebook",
-      description:
-        "Du hast genug Gold verdient.<br>Kaufe das SQL Notebook im Shop.",
-      hint: "Ich verkaufe manchmal nützliche Werkzeuge.",
+        id: "buy_notebook",
+        title: "Das alte SQL Notebook",
+        description: "Du hast genug Gold verdient.<br>Kaufe das SQL Notebook im Shop.",
+        tutorialSteps: [
+            {
+                target: "#result-panel",
+                text: "Siehst du? Genau so entstehen echte Produktlisten."
+            },
+            {
+                target: "#shopkeeper",
+                text: "Aber glaub mir... sobald Datenbanken größer werden, verlierst du ohne Struktur sehr schnell den Überblick."
+            },
+            {
+                target: "#shopkeeper",
+                text: "Denn <span class='sql-keyword'>OHNE STRUKTUR, KEIN INHALT.</span>"
+            },
+            {
+                target: "#shopkeeper",
+                text: "Deshalb laufen gute Händler niemals ohne Notizen herum."
+            },
+            {
+                target: "#shop-screen",
+                text: "Das gute ist, ich verkaufe hier im Laden ab und zu auch spezielle Werkzeuge für SQL Azubis."
+            },
+            {
+                target: ".shop-key-item",
+                text: "Wie dieses schöne SQL Notebook hier."
+            },
+            {
+                target: "#money-display",
+                text: "Du hast genug Gold durch deine Aufgaben verdient."
+            },
+            {
+                target: "#shop-screen",
+                text: "Also hol es dir. Denn gute Queries beginnen sauber, organisiert, diszipliniert.",
+                position: "bottom",
+                waitForMission: true
+            }
+        ],
+      hint: "",
       reward: {
         money: 0,
       },

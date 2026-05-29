@@ -35,6 +35,20 @@ function showTutorialStep() {
         nextButton.style.display = "block";
         runButton.style.zIndex = "";
     }
+
+    const textBox = document.getElementById("tutorial-text-box");
+    textBox.style.top = "";
+    textBox.style.bottom = "";
+    switch(step.position) {
+        case "bottom":
+            textBox.style.bottom = "200px";
+            break;
+        case "top":
+            textBox.style.top = "20px";
+            break;
+        default:
+            textBox.style.bottom = "380px";
+    }
 }
 
 document.getElementById("tutorial-next-btn").onclick = () => {
