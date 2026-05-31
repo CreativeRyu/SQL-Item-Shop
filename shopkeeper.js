@@ -7,7 +7,12 @@ const tutorialWarnings = [
     "Heute wird gelernt, nicht gelöscht.",
     "Gleich fliegt was...",
     "Du spielst mit Mächten, die du noch nicht kontrollieren kannst.",
-    "Willst du das Tutorial nochmal von vorne starten?"
+    "Willst du das Tutorial nochmal von vorne starten?",
+    "Einfach... NEIN",
+    "Das ist genau die Art von Idee, die Meetings verursacht.",
+    "Du willst nicht, dass ich Kopfschmerzen habe.",
+    "Interssanter Ansatz, wird aber so semi erfolgreich.",
+    "Netter Versuch..."
 ];
 
 

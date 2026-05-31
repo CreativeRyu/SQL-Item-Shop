@@ -167,23 +167,37 @@ function renderTablesPage() {
     `;
 
     Object.entries(notebookState.tables)
-    .forEach(([table, unlocked]) => {
-        html += `
-            <div class="notebook-list-entry">
-
-                <div class="notebook-list-text">
-                    ${table}
+        .forEach(([table, unlocked]) => {
+            html += `
+                <div class="notebook-list-entry notebook-table-entry ${unlocked ? "clickable" : "locked"}" data-table="${table}">
+                    <div class="notebook-list-text">
+                        ${table}
+                    </div>
+                    <div class="notebook-list-status ${unlocked ? "unlocked" : ""}">
+                    </div>
                 </div>
-
-                <div class="notebook-list-status ${unlocked ? "unlocked" : ""}">
-                </div>
-
-            </div>
-        `;
+            `;
     });
 
     html += `</div>`;
     notebookContent.innerHTML = html;
+    attachTableListeners();
+}
+
+function attachTableListeners() {
+    document
+        .querySelectorAll(".notebook-table-entry")
+        .forEach(entry => {
+
+            const table = entry.dataset.table;
+            if(!notebookState.tables[table])
+                return;
+
+            entry.onclick = () => {
+                const table = entry.dataset.table;
+                window.inspectTable(table);
+            };
+        });
 }
 
 export function unlockNotebookEntry(entry) {

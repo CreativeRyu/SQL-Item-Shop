@@ -3,12 +3,12 @@ import level0 from "./levels/level0.js";
 import level1 from "./levels/level1.js";
 import {initNotebook, showNotebookUI, unlockNotebookEntry, completeNotebookEntry} from "./notebook.js";
 import { renderShopVisuals, hideTooltip} from "./shop.js";
+import { processDiscoveries } from "./notebookDiscovery.js";
 import {
     loadQuotes,
     showHintMessage,
     showRandomQuote,
     showWarningMessage, 
-
     showTutorialWarning,
     getRandomTutorialWarning
 } from "./shopkeeper.js";
@@ -49,6 +49,11 @@ async function initDatabase() {
     databaseReady = true;
 }
 
+window.inspectTable = function(table) {
+    const result = db.exec(`PRAGMA table_info(${table})`);
+    renderTable(result, `SCHEMA: ${table}`);
+};
+
 startApp();
 
 async function startApp() {
@@ -84,13 +89,15 @@ function runQuery() {
     errorBox.innerHTML = "";
 
     try {
-        if(tutorialActive && !isTutorialQueryAllowed(query)) {
-            console.log("WARNING AUSGELÖST");
-            showTutorialWarning(getRandomTutorialWarning());
+        if(!isQueryAllowed(query)) {
+            if(tutorialActive) {showTutorialWarning(getRandomTutorialWarning());
+            } else {
+                showWarningMessage(getRandomTutorialWarning());
+            }
             return;
         }
-
         const result = db.exec(query);
+        processDiscoveries(query, result);
         renderTable(result);
         checkMission(query, result);
 
@@ -99,7 +106,7 @@ function runQuery() {
     }
 }
 
-function isTutorialQueryAllowed(query) {
+function isQueryAllowed(query) {
     const forbidden = [
         "insert",
         "update",
@@ -161,7 +168,7 @@ function checkMission(query, result) {
     refreshMission();
 }
 
-function renderTable(results) {
+function renderTable(results, header= null) {
     const resultDiv =
         document.getElementById("result");
     resultDiv.innerHTML = "";
@@ -172,7 +179,8 @@ function renderTable(results) {
         return;
     }
     results.forEach((tableData, index) => {
-        let html = `<h4>Result ${index + 1}</h4>`;
+        let title = header || (results.length > 1 ? `Result ${index + 1}` : "QUERY RESULT");
+        let html = `<h4>${title}</h4>`;
         html += "<table>";
 
         // Header
