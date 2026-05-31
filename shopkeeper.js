@@ -1,0 +1,75 @@
+let quotes = [];
+
+const tutorialWarnings = [
+    "Langsam, Azubi. Für solche Befehle fehlt dir noch die Ausbildung.",
+    "Die letzten beiden Azubis haben das auch versucht.",
+    "Finger weg von der Abrissbirne.",
+    "Heute wird gelernt, nicht gelöscht.",
+    "Gleich fliegt was...",
+    "Du spielst mit Mächten, die du noch nicht kontrollieren kannst.",
+    "Willst du das Tutorial nochmal von vorne starten?"
+];
+
+
+export async function loadQuotes() {
+    quotes = await fetch("./shopkeeperQuotes.json")
+        .then(res => res.json());
+}
+
+export function showHintMessage(text) {
+    const bubble = document.getElementById("shopkeeper-hint");
+    bubble.innerHTML = text;
+    bubble.classList.add("visible");
+    clearTimeout(bubble.hideTimeout);
+    bubble.hideTimeout =
+        setTimeout(() => {
+            bubble.classList.remove("visible");
+        }, 7000);
+}
+
+export function showRandomQuote() {
+    if(quotes.length === 0)
+        return;
+
+    const bubble = document.getElementById("shopkeeper-dialogue");
+    const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+    bubble.innerText = randomQuote;
+    bubble.style.opacity = 1;
+
+    setTimeout(() => {
+        bubble.style.opacity = 0;
+    }, 4000);
+}
+
+export function showWarningMessage(text) {
+    const bubble = document.getElementById("shopkeeper-warning");
+    bubble.innerHTML = text;
+    bubble.classList.add("visible");
+    clearTimeout(bubble.hideTimeout);
+    bubble.hideTimeout =
+        setTimeout(() => {
+            bubble.classList.remove("visible");
+        }, 5000);
+}
+
+export function showTutorialWarning(text) {
+    const box = document.getElementById("tutorial-warning-box" );
+    const textBox = document.getElementById("tutorial-warning-text");
+    textBox.innerHTML = text;
+    box.classList.add("visible");
+    console.log(box);
+    console.log(textBox);
+    clearTimeout(box.hideTimeout);
+    box.hideTimeout = setTimeout(() => {
+        box.classList.remove("visible");
+    }, 3000);
+}
+
+
+export function getRandomTutorialWarning() {
+    return tutorialWarnings[
+        Math.floor(
+            Math.random() * tutorialWarnings.length
+        )
+    ];
+}

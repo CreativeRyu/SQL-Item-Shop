@@ -3,6 +3,15 @@ import level0 from "./levels/level0.js";
 import level1 from "./levels/level1.js";
 import {initNotebook, showNotebookUI, unlockNotebookEntry, completeNotebookEntry} from "./notebook.js";
 import { renderShopVisuals, hideTooltip} from "./shop.js";
+import {
+    loadQuotes,
+    showHintMessage,
+    showRandomQuote,
+    showWarningMessage, 
+
+    showTutorialWarning,
+    getRandomTutorialWarning
+} from "./shopkeeper.js";
 
 let db;
 let editor;
@@ -11,17 +20,13 @@ let tutorialActive = true;
 let currentLevel = level0;
 let currentMissionIndex = 0;
 let hintTimeout;
-let quotes = [];
+let tutorialViolations = 0;
 let gameState = {
     money: 0,
     hasNotebook: false,
     is_notebook_unlocked: false
 };
 
-async function loadQuotes() {
-    quotes = await fetch("./shopkeeperQuotes.json")
-        .then(res => res.json());
-}
 
 async function initDatabase() {
     const SQL = await initSqlJs({
@@ -80,9 +85,10 @@ function runQuery() {
 
     try {
         if(tutorialActive && !isTutorialQueryAllowed(query)) {
-            errorBox.innerText = "Langsam, Azubi. Für solche Befehle fehlt dir noch die Ausbildung.";
-        return;
-}
+            console.log("WARNING AUSGELÖST");
+            showTutorialWarning(getRandomTutorialWarning());
+            return;
+        }
 
         const result = db.exec(query);
         renderTable(result);
@@ -132,7 +138,7 @@ function checkMission(query, result) {
         loadTutorialSteps(nextMission.tutorialSteps, nextMission.softTutorial);
         }      
 
-    if(mission.id === "only_names") {
+    if(mission.id === "names_and_prices") {
         unlockNotebook();
     }
 
@@ -143,7 +149,6 @@ function checkMission(query, result) {
         currentMissionIndex = 0;
         refreshMission();
         showHintMessage("Willkommen im Ladenbetrieb, Azubi.");
-
         return;
     }
 
@@ -224,18 +229,6 @@ function getCurrentMission() {
         .missions[currentMissionIndex];
 }
 
-function showHintMessage(text) {
-    if(tutorialActive)
-        return;
-    const bubble = document.getElementById("shopkeeper-hint");
-    bubble.innerHTML = text;
-    bubble.classList.add("visible");
-    clearTimeout(bubble.hideTimeout);
-    bubble.hideTimeout =
-        setTimeout(() => {
-            bubble.classList.remove("visible");
-        }, 7000);
-}
 
 function startMissionHintTimer() {
     if(tutorialActive)
@@ -264,20 +257,6 @@ function renderQuestHint(text) {
 function clearQuestHint() {
     const hintBox = document.getElementById("quest-hint");
     hintBox.innerHTML = "";
-}
-
-function showRandomQuote() {
-    if(tutorialActive)
-        return;
-    if(quotes.length === 0)
-        return;
-    const bubble = document.getElementById("shopkeeper-dialogue");
-    const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
-    bubble.innerText = randomQuote;
-    bubble.style.opacity = 1;
-    setTimeout(() => {
-        bubble.style.opacity = 0;
-    }, 4000);
 }
 
 function unlockNotebook() {
@@ -328,6 +307,8 @@ function showItemPopup(title,icon,description) {
 }
 
 setInterval(() => {
+    if(tutorialActive)
+        return;
     const chance = Math.random();
     if(chance < 0.4) {
         showRandomQuote();
