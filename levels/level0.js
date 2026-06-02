@@ -8,7 +8,7 @@ const level0 = {
       tutorialSteps: [
           {
               target: "#shopkeeper",
-              text: "Ahh... endlich Verstärkung. Willkommen im SQL Item Shop."
+              text: "Ahh... endlich Verstärkung. Willkommen im SQL Item Shop.",
           },
           {
             target: "#shopkeeper",
@@ -63,9 +63,14 @@ const level0 = {
       unlocks: [],
       completes: ["SELECT"],
       validator: (query, result) => {
-        const normalized = query.toLowerCase().trim();
-        return normalized.includes("select");
-      },
+            if(result.length === 0)
+                return false;
+
+            const value =
+                result[0].values?.[0]?.[0];
+
+            return value === 1;
+        },
     },
     {
       id: "hello_shopkeeper",
@@ -104,9 +109,14 @@ const level0 = {
       },
       unlocks: [],
       validator: (query, result) => {
-        const normalized = query.toLowerCase();
-        return normalized.includes("select") && result.length > 0;
-      },
+            if(result.length === 0)
+                return false;
+
+            const value =
+                result[0].values?.[0]?.[0];
+
+            return typeof value === "string";
+        },
     },
     {
       id: "show_products",

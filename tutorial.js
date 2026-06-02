@@ -12,6 +12,7 @@ export function loadTutorialSteps(steps, softTutorial = false) {
 }
 
 function showTutorialStep() {
+    document.body.style.overflow = "hidden";
     const step = tutorialSteps[currentTutorialStep];
     const overlay = document.getElementById("tutorial-overlay");
     const runButton = document.getElementById("run-btn");
@@ -44,14 +45,20 @@ function showTutorialStep() {
     textBox.style.top = "";
     textBox.style.bottom = "";
     switch(step.position) {
+        case "target-bottom":
+            textBox.style.top = (rect.bottom + 20) + "px";
+            break;
+        case "target-top":
+            textBox.style.top = (rect.top - 180) + "px";
+            break;
         case "bottom":
-            textBox.style.bottom = "200px";
+            textBox.style.bottom = "18vh";
             break;
         case "top":
-            textBox.style.top = "20px";
+            textBox.style.top = "5h";
             break;
         default:
-            textBox.style.bottom = "380px";
+            textBox.style.bottom = "41vh";
     }
 }
 
@@ -59,6 +66,7 @@ document.getElementById("tutorial-next-btn").onclick = () => {
     currentTutorialStep++;
     if(currentTutorialStep >= tutorialSteps.length) {
     document.getElementById("tutorial-overlay").style.display = "none";
+    document.body.style.overflow = "";
     if(finishCallback) {
         finishCallback();
     }
@@ -67,3 +75,12 @@ document.getElementById("tutorial-next-btn").onclick = () => {
 }
     showTutorialStep();
 };
+
+window.addEventListener("resize", () => {
+    if(
+        tutorialSteps.length > 0 &&
+        document.getElementById("tutorial-overlay").style.display !== "none"
+    ) {
+        showTutorialStep();
+    }
+});

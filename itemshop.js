@@ -1,9 +1,10 @@
 import {loadTutorialSteps } from "./tutorial.js";
 import level0 from "./levels/level0.js";
 import level1 from "./levels/level1.js";
-import {initNotebook, showNotebookUI, unlockNotebookEntry, completeNotebookEntry} from "./notebook.js";
+import {initNotebook, showNotebookUI, unlockNotebookEntry, completeNotebookEntry, getNotebookState, loadNotebookState} from "./notebook.js";
 import { renderShopVisuals, hideTooltip} from "./shop.js";
 import { processDiscoveries } from "./notebookDiscovery.js";
+import {saveGame,loadGame} from "./savegame.js";
 import {
     loadQuotes,
     showHintMessage,
@@ -12,6 +13,7 @@ import {
     showTutorialWarning,
     getRandomTutorialWarning
 } from "./shopkeeper.js";
+
 
 let db;
 let editor;
@@ -59,8 +61,31 @@ startApp();
 async function startApp() {
     await initDatabase();
     await loadQuotes();
-    loadTutorialSteps(currentLevel.missions[0].tutorialSteps, currentLevel.missions[0].softTutorial);
     initNotebook();
+
+    const save = loadGame();
+    if(save) {
+        gameState = save.gameState;
+        loadNotebookState(save.notebookState);
+        currentMissionIndex = save.missionIndex;
+
+        if(gameState.hasNotebook) {
+            showNotebookUI();
+        }
+
+        if(currentLevel === level0) {
+            loadTutorialSteps(
+                getCurrentMission().tutorialSteps,
+                getCurrentMission().softTutorial
+            );
+        }
+    } else {
+        loadTutorialSteps(
+            currentLevel.missions[0].tutorialSteps,
+            currentLevel.missions[0].softTutorial
+        );
+    }
+
     renderShopVisuals(db, buyNotebook);
     refreshMoneyDisplay();
     refreshMission();
@@ -166,6 +191,7 @@ function checkMission(query, result) {
     }
 
     refreshMission();
+    saveCurrentGame();
 }
 
 function renderTable(results, header= null) {
@@ -297,6 +323,7 @@ function buyNotebook() {
     renderShopVisuals(db, buyNotebook);
     showItemPopup("SQL NOTEBOOK","./assets/sprites/shopItems/notebook.png","Speichert deine neuen\nSQL Befehle und\nTabellenschemata.");
     hideTooltip();
+    saveCurrentGame();
 }
 
 function showItemPopup(title,icon,description) {
@@ -312,6 +339,15 @@ function showItemPopup(title,icon,description) {
         checkMission("", []);
     }
     };
+}
+
+function saveCurrentGame() {
+    saveGame({
+        level: currentLevel.title,
+        missionIndex: currentMissionIndex,
+        gameState,
+        notebookState: getNotebookState()
+    });
 }
 
 setInterval(() => {

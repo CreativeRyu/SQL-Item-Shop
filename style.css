@@ -932,6 +932,8 @@ tr:hover td {
     border-radius: 8px;
     color: #f3dfb6;
     font-family: 'superhelio _regular', sans-serif;
+    word-wrap: break-word;
+    box-sizing: border-box;
     z-index: 10000;
 }
 

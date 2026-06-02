@@ -231,3 +231,18 @@ export function completeNotebookEntry(entry) {
         renderCategoryPage(currentPage);
     }
 }
+
+export function getNotebookState() {
+    return notebookState;
+}
+
+export function loadNotebookState(data) {
+    notebookState.commands = data.commands || {};
+    notebookState.tables = data.tables || {};
+
+    if(currentPage === "TABLES") {
+        renderTablesPage();
+    } else {
+        renderCategoryPage(currentPage);
+    }
+}
