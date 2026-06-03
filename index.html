@@ -58,8 +58,36 @@
       </div>
       <div class="editor-container">
         <textarea id="sql-input"></textarea>
-        <button id="run-btn">Ausführen</button>
-      </div>
+      <div class="editor-actions">
+  <button id="run-btn" type="button"
+          title="Befehl ausführen" aria-label="Befehl ausführen">Ausführen</button>
+
+  <div class="editor-tools">
+    <button
+      id="reset-level-btn"
+      class="editor-tool-btn danger-tool hidden"
+      type="button"
+      title="Level neu starten"
+      aria-label="Level neu starten">&#8635;</button>
+
+    <div id="sound-controls" class="editor-tools hidden">
+      <button
+        id="sound-on-btn"
+        class="editor-tool-btn"
+        type="button"
+        title="Sound an"
+        aria-label="Sound an">&#9835;</button>
+
+      <button
+        id="sound-off-btn"
+        class="editor-tool-btn"
+        type="button"
+        title="Sound aus"
+        aria-label="Sound aus">x</button>
+    </div>
+  </div>
+</div>
+    </div>
     </div>
     <div id="error-box"></div>
     <div id="item-popup-overlay">

@@ -1,6 +1,6 @@
-import {loadTutorialSteps } from "./tutorial.js";
-import level0 from "./levels/level0.js";
-import level1 from "./levels/level1.js";
+import {loadTutorialSteps, clearTutorial } from "./tutorial.js";
+
+import { LEVELS } from "./levels/index.js";
 import {initNotebook, showNotebookUI, unlockNotebookEntry, completeNotebookEntry, getNotebookState, loadNotebookState} from "./notebook.js";
 import { renderShopVisuals, hideTooltip} from "./shop.js";
 import { processDiscoveries } from "./notebookDiscovery.js";
@@ -14,15 +14,12 @@ import {
     getRandomTutorialWarning
 } from "./shopkeeper.js";
 
-
 let db;
 let editor;
 let databaseReady = false;
-let tutorialActive = true;
-let currentLevel = level0;
+let currentLevel = LEVELS.level0;
 let currentMissionIndex = 0;
 let hintTimeout;
-let tutorialViolations = 0;
 let gameState = {
     money: 0,
     hasNotebook: false,
@@ -65,25 +62,18 @@ async function startApp() {
 
     const save = loadGame();
     if(save) {
+        currentLevel = LEVELS[save.levelId] || LEVELS.level0;
         gameState = save.gameState;
         loadNotebookState(save.notebookState);
         currentMissionIndex = save.missionIndex;
 
-        if(gameState.hasNotebook) {
-            showNotebookUI();
-        }
-
-        if(currentLevel === level0) {
-            loadTutorialSteps(
-                getCurrentMission().tutorialSteps,
-                getCurrentMission().softTutorial
-            );
-        }
     } else {
-        loadTutorialSteps(
-            currentLevel.missions[0].tutorialSteps,
-            currentLevel.missions[0].softTutorial
-        );
+        currentLevel = LEVELS.level0;
+        currentMissionIndex = 0;
+    }
+
+    if(gameState.hasNotebook) {
+        showNotebookUI();
     }
 
     renderShopVisuals(db, buyNotebook);
@@ -99,6 +89,11 @@ async function startApp() {
 
     const runButton = document.getElementById("run-btn");
     runButton.addEventListener("click", runQuery);
+    const resetButton = document.getElementById("reset-level-btn");
+    resetButton.addEventListener("click", resetCurrentLevel);
+    updateEditorToolsVisibility();
+
+    syncTutorialForCurrentMission();
 }
 
 function runQuery() {
@@ -115,9 +110,14 @@ function runQuery() {
 
     try {
         if(!isQueryAllowed(query)) {
-            if(tutorialActive) {showTutorialWarning(getRandomTutorialWarning());
+            if(missionHasTutorial()) {
+                showTutorialWarning(
+                    getRandomTutorialWarning()
+                );
             } else {
-                showWarningMessage(getRandomTutorialWarning());
+                showWarningMessage(
+                    getRandomTutorialWarning()
+                );
             }
             return;
         }
@@ -163,34 +163,32 @@ function checkMission(query, result) {
     });
     refreshMoneyDisplay();
 
-
     currentMissionIndex++;
-    const nextMission = getCurrentMission();
-    if(nextMission?.tutorialSteps) {
-        loadTutorialSteps(nextMission.tutorialSteps, nextMission.softTutorial);
-        }      
-
     if(mission.id === "names_and_prices") {
         unlockNotebook();
     }
 
     if(mission.id === "notebook_intro") {
-        tutorialActive = false;
-        document.getElementById("tutorial-overlay").style.display = "none";
-        currentLevel = level1;
-        currentMissionIndex = 0;
-        refreshMission();
-        showHintMessage("Willkommen im Ladenbetrieb, Azubi.");
-        return;
+    clearTutorial();
+    currentLevel = LEVELS.level1;
+    currentMissionIndex = 0;
+    refreshMission();
+    syncTutorialForCurrentMission();
+    saveCurrentGame();
+    showHintMessage("Willkommen im Ladenbetrieb, Azubi.");
+
+    return;
     }
 
     // Level Ende
     if(currentMissionIndex >= currentLevel.missions.length) {
-        refreshMission();
+        clearTutorial();
+        saveCurrentGame();
         return;
     }
 
     refreshMission();
+    syncTutorialForCurrentMission();
     saveCurrentGame();
 }
 
@@ -263,9 +261,25 @@ function getCurrentMission() {
         .missions[currentMissionIndex];
 }
 
+function missionHasTutorial() {
+    return !!getCurrentMission()?.tutorialSteps;
+}
+
+function syncTutorialForCurrentMission() {
+    const mission = getCurrentMission();
+
+    if(missionHasTutorial()) {
+        loadTutorialSteps(
+            mission.tutorialSteps,
+            mission.softTutorial
+        );
+    } else {
+        clearTutorial();
+    }
+}
 
 function startMissionHintTimer() {
-    if(tutorialActive)
+    if(missionHasTutorial())
         return;
     clearTimeout(hintTimeout);
     const mission = getCurrentMission();
@@ -343,15 +357,51 @@ function showItemPopup(title,icon,description) {
 
 function saveCurrentGame() {
     saveGame({
-        level: currentLevel.title,
+        levelId: currentLevel.levelId,
         missionIndex: currentMissionIndex,
         gameState,
         notebookState: getNotebookState()
     });
 }
 
+function updateEditorToolsVisibility() {
+    const resetButton = document.getElementById("reset-level-btn");
+    if(currentLevel.levelId === "level0") {
+        resetButton.classList.add("hidden");
+    } else {
+        resetButton.classList.remove("hidden");
+    }
+}
+
+async function resetCurrentLevel() {
+    const confirmed = confirm("Dieses Level wirklich von vorne starten?");
+    if(!confirmed)
+        return;
+
+    databaseReady = false;
+    clearTutorial();
+    clearTimeout(hintTimeout);
+    currentMissionIndex = 0;
+    await initDatabase();
+
+    if(editor) {
+        editor.setValue("");
+    }
+
+    document.getElementById("result").innerHTML = "";
+    document.getElementById("error-box").innerHTML = "";
+
+    renderShopVisuals(db, buyNotebook);
+    refreshMoneyDisplay();
+    refreshMission();
+    syncTutorialForCurrentMission();
+    saveCurrentGame();
+
+    showHintMessage("Level wurde neu gestartet.");
+}
+
 setInterval(() => {
-    if(tutorialActive)
+    if(missionHasTutorial())
         return;
     const chance = Math.random();
     if(chance < 0.4) {
@@ -383,16 +433,14 @@ window.debugNotebook = () => {
 };
 
 window.debugLevel1 = function() {
-    currentLevel = level1;
+    currentLevel = LEVELS.level1;
     currentMissionIndex = 0;
     gameState.money = 999;
     gameState.hasNotebook = true;
     gameState.is_notebook_unlocked = true;
     showNotebookUI();
-    tutorialActive = false;
-    document.getElementById(
-        "tutorial-overlay"
-    ).style.display = "none";
+    clearTutorial();
+    document.getElementById("tutorial-overlay").style.display = "none";
     refreshMoneyDisplay();
     refreshMission();
     console.log("Level 1 Debug gestartet");

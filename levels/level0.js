@@ -1,6 +1,7 @@
 const level0 = {
-  title: "Shop Training",
-  missions: [
+    levelId: "level0",
+    title: "Shop Training",
+    missions: [
     {
       id: "welcome",
       title: "Willkommen im SQL Item Shop",

@@ -84,3 +84,10 @@ window.addEventListener("resize", () => {
         showTutorialStep();
     }
 });
+
+export function clearTutorial() {
+    tutorialSteps = [];
+    currentTutorialStep = 0;
+    document.getElementById("tutorial-overlay").style.display = "none";
+    document.body.style.overflow = "";
+}
