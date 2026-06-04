@@ -1,28 +1,31 @@
 const shopItems = document.getElementById("shop-items");
 const tooltip = document.getElementById("shop-tooltip");
 
-export function renderShopVisuals(db, buyNotebook) {
+export function renderShopVisuals(db, shopLayout, buyNotebook) {
     const result = db.exec(`SELECT
+        products.id,
         products.name,
-        products.sprite,
-        products.pos_x,
-        products.pos_y,
-        products.scale,
         inventory.stock
     FROM inventory
     JOIN products
     ON inventory.product_id = products.id`);
 
-    const rows = result[0].values;
+    const rows = result[0]?.values || [];
     shopItems.innerHTML = "";
 
     rows.forEach(row => {
-        const name = row[0];
-        const sprite = row[1];
-        const posX = row[2];
-        const posY = row[3];
-        const scale = row[4];
-        const stock = row[5];
+        const productId = row[0];
+        const name = row[1];
+        const stock = row[2];
+        const visual = shopLayout[productId];
+
+        if(!visual)
+            return;
+
+        const sprite = visual.sprite;
+        const posX = visual.posX;
+        const posY = visual.posY;
+        const scale = visual.scale;
 
         const isNotebook = name === "SQL Notebook";
 

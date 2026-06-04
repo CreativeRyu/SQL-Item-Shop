@@ -1,13 +1,7 @@
 CREATE TABLE products (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
-    price REAL NOT NULL,
-
-    sprite TEXT NOT NULL,
-
-    pos_x INTEGER NOT NULL,
-    pos_y INTEGER NOT NULL,
-    scale REAL NOT NULL
+    price REAL NOT NULL
 );
 
 CREATE TABLE inventory (

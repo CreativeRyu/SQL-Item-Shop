@@ -1,6 +1,7 @@
 import {loadTutorialSteps, clearTutorial } from "./tutorial.js";
 
 import { LEVELS } from "./levels/index.js";
+import { level0ShopLayout } from "./shopLayouts/level0ShopLayout.js";
 import {initNotebook, showNotebookUI, unlockNotebookEntry, completeNotebookEntry, getNotebookState, loadNotebookState} from "./notebook.js";
 import { renderShopVisuals, hideTooltip} from "./shop.js";
 import { processDiscoveries } from "./notebookDiscovery.js";
@@ -20,6 +21,10 @@ let databaseReady = false;
 let currentLevel = LEVELS.level0;
 let currentMissionIndex = 0;
 let hintTimeout;
+let gameSystemsReady = false;
+let gameActive = false;
+let moneyCountAnimation;
+let missionTransitionActive = false;
 let gameState = {
     money: 0,
     hasNotebook: false,
@@ -53,32 +58,36 @@ window.inspectTable = function(table) {
     renderTable(result, `SCHEMA: ${table}`);
 };
 
-startApp();
+bootApp();
 
-async function startApp() {
+function bootApp() {
+    initStartScreen();
+    showStartScreen();
+    clearTutorial();
+}
+
+function initStartScreen() {
+    const newGameButton = document.getElementById("new-game-btn");
+    const loadGameButton = document.getElementById("load-game-btn");
+
+    newGameButton.addEventListener("click", startNewGame);
+    loadGameButton.addEventListener("click", continueGame);
+}
+
+async function initGameSystems() {
+    if(gameSystemsReady)
+        return;
+
     await initDatabase();
     await loadQuotes();
     initNotebook();
+    gameSystemsReady = true;
+}
 
-    const save = loadGame();
-    if(save) {
-        currentLevel = LEVELS[save.levelId] || LEVELS.level0;
-        gameState = save.gameState;
-        loadNotebookState(save.notebookState);
-        currentMissionIndex = save.missionIndex;
+function initEditor() {
+    if(editor)
+        return;
 
-    } else {
-        currentLevel = LEVELS.level0;
-        currentMissionIndex = 0;
-    }
-
-    if(gameState.hasNotebook) {
-        showNotebookUI();
-    }
-
-    renderShopVisuals(db, buyNotebook);
-    refreshMoneyDisplay();
-    refreshMission();
     editor = CodeMirror.fromTextArea(
     document.getElementById("sql-input"),
     {
@@ -91,12 +100,80 @@ async function startApp() {
     runButton.addEventListener("click", runQuery);
     const resetButton = document.getElementById("reset-level-btn");
     resetButton.addEventListener("click", resetCurrentLevel);
-    updateEditorToolsVisibility();
+}
 
+
+function showStartScreen() {
+    document.getElementById("start-screen").classList.remove("hidden");
+    document.getElementById("game-screen").classList.add("hidden");
+}
+
+function hideStartScreen() {
+    document.getElementById("start-screen").classList.add("hidden");
+}
+
+function showGameScreen() {
+    document.getElementById("game-screen").classList.remove("hidden");
+}
+
+async function startNewGame() {
+    await initGameSystems();
+
+    currentLevel = LEVELS.level0;
+    currentMissionIndex = 0;
+    gameState = {
+        money: 0,
+        hasNotebook: false,
+        is_notebook_unlocked: false
+    };
+
+    // später: altes Savegame löschen
+    enterGame();
+}
+
+async function continueGame() {
+    const save = loadGame();
+
+    if (!save) {
+        alert("Kein Spielstand gefunden.");
+        return;
+    }
+
+    await initGameSystems();
+
+    currentLevel = LEVELS[save.levelId] || LEVELS.level0;
+    currentMissionIndex = save.missionIndex;
+    gameState = save.gameState;
+    loadNotebookState(save.notebookState);
+
+    enterGame();
+}
+
+function enterGame() {
+    hideStartScreen();
+    showGameScreen();
+    window.scrollTo(0, 0);
+    initEditor();
+    gameActive = true;
+    renderGame();
+}
+
+function renderGame() {
+    if(gameState.hasNotebook) {
+        showNotebookUI();
+    }
+
+    renderShopVisuals(db, level0ShopLayout, buyNotebook);
+    refreshMoneyDisplay();
+    refreshMission();
+    updateEditorToolsVisibility();
     syncTutorialForCurrentMission();
 }
 
 function runQuery() {
+    if(missionTransitionActive)
+        return;
+
     if (!databaseReady) {
         alert("Datenbank lädt noch...");
         return;
@@ -147,12 +224,16 @@ function isQueryAllowed(query) {
 }
 
 function checkMission(query, result) {
+    if(missionTransitionActive)
+        return;
+
     const mission = getCurrentMission();
     const solved = mission.validator(query, result, gameState);
     if(!solved)
         return;
     
     const rewardMoney = mission.reward?.money || 0;
+    const previousMoney = gameState.money;
     gameState.money += rewardMoney;
     mission.unlocks?.forEach(entry => {
         unlockNotebookEntry(entry);
@@ -161,24 +242,35 @@ function checkMission(query, result) {
     mission.completes?.forEach(entry => {
         completeNotebookEntry(entry);
     });
-    refreshMoneyDisplay();
+    if(rewardMoney > 0) {
+        animateMoneyGain(previousMoney, gameState.money, rewardMoney);
+    } else {
+        refreshMoneyDisplay();
+    }
 
-    currentMissionIndex++;
     if(mission.id === "names_and_prices") {
         unlockNotebook();
     }
 
-    if(mission.id === "notebook_intro") {
     clearTutorial();
-    currentLevel = LEVELS.level1;
-    currentMissionIndex = 0;
-    refreshMission();
-    syncTutorialForCurrentMission();
-    saveCurrentGame();
-    showHintMessage("Willkommen im Ladenbetrieb, Azubi.");
+    showMissionCompleteStamp(() => {
+        advanceMission(mission);
+    });
+}
 
-    return;
+function advanceMission(mission) {
+    if(mission.id === "notebook_intro") {
+        currentLevel = LEVELS.level1;
+        currentMissionIndex = 0;
+        refreshMission();
+        syncTutorialForCurrentMission();
+        saveCurrentGame();
+        showHintMessage("Willkommen im Ladenbetrieb, Azubi.");
+
+        return;
     }
+
+    currentMissionIndex++;
 
     // Level Ende
     if(currentMissionIndex >= currentLevel.missions.length) {
@@ -192,6 +284,22 @@ function checkMission(query, result) {
     saveCurrentGame();
 }
 
+function showMissionCompleteStamp(onComplete) {
+    const stamp = document.getElementById("mission-complete-stamp");
+    missionTransitionActive = true;
+    stamp.classList.remove("visible");
+
+    requestAnimationFrame(() => {
+        stamp.classList.add("visible");
+    });
+
+    setTimeout(() => {
+        stamp.classList.remove("visible");
+        missionTransitionActive = false;
+        onComplete();
+    }, 1100);
+}
+
 function renderTable(results, header= null) {
     const resultDiv =
         document.getElementById("result");
@@ -203,7 +311,7 @@ function renderTable(results, header= null) {
         return;
     }
     results.forEach((tableData, index) => {
-        let title = header || (results.length > 1 ? `Result ${index + 1}` : "QUERY RESULT");
+        let title = header || (results.length > 1 ? `Result ${index + 1}` : "Query Result");
         let html = `<h4>${title}</h4>`;
         html += "<table>";
 
@@ -253,7 +361,58 @@ function refreshMoneyDisplay() {
     const moneyDisplay = document.getElementById("money-display");
     moneyDisplay.innerHTML = `
         <img src="./assets/sprites/Coin_Spin.gif">
-        <span>${gameState.money}$</span>`;
+        <span class="money-amount">${gameState.money}$</span>`;
+}
+
+function setMoneyDisplayAmount(amount) {
+    const moneyAmount = document.querySelector("#money-display .money-amount");
+    if(!moneyAmount) {
+        refreshMoneyDisplay();
+        return;
+    }
+
+    moneyAmount.innerText = `${amount}$`;
+}
+
+function animateMoneyGain(fromAmount, toAmount, rewardMoney) {
+    cancelAnimationFrame(moneyCountAnimation);
+    refreshMoneyDisplay();
+    setMoneyDisplayAmount(fromAmount);
+    showMoneyGainPopup(rewardMoney);
+
+    const duration = 800;
+    const startTime = performance.now();
+
+    function step(now) {
+        const progress = Math.min((now - startTime) / duration, 1);
+        const easedProgress = 1 - Math.pow(1 - progress, 3);
+        const currentAmount = Math.round(
+            fromAmount + (toAmount - fromAmount) * easedProgress
+        );
+
+        setMoneyDisplayAmount(currentAmount);
+
+        if(progress < 1) {
+            moneyCountAnimation = requestAnimationFrame(step);
+            return;
+        }
+
+        setMoneyDisplayAmount(toAmount);
+    }
+
+    moneyCountAnimation = requestAnimationFrame(step);
+}
+
+function showMoneyGainPopup(rewardMoney) {
+    const moneyDisplay = document.getElementById("money-display");
+    const popup = document.createElement("span");
+    popup.className = "money-gain-popup";
+    popup.innerText = `+${rewardMoney}$`;
+    moneyDisplay.appendChild(popup);
+
+    popup.addEventListener("animationend", () => {
+        popup.remove();
+    });
 }
 
 function getCurrentMission() {
@@ -317,7 +476,7 @@ function unlockNotebook() {
         (product_id, stock)
         VALUES (7, 1)
     `);
-    renderShopVisuals(db, buyNotebook);
+    renderShopVisuals(db, level0ShopLayout, buyNotebook);
 }
 
 function buyNotebook() {
@@ -334,7 +493,7 @@ function buyNotebook() {
         WHERE product_id = 7
     `);
     refreshMoneyDisplay();
-    renderShopVisuals(db, buyNotebook);
+    renderShopVisuals(db, level0ShopLayout, buyNotebook);
     showItemPopup("SQL NOTEBOOK","./assets/sprites/shopItems/notebook.png","Speichert deine neuen\nSQL Befehle und\nTabellenschemata.");
     hideTooltip();
     saveCurrentGame();
@@ -366,11 +525,7 @@ function saveCurrentGame() {
 
 function updateEditorToolsVisibility() {
     const resetButton = document.getElementById("reset-level-btn");
-    if(currentLevel.levelId === "level0") {
-        resetButton.classList.add("hidden");
-    } else {
-        resetButton.classList.remove("hidden");
-    }
+    resetButton.classList.add("hidden");
 }
 
 async function resetCurrentLevel() {
@@ -391,7 +546,7 @@ async function resetCurrentLevel() {
     document.getElementById("result").innerHTML = "";
     document.getElementById("error-box").innerHTML = "";
 
-    renderShopVisuals(db, buyNotebook);
+    renderShopVisuals(db, level0ShopLayout, buyNotebook);
     refreshMoneyDisplay();
     refreshMission();
     syncTutorialForCurrentMission();
@@ -401,6 +556,8 @@ async function resetCurrentLevel() {
 }
 
 setInterval(() => {
+    if(!gameActive)
+        return;
     if(missionHasTutorial())
         return;
     const chance = Math.random();

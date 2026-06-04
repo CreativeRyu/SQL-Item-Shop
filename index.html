@@ -10,86 +10,96 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/sql/sql.min.js"></script>
     <link href="https://fonts.cdnfonts.com/css/superhelio" rel="stylesheet" />
-    <link href="https://fonts.cdnfonts.com/css/kemco-pixel" rel="stylesheet" />
     <link rel="icon" type="image/png" href="./assets/icon.png" />
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <h1>SQL Item Shop</h1>
-    <div class="top-layout">
-      <div id="mission-panel">
-        <div class="quest-panel-header"></div>
-        <div id="mission-text"></div>
-        <div id="quest-hint"></div>
-      </div>
-      <div id="shop-screen">
-        <img id="shop-background" src="./assets/shopBackground.png" />
-        <img id="shelf-left" src="./assets/shelve_left.png" />
-        <img id="shelf-right" src="./assets/shelve_right.png" />
-        <div id="shop-items"></div>
-        <div id="shop-tooltip"></div>
-        <div id="shopkeeper-dialogue"></div>
-        <img id="shopkeeper" src="./assets/shopkeeper.png" />
-        <div id="shopkeeper-hint"></div>
-        <div id="shopkeeper-warning"></div>
-        <div class="counter-warm-overlay"></div>
-        <img id="shop-counter" src="./assets/counter.png" />
-        <div class="lamp-glow"></div>
-        <img id="lamp" src="./assets/lamp.png" />
-        <div id="money-display"></div>
-      </div>
-      <div id="result-panel">
-        <h3>SQL OUTPUT</h3>
-        <div id="result"></div>
-      </div>
+    <div id="start-screen">
+        <h1>SQL Item Shop</h1>
+        <div id="title-image-frame">
+          <img id="title-image" src="./assets/titlescreen/title_image.png" alt="SQL Item Shop Titelbild">
+        </div>
+        <button id="new-game-btn">Neues Spiel</button>
+        <button id="load-game-btn">Spiel laden</button>
     </div>
-    <div class="bottom-layout">
-      <div id="sql-notebook-ui">
-        <img id="sql-notebook-image" src="./assets/ui/sql_notebook.png">
-        <div id="notebook-content"></div>
-        <div id="notebook-tabs">
-          <img class="notebook-tab" id="tables-tab" src="./assets/ui/table_tab.png">
-          <img class="notebook-tab" id="dql-tab" src="./assets/ui/dql_tab_unselected.png">
-          <img class="notebook-tab" id="dml-tab" src="./assets/ui/dml_tab_unselected.png">
-          <img class="notebook-tab" id="ddl-tab" src="./assets/ui/ddl_tab_unselected.png">
-          <img class="notebook-tab" id="dcl-tab" src="./assets/ui/dcl_tab_unselected.png">
-          <img class="notebook-tab" id="tcl-tab" src="./assets/ui/tcl_tab_unselected.png">
+    <div id="game-screen" class="hidden">
+          <h1>SQL Item Shop</h1>
+        <div class="top-layout">
+          <div id="mission-panel">
+            <div class="quest-panel-header"></div>
+            <div id="mission-text"></div>
+            <div id="quest-hint"></div>
+            <div id="mission-complete-stamp">Complete</div>
+          </div>
+          <div id="shop-screen">
+            <img id="shop-background" src="./assets/shopBackground.png" />
+            <img id="shelf-left" src="./assets/shelve_left.png" />
+            <img id="shelf-right" src="./assets/shelve_right.png" />
+            <div id="shop-items"></div>
+            <div id="shop-tooltip"></div>
+            <div id="shopkeeper-dialogue"></div>
+            <img id="shopkeeper" src="./assets/shopkeeper.png" />
+            <div id="shopkeeper-hint"></div>
+            <div id="shopkeeper-warning"></div>
+            <div class="counter-warm-overlay"></div>
+            <img id="shop-counter" src="./assets/counter.png" />
+            <div class="lamp-glow"></div>
+            <img id="lamp" src="./assets/lamp.png" />
+            <div id="money-display"></div>
+          </div>
+          <div id="result-panel">
+            <h3>SQL Output</h3>
+            <div id="result"></div>
+          </div>
+        </div>
+        <div class="bottom-layout">
+          <div id="sql-notebook-ui">
+            <img id="sql-notebook-image" src="./assets/ui/sql_notebook.png">
+            <div id="notebook-content"></div>
+            <div id="notebook-tabs">
+              <img class="notebook-tab" id="tables-tab" src="./assets/ui/table_tab.png">
+              <img class="notebook-tab" id="dql-tab" src="./assets/ui/dql_tab_unselected.png">
+              <img class="notebook-tab" id="dml-tab" src="./assets/ui/dml_tab_unselected.png">
+              <img class="notebook-tab" id="ddl-tab" src="./assets/ui/ddl_tab_unselected.png">
+              <img class="notebook-tab" id="dcl-tab" src="./assets/ui/dcl_tab_unselected.png">
+              <img class="notebook-tab" id="tcl-tab" src="./assets/ui/tcl_tab_unselected.png">
+            </div>
+          </div>
+          <div class="editor-container">
+            <textarea id="sql-input"></textarea>
+          <div class="editor-actions">
+      <button id="run-btn" type="button"
+              title="Befehl ausführen" aria-label="Befehl ausführen">Ausführen</button>
+      <div class="editor-tools">
+        <button
+          id="reset-level-btn"
+          class="editor-tool-btn danger-tool hidden"
+          type="button"
+          title="Level neu starten"
+          aria-label="Level neu starten">&#8635;</button>
+
+        <div id="sound-controls" class="editor-tools hidden">
+          <button
+            id="sound-on-btn"
+            class="editor-tool-btn"
+            type="button"
+            title="Sound an"
+            aria-label="Sound an">&#9835;</button>
+
+          <button
+            id="sound-off-btn"
+            class="editor-tool-btn"
+            type="button"
+            title="Sound aus"
+            aria-label="Sound aus">x</button>
         </div>
       </div>
-      <div class="editor-container">
-        <textarea id="sql-input"></textarea>
-      <div class="editor-actions">
-  <button id="run-btn" type="button"
-          title="Befehl ausführen" aria-label="Befehl ausführen">Ausführen</button>
-
-  <div class="editor-tools">
-    <button
-      id="reset-level-btn"
-      class="editor-tool-btn danger-tool hidden"
-      type="button"
-      title="Level neu starten"
-      aria-label="Level neu starten">&#8635;</button>
-
-    <div id="sound-controls" class="editor-tools hidden">
-      <button
-        id="sound-on-btn"
-        class="editor-tool-btn"
-        type="button"
-        title="Sound an"
-        aria-label="Sound an">&#9835;</button>
-
-      <button
-        id="sound-off-btn"
-        class="editor-tool-btn"
-        type="button"
-        title="Sound aus"
-        aria-label="Sound aus">x</button>
     </div>
-  </div>
-</div>
+        </div>
+        </div>
+        <div id="error-box"></div>
     </div>
-    </div>
-    <div id="error-box"></div>
+
     <div id="item-popup-overlay">
       <div id="item-popup">
         <img id="item-popup-bg" src="./assets/ui/item_aquired_popup.png" />

@@ -2,51 +2,60 @@ const level1 = {
   levelId: "level1",
   title: "SELECT Basics",
   missions: [
-      {
-        id: "find_tables",
-        title: "Die letzen Tabellen",
-        description: "Finde heraus welche Tabellen im Laden noch übrig sind.",
-        hint: "Nutze SELECT name FROM sqlite_master WHERE type='table';",
-        reward: {
-            money: 15
-        },
-        unlocks: [
-            "products",
-            "inventory",
-            "customers",
-            "sales"
-        ],
-        validator: (query, result) => {
-            const normalized = query.toLowerCase();
+    {
+      id: "find_tables",
+      title: "Die letzten Tabellen",
+      description: "Finde heraus welche Tabellen im Laden noch uebrig sind.",
+      hint: "Nutze SELECT name FROM sqlite_master WHERE type='table';",
+      reward: {
+        money: 15
+      },
+      unlocks: [
+        "products",
+        "inventory",
+        "customers",
+        "sales"
+      ],
+      validator: (query, result) => {
+        const normalized = query.toLowerCase();
 
-            return (
-                normalized.includes("sqlite_master") &&
-                result.length > 0
-            );
-        }
+        return (
+          normalized.includes("sqlite_master") &&
+          result.length > 0
+        );
+      }
     },
     {
       id: 2,
       title: "Produkte anzeigen",
       description: "Zeige alle Produkte an.",
+      reward: {
+        money: 15
+      },
       validator: (query, result) => {
         const normalized = query.toLowerCase();
         return normalized.includes("from products");
-      },
+      }
     },
     {
       id: 3,
       title: "Kunden anzeigen",
       description: "Zeige alle Kunden an.",
+      reward: {
+        money: 15
+      },
       validator: (query, result) => {
         const normalized = query.toLowerCase();
         return normalized.includes("from customers");
-      },
+      }
     },
     {
       id: 4,
       title: "Produktnamen",
       description: "Zeige nur die Namen aller Produkte an.",
+      reward: {
+        money: 20
+      },
       validator: (query, result) => {
         const normalized = query.toLowerCase();
         if (!normalized.includes("from products")) {
@@ -57,12 +66,15 @@ const level1 = {
         }
         const columns = result[0].columns;
         return columns.length === 1 && columns.includes("name");
-      },
+      }
     },
     {
       id: 5,
-      title: "Produkte unter 3€",
-      description: "Finde alle Produkte die weniger als 3€ kosten.",
+      title: "Produkte unter 3$",
+      description: "Finde alle Produkte die weniger als 3$ kosten.",
+      reward: {
+        money: 25
+      },
       validator: (query, result) => {
         const normalized = query.toLowerCase();
         return (
@@ -70,13 +82,15 @@ const level1 = {
           normalized.includes("price") &&
           result.length > 0
         );
-      },
+      }
     },
-
     {
       id: 6,
       title: "Tabellenstruktur",
       description: "Finde die Struktur der products-Tabelle heraus.",
+      reward: {
+        money: 20
+      },
       validator: (query, result) => {
         const normalized = query.toLowerCase();
         return (
@@ -84,8 +98,8 @@ const level1 = {
           normalized.includes("table_info") &&
           normalized.includes("products")
         );
-      },
-    },
+      }
+    }
   ],
 };
 

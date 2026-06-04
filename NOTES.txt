@@ -1,0 +1,211 @@
+SQL Item Shop - Design Notes
+
+Core idea
+- SQL is not only the lesson goal. SQL is the tool the player uses to run and improve the shop.
+- Money should reward learning progress and unlock useful tools, shop systems, and atmosphere.
+- Essential SQL concepts should come from learning progress, not from paid unlocks.
+
+Current next feature direction
+- Mission feedback should feel in-world instead of like a generic popup.
+- Coin reward animation is already a good direction.
+- Next planned feedback: mission paper gets a "Complete" stamp animation.
+- Later: level complete screen and next-level intro screen.
+
+Money / shop item ideas
+- SQL Notebook: existing core learning item.
+- Large Notebook View: expanded reference view with syntax examples, schemas, known commands, and progress.
+- Schema Lupe: lets the player inspect a table schema by click, similar to PRAGMA table_info.
+- Query History: stores recent queries and lets the player put them back into the editor.
+- Query Blueprints: purchasable help per mission. Shows a full or partial example query, but the player still types it manually.
+- Radio: unlocks music and sound controls.
+- Error Analyzer: explains common SQL errors in plain language.
+- Hint vouchers: optional paid help if the player is stuck.
+
+Shop progression ideas
+- Buy more shelves or cabinets to offer more items.
+- Expand the shop to allow more customers over time.
+- Customers can buy items from inventory.
+- Player uses SQL to inspect stock, sales, customers, and product data.
+- Later, restocking can teach UPDATE and safe data changes.
+- Reset / backup tools become relevant once destructive database operations are allowed.
+
+Crafting / recipe system ideas
+- Customers may request crafted items, such as fruit salads or premium products.
+- Recipes can be bought or unlocked.
+- Crafting consumes items from inventory and creates a more valuable item.
+- This can teach joins, aggregation, inventory checks, and later transactions.
+- Possible tables: recipes, recipe_ingredients, products, inventory, sales, customers.
+
+Pedagogical notes
+- Keep required learning content unlocked by progress.
+- Let money buy comfort, examples, orientation, atmosphere, and shop possibilities.
+- Good players can spend extra money on cosmetics or shop upgrades.
+- Struggling players can spend money on hints, blueprints, or schema tools.
+
+Potential learning path
+- SELECT basics
+- Columns and FROM
+- WHERE and comparison operators
+- ORDER BY and LIMIT
+- Aggregates: COUNT, SUM, AVG
+- GROUP BY
+- HAVING
+- JOIN basics
+- Multiple JOINs
+- Subqueries
+- INSERT / UPDATE / DELETE in a safe shop-management layer
+- Transactions for crafting/restocking safety
+
+Moegliche kaufbare Items
+- SQL Notebook: Basis-Notizbuch fuer gelernte Befehle, Tabellen und Fortschritt.
+- Grosses SQL Notebook: erweiterte Ansicht mit Syntaxbeispielen, Erklaerungen, Schemas und typischen Fehlern.
+- Query Blueprint: zeigt eine Musterquery oder eine teilweise ausgefuellte Loesung fuer eine Mission.
+- Meister-Notiz: hochwertigere Hilfe mit kurzer Erklaerung, warum die Query funktioniert.
+- Schema Lupe: zeigt per Klick die Struktur einer Tabelle, aehnlich wie PRAGMA table_info.
+- Query History: speichert die letzten Queries und erlaubt, sie wieder in den Editor zu laden.
+- Fehleranalyse: erklaert SQL-Fehler in normaler Sprache.
+- Hinweis-Gutschein: kauft einen zusaetzlichen Tipp vom Shopkeeper.
+- Rezeptbuch: schaltet Crafting-Rezepte fuer besondere Shop-Items frei.
+- Crafting-Station: erlaubt das Kombinieren von Items zu wertvolleren Produkten.
+- Lieferantenkontakt: erlaubt spaeter Restocking oder besondere Waren.
+- Regal-Upgrade: mehr Platz fuer Produkte im Laden.
+- Lager-Upgrade: mehr Bestand oder groessere Vorratsmengen.
+- Kundentafel: zeigt Kundenwuensche, Verkaufsziele oder Tagesauftraege.
+- Radio: schaltet Musik, Soundeffekte und Soundbuttons frei.
+- Deko-Items: Poster, Lampen, Pflanzen oder Shopkeeper-Deko fuer Atmosphaere.
+- Backup-Stein: spaeter Schutz oder Wiederherstellung, wenn gefaehrlichere SQL-Befehle erlaubt werden.
+- Sandbox-Lizenz: erlaubt riskantere SQL-Operationen in einem sicheren Trainingsmodus.
+
+Roadmap / Naechste Schritte
+
+Aktueller Stand
+- Startscreen ist eingebaut.
+- Ithaca ist die Hauptschrift fuer Titel/UI-Headlines.
+- Shop-Buttons im Startscreen haben eigenen Holz/Metall-Look.
+- Mission Complete Feedback ist eingebaut:
+  - Geld zaehlt animiert hoch.
+  - +Gold Popup erscheint neben der Geldanzeige.
+  - Questzettel bekommt einen Complete-Stempel.
+  - Naechste Mission wird erst nach dem Stempel geladen.
+- Reset-Button ist aktuell bewusst komplett ausgeblendet.
+- Shop-Visuals sind von der SQL-Datenbank getrennt:
+  - products enthaelt keine sprite/pos_x/pos_y/scale Daten mehr.
+  - Visuelle Daten liegen in shopLayouts/level0ShopLayout.js.
+  - shop.js mapped DB-Daten auf Layout-Daten.
+
+Naechster grosser Schritt
+1. Levelwechsel-Flow bauen.
+   - Level Recap Screen nach Levelabschluss.
+   - Next Level Intro Screen vor dem neuen Level.
+   - Ziel: didaktisch Recap und Ausblick geben.
+   - Level 0 -> Level 1 nicht mehr hart per Hint wechseln.
+
+2. Leveldaten um Intro/Recap erweitern.
+   - Direkt in den Level-JS-Dateien speichern, nicht in JSON.
+   - Beispielstruktur:
+     intro: {
+       title: "...",
+       description: "...",
+       goals: [...]
+     }
+     recap: {
+       title: "...",
+       description: "...",
+       learned: [...]
+     }
+
+3. Cutscene-System planen.
+   - Fuer besondere Momente:
+     - Levelende
+     - Item-Freischaltung
+     - Notebook gekauft
+     - Radio gekauft
+     - erstes UPDATE
+     - erstes DELETE
+     - erstes DROP
+     - Crafting freigeschaltet
+   - Stil: kurze, witzige Shopkeeper-Szenen aehnlich Bancho-Vibes aus Dave the Diver.
+   - Nicht jede Mission braucht Cutscene. Normale Missionen bekommen hoechstens kurzen Shopkeeper-Anlass.
+
+4. Story-Verteilung festlegen.
+   - Questpanel: klare Aufgabe, kurz und nutzbar waehrend der Mission.
+   - Shopkeeper-Dialog / vorhandene Textbox: kleiner Anlass, Witz, Stimmung, Kontext.
+   - Diese Textbox kann fuer Mini-Shopkeeper-Storys genutzt werden, besonders wenn keine grosse Cutscene noetig ist.
+   - Beispiele:
+     - Kunde betritt den Laden.
+     - Shopkeeper erklaert kurz, warum diese Query gebraucht wird.
+     - kleiner Gag vor einer Aufgabe.
+     - kurzer Kommentar nach einer schwierigen Mission.
+   - Level Intro/Recap: didaktische Einordnung.
+   - Cutscenes: besondere Events und Freischaltungen.
+   - Notebook: Wissen, Syntax, Beispiele, Tabellenstruktur.
+
+5. Source Material / Jupyter Aufgaben auswerten.
+   - Notebook liegt in source_material/sql_aufgaben.ipynb.
+   - Aufgaben nicht 1:1 uebernehmen.
+   - Erst clustern:
+     - SELECT
+     - WHERE
+     - ORDER BY / LIMIT
+     - Aggregationen
+     - GROUP BY
+     - HAVING
+     - JOIN
+     - Mehrfach-JOINs
+     - Subqueries
+     - INSERT / UPDATE / DELETE
+     - CREATE / ALTER / DROP
+     - Transaktionen / Archivierung
+   - Danach pro Level 5-8 Hauptmissionen plus optionale Bonusquests bauen.
+
+6. Datenmodell v2 planen.
+   - Aktuell sauberer als vorher, aber spaeter brauchen wir wahrscheinlich:
+     - categories
+     - suppliers
+     - orders
+     - order_items
+     - recipes
+     - recipe_ingredients
+     - warehouses
+     - warehouse_stock
+   - Pro Level spaeter eigener Seed.
+   - Pro Level spaeter eigenes ShopLayout.
+   - Visuals bleiben ausserhalb der SQL-Lerndaten.
+
+7. Erste kaufbare Lernwerkzeuge planen.
+   - Schema Lupe passt gut zu Level 1 / Tabellenstruktur.
+   - Query History ist ebenfalls stark und praktisch.
+   - Query Blueprint / Meister-Notiz spaeter als kaufbare Hilfe pro Mission.
+   - Radio als Atmosphaere-Item.
+
+Kurzfristige Prioritaet fuer morgen
+- Zuerst Level Recap / Level Intro Screen bauen.
+- Danach Level 0 und Level 1 mit intro/recap Daten ausstatten.
+- Danach optional erstes Cutscene-Datenformat skizzieren, aber noch nicht gross ausbauen.
+
+Session Summary
+- Startscreen optisch verbessert:
+  - Titelbild im Rahmen.
+  - Ithaca als Hauptschrift eingefuehrt.
+  - Startscreen-Buttons im Holz/Metall-Look.
+- UI-Typografie nachgezogen:
+  - Quest-Missionstitel und Shopkeeper-Hint-Titel nutzen Superhelio fett.
+  - SQL Output / Query Result / Tabellenheader lesbarer gemacht.
+  - Geldanzeige vergroessert und mit mehr Zeichenabstand versehen.
+- Mission Feedback eingebaut:
+  - Geld zaehlt hoch.
+  - +Gold Popup erscheint.
+  - Questzettel bekommt Complete-Stempel.
+  - Neue Mission wird erst nach Stempelanimation geladen.
+- Shop-Visuals aus SQL-Datenmodell ausgelagert:
+  - products enthaelt keine Sprite-/Koordinaten-/Scale-Spalten mehr.
+  - level0ShopLayout.js enthaelt visuelle Daten.
+  - shop.js mapped DB-Daten auf Layout-Daten.
+- Source Material eingebunden:
+  - sql_aufgaben.ipynb liegt in source_material.
+  - Aufgaben eignen sich als Roh-Curriculum, aber sollen spaeter geclustert und spielerisch ueberarbeitet werden.
+
+Naechster konkreter Startpunkt
+- Level Recap / Level Intro Screen bauen.
+- Leveldaten um intro/recap Felder erweitern.
+- Level 0 -> Level 1 Uebergang ueber Recap und Intro statt direktem Hint abbilden.
