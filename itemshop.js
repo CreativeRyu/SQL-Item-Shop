@@ -1,4 +1,4 @@
-import {loadTutorialSteps, clearTutorial } from "./tutorial.js";
+﻿import {loadTutorialSteps, clearTutorial } from "./tutorial.js";
 
 import { LEVELS } from "./levels/index.js";
 import { level0ShopLayout } from "./shopLayouts/level0ShopLayout.js";
@@ -25,6 +25,8 @@ let gameSystemsReady = false;
 let gameActive = false;
 let moneyCountAnimation;
 let missionTransitionActive = false;
+let levelTransitionActive = false;
+const SCROLL_ANIMATION_DURATION = 480;
 let gameState = {
     money: 0,
     hasNotebook: false,
@@ -193,7 +195,7 @@ function renderGame() {
 }
 
 function runQuery() {
-    if(missionTransitionActive)
+    if(missionTransitionActive || levelTransitionActive)
         return;
 
     if (!databaseReady) {
@@ -281,29 +283,176 @@ function checkMission(query, result) {
 }
 
 function advanceMission(mission) {
-    if(mission.id === "notebook_intro") {
-        currentLevel = LEVELS.level1;
-        currentMissionIndex = 0;
-        refreshMission();
-        syncTutorialForCurrentMission();
-        saveCurrentGame();
-        showHintMessage("Willkommen im Ladenbetrieb, Azubi.");
-
-        return;
-    }
-
     currentMissionIndex++;
 
     // Level Ende
     if(currentMissionIndex >= currentLevel.missions.length) {
-        clearTutorial();
-        saveCurrentGame();
+        completeCurrentLevel();
         return;
     }
 
     refreshMission();
     syncTutorialForCurrentMission();
     saveCurrentGame();
+}
+
+function completeCurrentLevel() {
+    clearTutorial();
+    clearTimeout(hintTimeout);
+
+    const completedLevel = currentLevel;
+    const nextLevel = getNextLevel(completedLevel);
+
+    if(!nextLevel) {
+        currentMissionIndex = currentLevel.missions.length - 1;
+        saveCurrentGame();
+        showHintMessage("Mehr Ladenbetrieb kommt bald.");
+        return;
+    }
+
+    saveGame({
+        levelId: nextLevel.levelId,
+        missionIndex: 0,
+        gameState,
+        notebookState: getNotebookState()
+    });
+
+    showLevelTransition(completedLevel, nextLevel, () => {
+        currentLevel = nextLevel;
+        currentMissionIndex = 0;
+        refreshMission();
+        syncTutorialForCurrentMission();
+        saveCurrentGame();
+        showHintMessage("Willkommen in der nächsten Schicht, Azubi.");
+    });
+}
+
+function getNextLevel(level) {
+    const levels = Object.values(LEVELS);
+    const currentIndex = levels.findIndex(
+        entry => entry.levelId === level.levelId
+    );
+
+    if(currentIndex < 0)
+        return null;
+
+    return levels[currentIndex + 1] || null;
+}
+
+function showLevelTransition(completedLevel, nextLevel, onComplete) {
+    levelTransitionActive = true;
+    clearTutorial();
+    clearTimeout(hintTimeout);
+
+    const overlay = document.getElementById("level-transition-overlay");
+    const content = document.getElementById("level-scroll-content");
+    const button = document.getElementById("level-scroll-button");
+    let step = "recap";
+
+    overlay.classList.remove("hidden");
+    content.classList.add("hidden");
+    button.disabled = true;
+    setLevelScrollImage("closed");
+
+    setTimeout(() => {
+        setLevelScrollImage("open");
+    }, 60);
+
+    setTimeout(() => {
+        setLevelScrollImage("static");
+        renderLevelScrollContent(
+            completedLevel.recap || getFallbackRecap(completedLevel),
+            "Weiter"
+        );
+        content.classList.remove("hidden");
+        button.disabled = false;
+    }, SCROLL_ANIMATION_DURATION + 60);
+
+    button.onclick = () => {
+        if(step === "recap") {
+            step = "intro";
+            renderLevelScrollContent(
+                nextLevel.intro || getFallbackIntro(nextLevel),
+                "Schicht starten"
+            );
+            return;
+        }
+
+        content.classList.add("hidden");
+        button.disabled = true;
+        setLevelScrollImage("close");
+
+        setTimeout(() => {
+            overlay.classList.add("hidden");
+            levelTransitionActive = false;
+            onComplete?.();
+        }, SCROLL_ANIMATION_DURATION);
+    };
+}
+
+function renderLevelScrollContent(data, buttonText) {
+    document.getElementById("level-scroll-label").innerText =
+        data.label || "";
+    document.getElementById("level-scroll-title").innerText =
+        data.title || "";
+    document.getElementById("level-scroll-description").innerText =
+        data.description || "";
+    document.getElementById("level-scroll-button").innerText =
+        buttonText;
+
+    renderLevelScrollList(data.learned || data.goals || [], data.learnedIntro || data.goalsIntro);
+}
+
+function renderLevelScrollList(items, introText = "") {
+    const list = document.getElementById("level-scroll-list");
+
+    if(items.length === 0) {
+        list.innerHTML = introText
+            ? `<div class="level-scroll-list-intro">${introText}</div>`
+            : "";
+        return;
+    }
+
+    list.innerHTML = `
+        ${introText ? `<div class="level-scroll-list-intro">${introText}</div>` : ""}
+        <ul>
+            ${items.map(item => `<li>${item}</li>`).join("")}
+        </ul>
+    `;
+}
+
+function setLevelScrollImage(state) {
+    const image = document.getElementById("level-scroll-image");
+    const paths = {
+        closed: "./assets/ui/scroll_closed.png",
+        open: "./assets/ui/scroll_open.gif",
+        static: "./assets/ui/scroll.png",
+        close: "./assets/ui/scroll_close.gif"
+    };
+
+    const src = paths[state];
+    const shouldRestartGif = state === "open" || state === "close";
+    image.src = shouldRestartGif
+        ? `${src}?t=${Date.now()}`
+        : src;
+}
+
+function getFallbackRecap(level) {
+    return {
+        label: "Schicht abgeschlossen",
+        title: level.title,
+        description: "Diese Schicht ist geschafft.",
+        learned: []
+    };
+}
+
+function getFallbackIntro(level) {
+    return {
+        label: "Nächste Schicht",
+        title: level.title,
+        description: "Ein neuer Abschnitt beginnt.",
+        goals: []
+    };
 }
 
 function showMissionCompleteStamp(onComplete) {
@@ -579,6 +728,8 @@ async function resetCurrentLevel() {
 
 setInterval(() => {
     if(!gameActive)
+        return;
+    if(levelTransitionActive)
         return;
     if(missionHasTutorial())
         return;

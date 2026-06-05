@@ -1,11 +1,22 @@
-const level1 = {
+﻿const level1 = {
   levelId: "level1",
   title: "SELECT Basics",
+  intro: {
+    label: "Nächste Schicht",
+    title: "Der Ladenbetrieb beginnt",
+    description: "Jetzt wird aus Trockenübung echte Ladenarbeit. Du untersuchst Tabellen, liest Produkt- und Kundendaten und machst deine Abfragen genauer.",
+    goalsIntro: "Was als Nächstes ansteht:",
+    goals: [
+      "Tabellen in der Datenbank finden",
+      "Produkt- und Kundendaten gezielt anzeigen",
+      "Erste WHERE-Bedingungen benutzen"
+    ]
+  },
   missions: [
     {
       id: "find_tables",
       title: "Die letzten Tabellen",
-      description: "Finde heraus welche Tabellen im Laden noch uebrig sind.",
+      description: "Finde heraus welche Tabellen im Laden noch übrig sind.",
       hint: "Nutze SELECT name FROM sqlite_master WHERE type='table';",
       reward: {
         money: 15

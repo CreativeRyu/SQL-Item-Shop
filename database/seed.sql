@@ -2,7 +2,7 @@ INSERT INTO products (name, price)
 VALUES
 ('Apfel', 1.99),
 ('Banane', 2.49),
-('Dragonball', 999.99),
+('Perle', 999.99),
 ('Lifting Belt', 49.99),
 ('Creatine', 29.99),
 ('Protein Shake', 4.99),

@@ -12,10 +12,10 @@ export const level0ShopLayout = {
         scale: 1.0
     },
     3: {
-        sprite: "./assets/sprites/shopItems/4sterne_dragonball.png",
+        sprite: "./assets/sprites/shopItems/perle.png",
         posX: 624,
-        posY: 153,
-        scale: 1.0
+        posY: 158,
+        scale: 1.25
     },
     4: {
         sprite: "./assets/sprites/shopItems/lift_belt.png",

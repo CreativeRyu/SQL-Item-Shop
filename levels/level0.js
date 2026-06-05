@@ -1,6 +1,18 @@
-const level0 = {
+﻿const level0 = {
     levelId: "level0",
     title: "Shop Training",
+    recap: {
+      label: "Schicht abgeschlossen",
+      title: "Der Laden steht noch",
+      description: "Du hast die erste Schicht überlebt und der Laden steht noch. Gute Quote.",
+      learnedIntro: "Was du gelernt hast:",
+      learned: [
+        "SELECT gibt Werte und Daten aus",
+        "FROM wählt die Tabelle für eine Abfrage",
+        "Spaltennamen fragen gezielt Informationen ab",
+        "PRAGMA table_info zeigt die Struktur einer Tabelle"
+      ]
+    },
     missions: [
     {
       id: "welcome",
@@ -37,7 +49,7 @@ const level0 = {
           },
           {
               target: "#result-panel",
-              text: "Hier rechts ist das Ergebnissfenster. Dort landen deine zarten Ergebnisse. Wenn da Unsinn steht, hast du vermutlich Unsinn geschrieben."
+              text: "Hier rechts ist das Ergebnisfenster. Dort landen deine zarten Ergebnisse. Wenn da Unsinn steht, hast du vermutlich Unsinn geschrieben."
           },
           {
               target: ".CodeMirror",
@@ -75,7 +87,7 @@ const level0 = {
     },
     {
       id: "hello_shopkeeper",
-      title: "Gruss an den Händler",
+      title: "Gruß an den Händler",
       description: "Sende eine Nachricht an den Händler.",
       tutorialSteps: [
           {
