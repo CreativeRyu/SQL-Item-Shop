@@ -37,6 +37,7 @@ h2 {
     align-items: center;
     justify-content: center;
     gap: 20px;
+    position: relative;
 }
 
 #start-screen h1 {
@@ -70,6 +71,48 @@ h2 {
         inset 0 0 0 2px rgba(255,255,255,0.08),
         0 4px 0 #120d0a,
         0 0 18px rgba(216,155,60,0.28);
+}
+
+#start-screen #support-project-btn {
+    position: fixed;
+    right: 28px;
+    bottom: 28px;
+    width: 235px;
+    padding-left: 8px;
+    padding-right: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    white-space: nowrap;
+    background:
+        linear-gradient(
+            180deg,
+            #e6b64b 0%,
+            #b9792c 58%,
+            #74421f 100%
+        );
+    border-top-color: #ffe39a;
+    border-left-color: #ffe39a;
+    color: #fff5c8;
+    font-size: 14px;
+    z-index: 10;
+}
+
+#start-screen #support-project-btn:hover {
+    filter: brightness(1.12);
+    box-shadow:
+        inset 0 0 0 2px rgba(255,255,255,0.10),
+        0 4px 0 #3a1f0f,
+        0 0 18px rgba(255,205,80,0.32);
+}
+
+.support-heart-gif {
+    width: 17px;
+    height: 17px;
+    object-fit: contain;
+    image-rendering: pixelated;
+    flex: 0 0 auto;
 }
 
 #start-screen.hidden,
@@ -942,6 +985,142 @@ tr:hover td {
             scale(1);
         opacity: 1;
     }
+}
+
+/* =======================================================
+    SUPPORT POPUP
+======================================================= */
+
+#support-popup-overlay {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0,0,0,0.55);
+    z-index: 9999;
+}
+
+#support-popup-overlay.hidden {
+    display: none;
+}
+
+#support-popup {
+    position: relative;
+    width: 360px;
+    image-rendering: pixelated;
+    animation: popupAppear 0.22s ease-out;
+}
+
+#support-popup-bg {
+    width: 100%;
+    display: block;
+    image-rendering: pixelated;
+    filter: drop-shadow(0 10px 14px rgba(0,0,0,0.45));
+}
+
+#support-popup-close {
+    position: absolute;
+    top: 34px;
+    right: 36px;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    border: 2px solid #5a3920;
+    background: rgba(90,57,32,0.18);
+    box-shadow: none;
+    color: #5a3920;
+    font-family: Arial, sans-serif;
+    font-size: 18px;
+    line-height: 0;
+    text-shadow: none;
+    z-index: 2;
+}
+
+#support-popup-close:hover,
+#support-popup-close:active {
+    transform: none;
+    box-shadow: none;
+}
+
+#support-popup-title {
+    position: absolute;
+    top: 66px;
+    left: 28px;
+    right: 28px;
+    text-align: center;
+    font-family: 'Ithaca', sans-serif;
+    font-size: 30px;
+    letter-spacing: 1px;
+    color: #5a3920;
+}
+
+#support-popup-description {
+    position: absolute;
+    top: 126px;
+    left: 44px;
+    right: 44px;
+    text-align: center;
+    font-family: 'superhelio _regular', sans-serif;
+    font-size: 13px;
+    line-height: 1.45;
+    color: #4b3824;
+}
+
+#support-popup-heart {
+    position: absolute;
+    left: 50%;
+    bottom: 178px;
+    width: 34px;
+    height: 34px;
+    transform: translateX(-50%);
+    object-fit: contain;
+    image-rendering: pixelated;
+}
+
+#support-paypal-link {
+    position: absolute;
+    left: 50%;
+    bottom: 124px;
+    width: 215px;
+    padding: 9px 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transform: translateX(-50%);
+    background:
+        linear-gradient(180deg, #14c878 0%, #0ca864 100%);
+    border: 2px solid #1fdd8b;
+    border-bottom: 4px solid #067847;
+    border-radius: 7px;
+    color: white;
+    font-family: 'superhelio _regular', sans-serif;
+    font-size: 14px;
+    text-align: center;
+    text-decoration: none;
+    text-shadow: 1px 1px 0 rgba(0,0,0,0.4);
+    box-shadow: 0 3px 0 #045c36, 0 0 10px rgba(20,200,120,0.18);
+}
+
+#support-paypal-link:hover {
+    filter: brightness(1.08);
+}
+
+#support-popup-note {
+    position: absolute;
+    left: 38px;
+    right: 38px;
+    bottom: 46px;
+    text-align: center;
+    font-family: 'superhelio _regular', sans-serif;
+    font-size: 10px;
+    line-height: 1.35;
+    color: rgba(75,56,36,0.72);
 }
 
 /* =======================================================

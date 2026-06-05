@@ -69,9 +69,31 @@ function bootApp() {
 function initStartScreen() {
     const newGameButton = document.getElementById("new-game-btn");
     const loadGameButton = document.getElementById("load-game-btn");
+    const supportProjectButton = document.getElementById("support-project-btn");
+    const supportPopupCloseButton = document.getElementById("support-popup-close");
+    const supportPopupOverlay = document.getElementById("support-popup-overlay");
 
     newGameButton.addEventListener("click", startNewGame);
     loadGameButton.addEventListener("click", continueGame);
+    supportProjectButton.addEventListener("click", showSupportPopup);
+    supportPopupCloseButton.addEventListener("click", hideSupportPopup);
+    supportPopupOverlay.addEventListener("click", event => {
+        if(event.target === supportPopupOverlay) {
+            hideSupportPopup();
+        }
+    });
+}
+
+function showSupportPopup() {
+    document
+        .getElementById("support-popup-overlay")
+        .classList.remove("hidden");
+}
+
+function hideSupportPopup() {
+    document
+        .getElementById("support-popup-overlay")
+        .classList.add("hidden");
 }
 
 async function initGameSystems() {

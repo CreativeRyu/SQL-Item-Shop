@@ -21,6 +21,11 @@
         </div>
         <button id="new-game-btn">Neues Spiel</button>
         <button id="load-game-btn">Spiel laden</button>
+        <button id="support-project-btn" type="button">
+          <img class="support-heart-gif" src="./assets/sprites/HeartDetailed_Bounce.gif" alt="">
+          <span>Support the project</span>
+          <img class="support-heart-gif" src="./assets/sprites/HeartDetailed_Bounce.gif" alt="">
+        </button>
     </div>
     <div id="game-screen" class="hidden">
           <h1>SQL Item Shop</h1>
@@ -106,6 +111,25 @@
         <div id="item-popup-title"></div>
         <img id="item-popup-icon" />
         <div id="item-popup-description"></div>
+      </div>
+    </div>
+
+    <div id="support-popup-overlay" class="hidden">
+      <div id="support-popup">
+        <img id="support-popup-bg" src="./assets/ui/item_aquired_popup.png" alt="">
+        <button id="support-popup-close" type="button" aria-label="Support-Fenster schliessen">x</button>
+        <div id="support-popup-title">Support the project</div>
+        <div id="support-popup-description">
+          SQL Item Shop bleibt kostenlos.<br>
+          Wenn dir das Projekt hilft, kannst du die Weiterentwicklung von Creative Djinns Lernprojekten freiwillig unterstuetzen.
+        </div>
+        <img id="support-popup-heart" src="./assets/sprites/HeartDetailed_Bounce.gif" alt="">
+        <a id="support-paypal-link" href="https://paypal.me/creativedjinns" target="_blank" rel="noopener noreferrer">
+          Support via PayPal
+        </a>
+        <div id="support-popup-note">
+          Keine steuerlich absetzbare Spende.
+        </div>
       </div>
     </div>
     <div id="tutorial-overlay">
