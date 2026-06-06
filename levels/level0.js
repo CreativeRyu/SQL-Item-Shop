@@ -53,7 +53,8 @@
           },
           {
               target: ".CodeMirror",
-              text: "Hier unten schreibst du SQL Befehle. Ruhige Hände. Saubere Queries. Am Anfang reicht einfaches Zeug."
+              text: "Hier unten schreibst du SQL Befehle. Ruhige Hände. Saubere Queries. Am Anfang reicht einfaches Zeug.",
+              position: "editor-top"
           },
           {
               target: "#run-btn",
@@ -66,6 +67,7 @@
           {
               target: ".CodeMirror",
               text: "Zeig mir ob du tippen kannst. Gib jetzt:\n\n<span class='sql-keyword'>SELECT</span> <span class='sql-value'>1</span>; ein.",
+              position: "editor-top",
               waitForMission: true
           }
       ],
@@ -104,7 +106,8 @@
           },
           {
               target: ".CodeMirror",
-              text: "Texte setzt man in einfache Anführungszeichen."
+              text: "Texte setzt man in einfache Anführungszeichen.",
+              position: "editor-top"
           },
           {
               target: "#mission-panel",
@@ -113,6 +116,7 @@
           {
               target: ".CodeMirror",
               text: "Sag doch mal Hi:\n\n<span class='sql-keyword'>SELECT</span> <span class='sql-string'>'Hi Shopkeeper'</span>;",
+              position: "editor-top",
               waitForMission: true
           }
       ],
@@ -154,11 +158,13 @@
           },
           {
               target: ".CodeMirror",
-              text: "Mit <span class='sql-keyword'>FROM</span> sagst du SQL aus welcher Tabelle gelesen werden soll."
+              text: "Mit <span class='sql-keyword'>FROM</span> sagst du SQL aus welcher Tabelle gelesen werden soll.",
+              position: "editor-top"
           },
           {
               target: ".CodeMirror",
-              text: "Das Sternsymbol <span class='sql-symbol'>*</span> bedeutet: zeige alles."
+              text: "Das Sternsymbol <span class='sql-symbol'>*</span> bedeutet: zeige alles.",
+              position: "editor-top"
           },
           {
               target: "#mission-panel",
@@ -167,6 +173,7 @@
           {
               target: ".CodeMirror",
               text: "Tippe jetzt:\n\n<span class='sql-keyword'>SELECT</span> <span class='sql-symbol'>*</span> <span class='sql-keyword'>FROM</span> <span class='sql-table'>shop_items</span>;",
+              position: "editor-top",
               waitForMission: true
           }
       ],
@@ -213,6 +220,7 @@
           {
               target: ".CodeMirror",
               text: "Tippe jetzt:\n\n<span class='sql-keyword'>SELECT</span> name <span class='sql-keyword'>FROM</span> <span class='sql-table'>shop_items</span>;",
+              position: "editor-top",
               waitForMission: true
           }
       ],
@@ -255,13 +263,14 @@
               text: "Zeig mir jetzt Namen UND Preise aller Produkte."
           },
           {
-              target: ".CodeMirror",
-              text:
+             target: ".CodeMirror",
+             text:
               "Tippe jetzt:\n\n" +
               "<span class='sql-keyword'>SELECT</span> " +
               "name, price " +
               "<span class='sql-keyword'>FROM</span> " +
               "<span class='sql-table'>shop_items</span>;",
+              position: "editor-top",
               waitForMission: true
           }
       ],
@@ -313,7 +322,8 @@
             },
             {
                 target: ".shop-key-item",
-                text: "Wie dieses schöne SQL Notebook hier."
+                text: "Wie dieses schöne SQL Notebook hier.",
+                position: "bottom"
             },
             {
                 target: "#money-display",

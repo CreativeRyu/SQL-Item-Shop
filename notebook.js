@@ -74,7 +74,7 @@ export function showNotebookUI() {
 function renderCategoryPage(category) {
     const categories = {
         DQL: {
-            description: "Data Quiery Language<br><br>Abfragen von Daten",
+            description: "Data Query Language<br><br>Abfragen von Daten",
             commands: [
                 "SELECT",
                 "WHERE",

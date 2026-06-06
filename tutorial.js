@@ -42,8 +42,8 @@ function showTutorialStep() {
     }
 
     const textBox = document.getElementById("tutorial-text-box");
-    textBox.style.top = "";
-    textBox.style.bottom = "";
+    textBox.style.top = "auto";
+    textBox.style.bottom = "auto";
     switch(step.position) {
         case "target-bottom":
             textBox.style.top = (rect.bottom + 20) + "px";
@@ -51,15 +51,52 @@ function showTutorialStep() {
         case "target-top":
             textBox.style.top = (rect.top - 180) + "px";
             break;
+        case "editor-top":
+            placeTextBoxAtCounter(textBox);
+            break;
         case "bottom":
-            textBox.style.bottom = "18vh";
+            placeTextBoxAtEditorTop(textBox);
             break;
         case "top":
-            textBox.style.top = "5h";
+            textBox.style.top = "5vh";
             break;
         default:
-            textBox.style.bottom = "41vh";
+            placeTextBoxAtCounter(textBox);
     }
+}
+
+function placeTextBoxAtCounter(textBox) {
+    const shopElement = document.getElementById("shop-screen");
+
+    if(!shopElement) {
+        textBox.style.bottom = "41vh";
+        return;
+    }
+
+    const shopRect = shopElement.getBoundingClientRect();
+    const top = Math.max(
+        20,
+        shopRect.top + shopRect.height * 0.72
+    );
+
+    textBox.style.top = `${top}px`;
+}
+
+function placeTextBoxAtEditorTop(textBox) {
+    const editorElement = document.querySelector(".CodeMirror");
+
+    if(!editorElement) {
+        textBox.style.bottom = "18vh";
+        return;
+    }
+
+    const editorRect = editorElement.getBoundingClientRect();
+    const top = Math.max(
+        20,
+        editorRect.top + 12
+    );
+
+    textBox.style.top = `${top}px`;
 }
 
 document.getElementById("tutorial-next-btn").onclick = () => {

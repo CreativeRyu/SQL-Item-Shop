@@ -11,7 +11,7 @@ const tutorialWarnings = [
     "Einfach... NEIN",
     "Das ist genau die Art von Idee, die Meetings verursacht.",
     "Du willst nicht, dass ich Kopfschmerzen habe.",
-    "Interssanter Ansatz, wird aber so semi erfolgreich.",
+    "Interessanter Ansatz, wird aber so semi erfolgreich.",
     "Netter Versuch..."
 ];
 
@@ -21,7 +21,9 @@ export async function loadQuotes() {
         .then(res => res.json());
 }
 
-export function showHintMessage(text) {
+export function showHintMessage(text, duration = 7000) {
+    const displayDuration =
+        typeof duration === "number" ? duration : 7000;
     const bubble = document.getElementById("shopkeeper-hint");
     bubble.innerHTML = text;
     bubble.classList.add("visible");
@@ -29,7 +31,7 @@ export function showHintMessage(text) {
     bubble.hideTimeout =
         setTimeout(() => {
             bubble.classList.remove("visible");
-        }, 7000);
+        }, displayDuration);
 }
 
 export function showRandomQuote() {

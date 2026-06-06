@@ -26,10 +26,6 @@ h1 {
         0 0 14px rgba(216, 155, 60, 0.22);
 }
 
-h2 {
-    font-family: 'Ithaca', sans-serif;
-}
-
 #start-screen {
     min-height: 80vh;
     display: flex;
@@ -575,28 +571,12 @@ h2 {
 }
 
 
-.item-icon {
-  font-size: 20px;
-  margin-bottom: 8px;
-}
-
-.item-name {
-  font-size: 14px;
-  margin-bottom: 5px;
-}
-
-.item-stock {
-  font-size: 14px;
-  font-weight: bold;
-  color: #00ff88;
-}
-
 #mission-panel {
     padding: 40px;
-    padding-top: 45px;
+    padding-top: 34px;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 14px;
     background-image: url("./assets/ui/questpaper.png");
     background-size: 100% 100%;
     background-repeat: no-repeat;
@@ -609,7 +589,7 @@ h2 {
 
 .quest-panel-header {
     padding: 12px 18px;
-    margin-bottom: 18px;
+    margin-bottom: 10px;
     background: linear-gradient(
             180deg,
             #6f534d 0%,
@@ -632,7 +612,7 @@ h2 {
 .quest-card {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 10px;
     padding: 14px;
     background: rgba(255,255,255,0.04);
     border: 2px solid rgba(140,90,40,0.18);
@@ -655,15 +635,34 @@ h2 {
 .quest-description {
     min-height: 80px;
     padding: 15px;
-    background-image: url("./assets/ui/description_panel.png");
-    background-size: 100% 100%;
-    background-repeat: no-repeat;
-    image-rendering: pixelated;
+    background: rgba(190, 161, 122, 0.822);
+    border: none;
+    border-radius: 5px;
     box-sizing: border-box;
-    color: #4a3824;
-    font-size: 18px;
-    line-height: 1.8;
+    color: #5b3d22;
+    font-size: 16px;
+    line-height: 1.6;
     font-family: 'superhelio _regular', sans-serif;
+}
+
+.quest-description-expanded {
+    min-height: 150px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.quest-story,
+.quest-task {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.quest-section-label {
+    font-size: 13px;
+    font-weight: bold;
+    color: #5b3d22;
 }
 
 .quest-hint-title {
@@ -1407,21 +1406,15 @@ tr:hover td {
     transition: all 0.35s ease;
 }
 
-#tutorial-shopkeeper-highlight {
-    position: absolute;
-    border-radius: 12px;
-    box-shadow: 0 0 0 9999px rgba(0,0,0,0.72);
-    pointer-events: none;
-    z-index: 9998;
-}
-
 #tutorial-text-box {
     position: absolute;
     bottom: 380px;
     left: 50%;
     transform: translateX(-50%);
     width: 420px;
-    padding: 18px;
+    height: auto;
+    min-height: 0;
+    padding: 14px 18px;
     background: #2e241b;
     border: 4px solid #7b5d3b;
     border-radius: 8px;
@@ -1443,7 +1436,7 @@ tr:hover td {
 #tutorial-text {
     width: 100%;
     text-align: left;
-    line-height: 1.5;
+    line-height: 1.35;
 }
 
 #tutorial-warning-box {

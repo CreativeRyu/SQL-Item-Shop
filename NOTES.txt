@@ -6,20 +6,29 @@ Core idea
 - Essential SQL concepts should come from learning progress, not from paid unlocks.
 
 Current next feature direction
-- Mission feedback should feel in-world instead of like a generic popup.
-- Coin reward animation is already a good direction.
-- Next planned feedback: mission paper gets a "Complete" stamp animation.
-- Later: level complete screen and next-level intro screen.
+- Mission feedback is now in-world:
+  - Coin reward animation.
+  - +Gold popup.
+  - Complete stamp on the mission paper.
+  - Level recap / next-level intro scroll.
+- Next focus is content and progression:
+  - Level 2 missions with WHERE.
+  - Purchasable help items and help panel.
+  - Large Notebook View.
+  - Tablet/iPad landscape layout.
+  - Radio, music, and sound effects.
 
 Money / shop item ideas
 - SQL Notebook: existing core learning item.
 - Large Notebook View: expanded reference view with syntax examples, schemas, known commands, and progress.
-- Schema Lupe: lets the player inspect a table schema by click, similar to PRAGMA table_info.
 - Query History: stores recent queries and lets the player put them back into the editor.
 - Query Blueprints: purchasable help per mission. Shows a full or partial example query, but the player still types it manually.
 - Radio: unlocks music and sound controls.
 - Error Analyzer: explains common SQL errors in plain language.
 - Hint vouchers: optional paid help if the player is stuck.
+- Schema Lupe is probably not needed as a separate item:
+  - Players should discover schemas with PRAGMA table_info.
+  - Discovered schemas should remain available in the Large Notebook View.
 
 Shop progression ideas
 - Buy more shelves or cabinets to offer more items.
@@ -61,7 +70,6 @@ Moegliche kaufbare Items
 - Grosses SQL Notebook: erweiterte Ansicht mit Syntaxbeispielen, Erklaerungen, Schemas und typischen Fehlern.
 - Query Blueprint: zeigt eine Musterquery oder eine teilweise ausgefuellte Loesung fuer eine Mission.
 - Meister-Notiz: hochwertigere Hilfe mit kurzer Erklaerung, warum die Query funktioniert.
-- Schema Lupe: zeigt per Klick die Struktur einer Tabelle, aehnlich wie PRAGMA table_info.
 - Query History: speichert die letzten Queries und erlaubt, sie wieder in den Editor zu laden.
 - Fehleranalyse: erklaert SQL-Fehler in normaler Sprache.
 - Hinweis-Gutschein: kauft einen zusaetzlichen Tipp vom Shopkeeper.
@@ -92,29 +100,134 @@ Aktueller Stand
   - products enthaelt keine sprite/pos_x/pos_y/scale Daten mehr.
   - Visuelle Daten liegen in shopLayouts/level0ShopLayout.js.
   - shop.js mapped DB-Daten auf Layout-Daten.
+- Levelwechsel-Flow ist eingebaut:
+  - Nach Levelabschluss erscheint ein Recap Screen.
+  - Danach erscheint ein Next Level Intro Screen.
+  - Level 0 -> Level 1 laeuft nicht mehr hart per Hint.
+  - Weitere Level brauchen spaeter nur passende intro/recap Inhalte.
 
 Naechster grosser Schritt
-1. Levelwechsel-Flow bauen.
-   - Level Recap Screen nach Levelabschluss.
-   - Next Level Intro Screen vor dem neuen Level.
-   - Ziel: didaktisch Recap und Ausblick geben.
-   - Level 0 -> Level 1 nicht mehr hart per Hint wechseln.
+1. Level 2 didaktisch sauber ausarbeiten.
+   - Level 1 festigt die in Level 0 gelernten Skills:
+     - SELECT
+     - FROM
+     - einzelne Spalten
+     - mehrere Spalten
+     - verschiedene Tabellen
+     - PRAGMA table_info
+   - Level 2 fuehrt als neues Konzept WHERE ein.
+   - Ziel:
+     - einzelne Bedingungen verstehen.
+     - Vergleichsoperatoren einfuehren.
+     - SELECT-Spaltenauswahl mit WHERE kombinieren.
+     - Noch keine komplexen AND/OR-Kombinationen erzwingen.
+   - Moegliche Level-2-Aufgaben:
+     - Produkt mit bestimmtem Namen finden.
+     - Produkte unter / ueber einem Preis finden.
+     - Kunden mit genug Geld finden.
+     - Inventory-Eintraege mit wenig oder viel Bestand finden.
+     - Passende Spalten anzeigen statt immer SELECT *.
+   - Level 2 braucht:
+     - eigene Missionenfolge.
+     - Shopkeeper-Anlaesse / Mini-Story.
+     - Recap-Daten am Levelende.
+     - eventuell erweiterten Seed mit mehr Produkten, Kunden und Lagerdaten.
 
-2. Leveldaten um Intro/Recap erweitern.
-   - Direkt in den Level-JS-Dateien speichern, nicht in JSON.
-   - Beispielstruktur:
-     intro: {
-       title: "...",
-       description: "...",
-       goals: [...]
-     }
-     recap: {
-       title: "...",
-       description: "...",
-       learned: [...]
-     }
+2. Help Panel und kaufbare Hilfe-Items bauen.
+   - Neue Shop-Items:
+     - hint.png als Shopkeeper-Hinweis.
+     - blueprint.png als Query Blueprint / Loesungsgeruest.
+   - Beide Items sollen als kaufbare Hilfen pro Mission funktionieren.
+   - Wer die Hilfen nicht kauft, behaelt mehr Geld fuer andere Dinge.
+   - Nach Kauf erscheinen kleine klickbare UI-Buttons im Help Panel unten rechts.
+   - Help Panel:
+     - zeigt gekaufte Hilfeelemente zur aktuellen Mission.
+     - kann zwischen Hinweis und Blueprint wechseln.
+     - bleibt getrennt vom Questpanel.
+     - verdeckt keine wichtigen Quest- oder Editor-Elemente.
+   - Hinweis:
+     - kurzer Shopkeeper-Tipp.
+     - gibt Richtung, aber keine komplette Loesung.
+   - Blueprint:
+     - zeigt Query-Geruest oder Lueckentext.
+     - hilft beim Aufbau der Query, ohne sie komplett abzunehmen.
+   - Diese Funktion ist wahrscheinlich kleiner als die grosse Notebook-Ansicht,
+     weil sie erstmal nur missionsbezogene Inhalte anzeigen muss.
 
-3. Cutscene-System planen.
+3. Story-Verteilung fuer Missionen konkretisieren.
+   - Questpanel:
+     - klare Aufgabe.
+     - kurz, praktisch, waehrend der Mission nutzbar.
+   - Shopkeeper-Dialog / Textbox:
+     - witzige Einleitung.
+     - kleiner Anlass fuer die Aufgabe.
+     - Kommentare nach wichtigen oder schwierigen Missionen.
+   - Tutorial:
+     - nur fuer neue Konzepte oder neue UI-Werkzeuge.
+     - Level 1 soll eher trainieren als dauernd unterbrechen.
+   - Level Intro/Recap:
+     - didaktische Einordnung.
+     - was wurde gelernt / was kommt als Naechstes.
+   - Wichtig:
+     - Texte duerfen wichtige UI nicht verdecken.
+     - Spaeter besonders wegen Tablet-Layout pruefen.
+
+4. Grosses SQL Notebook planen und bauen.
+   - Das kleine Notebook bleibt Schnelluebersicht im Hauptscreen.
+   - Die grosse Notebook-Ansicht wird das eigentliche Lernwerkzeug.
+   - Inhalte:
+     - Syntax der gelernten Befehle.
+     - kurze Erklaerungen.
+     - Beispiele.
+     - bekannte Tabellen.
+     - gespeicherte Tabellenschemata.
+     - eventuell typische Fehler.
+   - Schema Lupe entfaellt wahrscheinlich als eigenes Item:
+     - Der Spieler soll PRAGMA table_info einmal selbst ausfuehren.
+     - Danach ist das Schema dauerhaft ueber das Notebook abrufbar.
+     - SQL bleibt dadurch das Werkzeug, nicht ein Klick-Shortcut.
+
+5. Tablet / iPad Anpassung planen.
+   - Zielgeraet erstmal Tablet im Querformat.
+   - Hochformat muss nicht priorisiert werden.
+   - Aktuelles Desktop-Layout ist sehr breit:
+     - Questpanel links.
+     - Shop in der Mitte.
+     - Output rechts.
+     - Editor / Notebook unten.
+   - Zu pruefen:
+     - Passt die Drei-Spalten-Ansicht im Querformat noch?
+     - Muss Output unter Shop oder neben Quest wandern?
+     - Wie wird das Notebook auf Tablet platziert?
+     - Verdecken Shopkeeper-Bubbles, Tutorial oder Popups wichtige UI?
+
+6. Radio, Musik und Soundeffekte.
+   - Radio als kaufbares Atmosphaere-Item.
+   - Nach Kauf werden die vorbereiteten Audio-Buttons sichtbar.
+   - Musik ins Spiel bringen.
+   - Erste Soundeffekte einbauen:
+     - Button-Klick.
+     - Geld erhalten.
+     - Mission Complete / Stempel.
+     - Item gekauft.
+     - Warnung / Fehler.
+
+7. Weitere sinnvolle Geld-Sinks planen.
+   - Geld soll mehr Bedeutung bekommen als nur Notebook kaufen.
+   - Moegliche Items:
+     - Radio.
+     - Grosses Notebook.
+     - Query History.
+     - Query Blueprints / Meister-Notizen.
+     - Deko / Atmosphaere.
+     - Video- oder Cutscene-Sammlung.
+   - Idee Video-Slot / Cutscene-Archiv:
+     - Witzige Shopkeeper-Szenen koennen gesammelt werden.
+     - Manche werden durch Events freigeschaltet.
+     - Spieler koennen sie im Shop/Archiv kaufen oder dauerhaft sichern.
+     - Letzte Szene erst nach Spielabschluss.
+
+8. Cutscene-System planen.
    - Fuer besondere Momente:
      - Levelende
      - Item-Freischaltung
@@ -126,21 +239,9 @@ Naechster grosser Schritt
      - Crafting freigeschaltet
    - Stil: kurze, witzige Shopkeeper-Szenen aehnlich Bancho-Vibes aus Dave the Diver.
    - Nicht jede Mission braucht Cutscene. Normale Missionen bekommen hoechstens kurzen Shopkeeper-Anlass.
+   - Vermutlich eher spaeter bauen, wenn Levelinhalt, Notebook und Geld-Sinks klarer sind.
 
-4. Story-Verteilung festlegen.
-   - Questpanel: klare Aufgabe, kurz und nutzbar waehrend der Mission.
-   - Shopkeeper-Dialog / vorhandene Textbox: kleiner Anlass, Witz, Stimmung, Kontext.
-   - Diese Textbox kann fuer Mini-Shopkeeper-Storys genutzt werden, besonders wenn keine grosse Cutscene noetig ist.
-   - Beispiele:
-     - Kunde betritt den Laden.
-     - Shopkeeper erklaert kurz, warum diese Query gebraucht wird.
-     - kleiner Gag vor einer Aufgabe.
-     - kurzer Kommentar nach einer schwierigen Mission.
-   - Level Intro/Recap: didaktische Einordnung.
-   - Cutscenes: besondere Events und Freischaltungen.
-   - Notebook: Wissen, Syntax, Beispiele, Tabellenstruktur.
-
-5. Source Material / Jupyter Aufgaben auswerten.
+9. Source Material / Jupyter Aufgaben auswerten.
    - Notebook liegt in source_material/sql_aufgaben.ipynb.
    - Aufgaben nicht 1:1 uebernehmen.
    - Erst clustern:
@@ -158,7 +259,7 @@ Naechster grosser Schritt
      - Transaktionen / Archivierung
    - Danach pro Level 5-8 Hauptmissionen plus optionale Bonusquests bauen.
 
-6. Datenmodell v2 planen.
+10. Datenmodell v2 planen.
    - Aktuell sauberer als vorher, aber spaeter brauchen wir wahrscheinlich:
      - categories
      - suppliers
@@ -172,16 +273,16 @@ Naechster grosser Schritt
    - Pro Level spaeter eigenes ShopLayout.
    - Visuals bleiben ausserhalb der SQL-Lerndaten.
 
-7. Erste kaufbare Lernwerkzeuge planen.
-   - Schema Lupe passt gut zu Level 1 / Tabellenstruktur.
-   - Query History ist ebenfalls stark und praktisch.
-   - Query Blueprint / Meister-Notiz spaeter als kaufbare Hilfe pro Mission.
-   - Radio als Atmosphaere-Item.
-
 Kurzfristige Prioritaet fuer morgen
-- Zuerst Level Recap / Level Intro Screen bauen.
-- Danach Level 0 und Level 1 mit intro/recap Daten ausstatten.
-- Danach optional erstes Cutscene-Datenformat skizzieren, aber noch nicht gross ausbauen.
+- Zuerst Level 2 didaktisch und storymaessig ausarbeiten.
+- Level 2 soll WHERE einfuehren und mit SELECT / FROM / Spaltenauswahl kombinieren.
+- Parallel dazu Help Panel und kaufbare Hilfe-Items planen:
+  - hint.png fuer Shopkeeper-Hinweise.
+  - blueprint.png fuer Query-Gerueste / Lueckentexte.
+- Danach Grosses SQL Notebook planen und bauen.
+- Danach Tablet/iPad Querformat pruefen und Layout anpassen.
+- Danach Radio / Musik / erste Soundeffekte.
+- Cutscenes und Video-Sammlung eher spaeter planen, wenn Progression und Geld-Sinks klarer sind.
 
 Session Summary
 - Startscreen optisch verbessert:
@@ -206,6 +307,6 @@ Session Summary
   - Aufgaben eignen sich als Roh-Curriculum, aber sollen spaeter geclustert und spielerisch ueberarbeitet werden.
 
 Naechster konkreter Startpunkt
-- Level Recap / Level Intro Screen bauen.
-- Leveldaten um intro/recap Felder erweitern.
-- Level 0 -> Level 1 Uebergang ueber Recap und Intro statt direktem Hint abbilden.
+- Level 2 Missionen mit WHERE entwerfen.
+- Help Panel unten rechts bauen.
+- Kaufbare Hilfe-Items hint.png und blueprint.png einbinden.

@@ -187,6 +187,7 @@ function renderGame() {
         showNotebookUI();
     }
 
+    syncUnlockedShopItems();
     renderShopVisuals(db, level0ShopLayout, buyNotebook);
     refreshMoneyDisplay();
     refreshMission();
@@ -223,7 +224,7 @@ function runQuery() {
             return;
         }
         const result = db.exec(query);
-        processDiscoveries(query, result);
+        processDiscoveries(query, result, db);
         renderTable(result);
         checkMission(query, result);
 
@@ -276,6 +277,7 @@ function checkMission(query, result) {
         unlockNotebook();
     }
 
+    clearEditor();
     clearTutorial();
     showMissionCompleteStamp(() => {
         advanceMission(mission);
@@ -323,7 +325,9 @@ function completeCurrentLevel() {
         refreshMission();
         syncTutorialForCurrentMission();
         saveCurrentGame();
-        showHintMessage("Willkommen in der nächsten Schicht, Azubi.");
+        if(!missionHasTutorial()) {
+            showHintMessage("Willkommen in der nächsten Schicht, Azubi.");
+        }
     });
 }
 
@@ -519,13 +523,38 @@ function refreshMission() {
         <div class="quest-title">
             ${mission.title}
         </div>
-        <div class="quest-description">
-            ${mission.description}
-        </div>
+        ${renderMissionDescription(mission)}
     </div>
     `;
 
     startMissionHintTimer();
+}
+
+function renderMissionDescription(mission) {
+    if(mission.story || mission.task) {
+        return `
+            <div class="quest-description quest-description-expanded">
+                ${mission.story ? `
+                    <div class="quest-story">
+                        <div class="quest-section-label">Der Shopkeeper:</div>
+                        <div>${mission.story}</div>
+                    </div>
+                ` : ""}
+                ${mission.task ? `
+                    <div class="quest-task">
+                        <div class="quest-section-label">Aufgabe:</div>
+                        <div>${mission.task}</div>
+                    </div>
+                ` : ""}
+            </div>
+        `;
+    }
+
+    return `
+        <div class="quest-description">
+            ${mission.description}
+        </div>
+    `;
 }
 
 function refreshMoneyDisplay() {
@@ -637,6 +666,38 @@ function clearQuestHint() {
     hintBox.innerHTML = "";
 }
 
+function clearEditor() {
+    if(!editor)
+        return;
+
+    editor.setValue("");
+}
+
+function syncUnlockedShopItems() {
+    if(gameState.is_notebook_unlocked && !gameState.hasNotebook) {
+        ensureInventoryItem(7, 1);
+    }
+}
+
+function ensureInventoryItem(productId, stock) {
+    const result = db.exec(`
+        SELECT stock
+        FROM inventory
+        WHERE product_id = ${productId}
+    `);
+
+    const hasItem = result[0]?.values?.length > 0;
+
+    if(hasItem)
+        return;
+
+    db.run(`
+        INSERT INTO inventory
+        (product_id, stock)
+        VALUES (${productId}, ${stock})
+    `);
+}
+
 function unlockNotebook() {
     if(gameState.is_notebook_unlocked)
         return;
@@ -671,6 +732,7 @@ function buyNotebook() {
 }
 
 function showItemPopup(title,icon,description) {
+    clearTutorial();
     const overlay = document.getElementById("item-popup-overlay");
     document.getElementById("item-popup-title").innerText = title;
     document.getElementById("item-popup-icon").src = icon;
@@ -773,5 +835,6 @@ window.debugLevel1 = function() {
     document.getElementById("tutorial-overlay").style.display = "none";
     refreshMoneyDisplay();
     refreshMission();
+    syncTutorialForCurrentMission();
     console.log("Level 1 Debug gestartet");
 };

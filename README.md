@@ -5,7 +5,7 @@
 
 SQL Item Shop is a cozy pixel-art SQL learning game where players explore a small RPG-style shop and learn SQL interactively through quests, progression, and unlocks.
 
-Write SQL queries, complete missions, earn money, and unlock new features like the SQL Notebook while managing and analyzing the shop’s database.
+Write SQL queries, complete missions, earn money, and unlock new features like the SQL Notebook while managing and analyzing the shop's database.
 
 The game combines:
 
