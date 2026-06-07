@@ -46,6 +46,8 @@ function selectsColumnsFrom(query, result, tableName, expectedColumns) {
 const level1 = {
   levelId: "level1",
   title: "SELECT Basics",
+  seedPath: "./database/seed1.sql",
+  shopLayoutId: "level0",
   intro: {
     label: "Nächste Schicht",
     title: "Der Ladenbetrieb beginnt",
@@ -56,6 +58,18 @@ const level1 = {
       "Produkt- und Kundendaten gezielt anzeigen",
       "Mehrere Spalten sauber auswählen",
       "Tabellenstrukturen mit PRAGMA table_info nachschlagen"
+    ]
+  },
+  recap: {
+    label: "Schicht abgeschlossen",
+    title: "Die Grundlagen sitzen",
+    description: "Du hast das Tutorialwissen im echten Ladenbetrieb wiederholt und gefestigt. Der Shopkeeper wirkt fast entspannt. Fast.",
+    learnedIntro: "Was jetzt stabiler sitzen sollte:",
+    learned: [
+      "Einfache SELECT-Abfragen auf echten Shop-Tabellen",
+      "Tabellen mit FROM gezielt auswählen",
+      "Nur die Spalten anzeigen, die gerade gebraucht werden",
+      "Tabellenstrukturen nachschlagen, bevor man blind rät"
     ]
   },
   missions: [
@@ -132,7 +146,7 @@ const level1 = {
           disableHighlight: true,
           position: "editor-top",
           text:
-            "Sauber. Das <span class='sql-keyword'>WHERE</span> war gerade nur ein kleiner SQLite-Filter für die Tabellenliste. Richtig trainieren wir Bedingungen erst später."
+            "Sauber. Das <span class='sql-keyword'>WHERE</span> war gerade nur ein kleiner SQL Filter für die Tabellenliste. Darüber werden wir später reden."
         }
       ],
       reward: {
@@ -236,7 +250,7 @@ const level1 = {
       story:
         "Die Kundenliste hat mehr als nur Namen. Schau dir die Struktur an, " +
         "bevor später jemand mit Geld, Wünschen und Chaos vor dem Tresen steht.",
-      task: "Führe PRAGMA table_info(customers); aus.",
+      task: "Führe PRAGMA table_info auf unserer Kundentabelle aus.",
       reward: {
         money: 20
       },

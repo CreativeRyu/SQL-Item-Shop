@@ -13,7 +13,7 @@ CREATE TABLE inventory (
 CREATE TABLE customers (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
-    money REAL NOT NULL
+    budget REAL NOT NULL
 );
 
 CREATE TABLE sales (

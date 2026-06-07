@@ -37,6 +37,20 @@ Shop progression ideas
 - Player uses SQL to inspect stock, sales, customers, and product data.
 - Later, restocking can teach UPDATE and safe data changes.
 - Reset / backup tools become relevant once destructive database operations are allowed.
+- Shelf-slot gameplay:
+  - Shelves have visible product slots.
+  - Player can fill slots with products from inventory.
+  - Customers buy from the visible shelf stock.
+  - Shelf stock goes down when customers buy items.
+  - Player has to restock shelves over time.
+  - More or better shelves can be bought as shop upgrades.
+  - This makes money useful for real shop growth, not only help items.
+- Transactions fit naturally into restocking:
+  - Restocking moves goods out of inventory and into shelf slots.
+  - That changes two places and should be treated as one safe action.
+  - Without a transaction, goods could leave inventory but never arrive on the shelf.
+  - BEGIN / COMMIT / ROLLBACK can be taught as the safe way to move stock.
+  - Shopkeeper framing: weight moved from one rack to another must not vanish halfway.
 
 Crafting / recipe system ideas
 - Customers may request crafted items, such as fruit salads or premium products.
@@ -137,6 +151,13 @@ Naechster grosser Schritt
    - Neue Shop-Items:
      - hint.png als Shopkeeper-Hinweis.
      - blueprint.png als Query Blueprint / Loesungsgeruest.
+   - Help-Items sind Key-Items, keine normalen Lagerwaren:
+     - Pro Mission gibt es genau einen Shopkeeper Hint.
+     - Pro Mission gibt es genau einen Query Blueprint.
+     - Beide erscheinen im Shop als kaufbare Spezialitems.
+     - Der sichtbare Bestand kann im Seed erstmal 1 sein.
+     - Die echte "pro Mission gekauft"-Logik soll spaeter ueber gameState / Help Panel laufen,
+       nicht dauerhaft ueber den SQL-Lagerbestand.
    - Beide Items sollen als kaufbare Hilfen pro Mission funktionieren.
    - Wer die Hilfen nicht kauft, behaelt mehr Geld fuer andere Dinge.
    - Nach Kauf erscheinen kleine klickbare UI-Buttons im Help Panel unten rechts.
@@ -267,6 +288,8 @@ Naechster grosser Schritt
      - order_items
      - recipes
      - recipe_ingredients
+     - shelf_slots
+     - shelf_stock / visible_stock
      - warehouses
      - warehouse_stock
    - Pro Level spaeter eigener Seed.

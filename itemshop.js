@@ -1,11 +1,12 @@
 ﻿import {loadTutorialSteps, clearTutorial } from "./tutorial.js";
 
 import { LEVELS } from "./levels/index.js";
-import { level0ShopLayout } from "./shopLayouts/level0ShopLayout.js";
+import { SHOP_LAYOUTS } from "./shopLayouts/index.js";
 import {initNotebook, showNotebookUI, unlockNotebookEntry, completeNotebookEntry, getNotebookState, loadNotebookState} from "./notebook.js";
 import { renderShopVisuals, hideTooltip} from "./shop.js";
 import { processDiscoveries } from "./notebookDiscovery.js";
 import {saveGame,loadGame} from "./savegame.js";
+import { registerDebugTools } from "./debugTools.js";
 import {
     loadQuotes,
     showHintMessage,
@@ -16,6 +17,7 @@ import {
 } from "./shopkeeper.js";
 
 let db;
+let SQL;
 let editor;
 let databaseReady = false;
 let currentLevel = LEVELS.level0;
@@ -34,12 +36,22 @@ let gameState = {
 };
 
 
-async function initDatabase() {
-    const SQL = await initSqlJs({
+async function initSqlEngine() {
+    if(SQL)
+        return SQL;
+
+    SQL = await initSqlJs({
         locateFile: file =>
             `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/${file}`
     });
 
+    return SQL;
+}
+
+async function initDatabase(seedPath = "./database/seed.sql") {
+    const SQL = await initSqlEngine();
+
+    databaseReady = false;
     db = new SQL.Database();
     // Schema laden
     const schema = await fetch("./database/schema.sql")
@@ -47,12 +59,16 @@ async function initDatabase() {
 
     db.run(schema);
     // Seed laden
-    const seed = await fetch("./database/seed.sql")
+    const seed = await fetch(seedPath)
         .then(res => res.text());
 
     db.run(seed);
-    console.log("Datenbank geladen!");
+    console.log(`Datenbank geladen: ${seedPath}`);
     databaseReady = true;
+}
+
+async function initCurrentLevelDatabase() {
+    await initDatabase(currentLevel.seedPath);
 }
 
 window.inspectTable = function(table) {
@@ -102,7 +118,7 @@ async function initGameSystems() {
     if(gameSystemsReady)
         return;
 
-    await initDatabase();
+    await initSqlEngine();
     await loadQuotes();
     initNotebook();
     gameSystemsReady = true;
@@ -152,6 +168,7 @@ async function startNewGame() {
     };
 
     // später: altes Savegame löschen
+    await initCurrentLevelDatabase();
     enterGame();
 }
 
@@ -170,6 +187,7 @@ async function continueGame() {
     gameState = save.gameState;
     loadNotebookState(save.notebookState);
 
+    await initCurrentLevelDatabase();
     enterGame();
 }
 
@@ -188,7 +206,7 @@ function renderGame() {
     }
 
     syncUnlockedShopItems();
-    renderShopVisuals(db, level0ShopLayout, buyNotebook);
+    renderShopVisuals(db, getCurrentShopLayout(), buyNotebook, getKeyItemActions());
     refreshMoneyDisplay();
     refreshMission();
     updateEditorToolsVisibility();
@@ -319,11 +337,11 @@ function completeCurrentLevel() {
         notebookState: getNotebookState()
     });
 
-    showLevelTransition(completedLevel, nextLevel, () => {
+    showLevelTransition(completedLevel, nextLevel, async () => {
         currentLevel = nextLevel;
         currentMissionIndex = 0;
-        refreshMission();
-        syncTutorialForCurrentMission();
+        await initCurrentLevelDatabase();
+        renderGame();
         saveCurrentGame();
         if(!missionHasTutorial()) {
             showHintMessage("Willkommen in der nächsten Schicht, Azubi.");
@@ -620,6 +638,10 @@ function getCurrentMission() {
         .missions[currentMissionIndex];
 }
 
+function getCurrentShopLayout() {
+    return SHOP_LAYOUTS[currentLevel.shopLayoutId] || SHOP_LAYOUTS.level0;
+}
+
 function missionHasTutorial() {
     return !!getCurrentMission()?.tutorialSteps;
 }
@@ -708,7 +730,7 @@ function unlockNotebook() {
         (product_id, stock)
         VALUES (7, 1)
     `);
-    renderShopVisuals(db, level0ShopLayout, buyNotebook);
+    renderShopVisuals(db, getCurrentShopLayout(), buyNotebook, getKeyItemActions());
 }
 
 function buyNotebook() {
@@ -725,13 +747,48 @@ function buyNotebook() {
         WHERE product_id = 7
     `);
     refreshMoneyDisplay();
-    renderShopVisuals(db, level0ShopLayout, buyNotebook);
-    showItemPopup("SQL NOTEBOOK","./assets/sprites/shopItems/notebook.png","Speichert deine neuen\nSQL Befehle und\nTabellenschemata.");
+    renderShopVisuals(db, getCurrentShopLayout(), buyNotebook, getKeyItemActions());
+    showItemPopup(
+        "SQL NOTEBOOK",
+        "./assets/sprites/shopItems/notebook.png",
+        "Speichert deine neuen\nSQL Befehle und\nTabellenschemata.",
+        () => {
+            showNotebookUI();
+            if(getCurrentMission().id === "buy_notebook") {
+                checkMission("", []);
+            }
+        }
+    );
     hideTooltip();
     saveCurrentGame();
 }
 
-function showItemPopup(title,icon,description) {
+function showShopkeeperHintPopup() {
+    showItemPopup(
+        "SHOPKEEPER HINT",
+        "./assets/sprites/shopItems/hint.png",
+        "Schaltet einen\nShopkeeper-Hinweis\nfür diese Mission frei."
+    );
+    hideTooltip();
+}
+
+function showQueryBlueprintPopup() {
+    showItemPopup(
+        "QUERY BLUEPRINT",
+        "./assets/sprites/shopItems/blueprint.png",
+        "Schaltet ein\nQuery-Gerüst\nfür diese Mission frei."
+    );
+    hideTooltip();
+}
+
+function getKeyItemActions() {
+    return {
+        showShopkeeperHintPopup,
+        showQueryBlueprintPopup
+    };
+}
+
+function showItemPopup(title,icon,description,onClose) {
     clearTutorial();
     const overlay = document.getElementById("item-popup-overlay");
     document.getElementById("item-popup-title").innerText = title;
@@ -740,10 +797,7 @@ function showItemPopup(title,icon,description) {
     overlay.style.display = "flex";
     overlay.onclick = () => {
         overlay.style.display = "none";
-        showNotebookUI()
-        if(getCurrentMission().id === "buy_notebook") {
-        checkMission("", []);
-    }
+        onClose?.();
     };
 }
 
@@ -770,7 +824,7 @@ async function resetCurrentLevel() {
     clearTutorial();
     clearTimeout(hintTimeout);
     currentMissionIndex = 0;
-    await initDatabase();
+    await initCurrentLevelDatabase();
 
     if(editor) {
         editor.setValue("");
@@ -779,7 +833,7 @@ async function resetCurrentLevel() {
     document.getElementById("result").innerHTML = "";
     document.getElementById("error-box").innerHTML = "";
 
-    renderShopVisuals(db, level0ShopLayout, buyNotebook);
+    renderShopVisuals(db, getCurrentShopLayout(), buyNotebook, getKeyItemActions());
     refreshMoneyDisplay();
     refreshMission();
     syncTutorialForCurrentMission();
@@ -804,16 +858,16 @@ setInterval(() => {
 
 // DEBUG FEATURES
 
-window.jumpToMission = (index) => {
+function jumpToMission(index) {
     currentMissionIndex = index;
     refreshMission();
     const mission = getCurrentMission();
     if(mission?.tutorialSteps) {
         loadTutorialSteps(mission.tutorialSteps);
     }
-};
+}
 
-window.debugNotebook = () => {
+function debugNotebook() {
     gameState.money = 999;
     unlockNotebook();
     currentMissionIndex = 5;
@@ -822,19 +876,30 @@ window.debugNotebook = () => {
     loadTutorialSteps(
         currentLevel.missions[5].tutorialSteps
     );
-};
+}
 
-window.debugLevel1 = function() {
-    currentLevel = LEVELS.level1;
-    currentMissionIndex = 0;
+async function debugLevel(levelId, missionIndex = 0) {
+    currentLevel = LEVELS[levelId];
+    currentMissionIndex = missionIndex;
     gameState.money = 999;
     gameState.hasNotebook = true;
     gameState.is_notebook_unlocked = true;
+    await initCurrentLevelDatabase();
     showNotebookUI();
     clearTutorial();
     document.getElementById("tutorial-overlay").style.display = "none";
     refreshMoneyDisplay();
     refreshMission();
     syncTutorialForCurrentMission();
-    console.log("Level 1 Debug gestartet");
-};
+    console.log(`${currentLevel.title} Debug gestartet`);
+}
+
+registerDebugTools({
+    jumpToMission,
+    debugNotebook,
+    debugLevel1: () => debugLevel("level1"),
+    debugLastMissionLevel1: () => {
+        const lastMissionIndex = LEVELS.level1.missions.length - 1;
+        return debugLevel("level1", lastMissionIndex);
+    }
+});

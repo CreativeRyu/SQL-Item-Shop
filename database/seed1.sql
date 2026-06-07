@@ -5,8 +5,7 @@ VALUES
 ('Perle', 999.99),
 ('Lifting Belt', 49.99),
 ('Creatine', 29.99),
-('Protein Shake', 4.99),
-('SQL Notebook', 30.00);
+('Protein Shake', 4.99);
 
 INSERT INTO inventory (product_id, stock)
 VALUES

@@ -1,6 +1,8 @@
 ﻿const level0 = {
     levelId: "level0",
     title: "Shop Training",
+    seedPath: "./database/seed.sql",
+    shopLayoutId: "level0",
     recap: {
       label: "Schicht abgeschlossen",
       title: "Der Laden steht noch",
@@ -94,7 +96,7 @@
       tutorialSteps: [
           {
               target: "#shopkeeper",
-              text: "Nicht schlecht Azubi."
+              text: "Nicht schlecht."
           },
           {
               target: "#result-panel",
@@ -318,7 +320,7 @@
             },
             {
                 target: "#shop-screen",
-                text: "Das gute ist, ich verkaufe hier im Laden ab und zu auch spezielle Werkzeuge für SQL Azubis."
+                text: "Das gute ist, ich verkaufe hier im Laden ab und zu auch spezielle Werkzeuge für SQL Lehrlinge."
             },
             {
                 target: ".shop-key-item",
