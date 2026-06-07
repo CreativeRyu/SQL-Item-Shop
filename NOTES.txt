@@ -114,11 +114,28 @@ Aktueller Stand
   - products enthaelt keine sprite/pos_x/pos_y/scale Daten mehr.
   - Visuelle Daten liegen in shopLayouts/level0ShopLayout.js.
   - shop.js mapped DB-Daten auf Layout-Daten.
+  - Levels koennen eigene ShopLayouts ueber shopLayoutId verwenden.
 - Levelwechsel-Flow ist eingebaut:
   - Nach Levelabschluss erscheint ein Recap Screen.
   - Danach erscheint ein Next Level Intro Screen.
   - Level 0 -> Level 1 laeuft nicht mehr hart per Hint.
   - Weitere Level brauchen spaeter nur passende intro/recap Inhalte.
+- Seeds sind pro Level vorbereitet:
+  - level0 nutzt database/seed.sql.
+  - level1 nutzt database/seed1.sql ohne SQL Notebook.
+  - level2 nutzt database/seed2.sql mit erweiterten WHERE-Testdaten.
+- customers.money wurde zu customers.budget umbenannt.
+- Level 2 Grundgeruest ist angelegt:
+  - level2.js hat intro, seedPath und shopLayoutId.
+  - seed2.sql enthaelt Produkte, Inventar und Kundenbudgets fuer WHERE-Aufgaben.
+  - level2ShopLayout.js platziert frische Waren, Rubin, Fitness-Items, Hint und Blueprint.
+  - SQL Notebook ist nicht mehr Teil des Level-2-Seeds.
+- Shopkeeper Hint und Query Blueprint sind als Level-2-Key-Items vorbereitet:
+  - Hover vergroessert das Item und zeigt Tooltip.
+  - Klick zeigt aktuell nur das Item-Acquired-Popup mit Icon.
+  - Noch kein Geldabzug, kein Entfernen aus Inventory, kein Help-Panel-State.
+- Debug-Funktionen sind in debugTools.js ausgelagert.
+  - debugLastMissionLevel1() springt zum Testen direkt zur letzten Level-1-Mission.
 
 Naechster grosser Schritt
 1. Level 2 didaktisch sauber ausarbeiten.
@@ -145,10 +162,15 @@ Naechster grosser Schritt
      - eigene Missionenfolge.
      - Shopkeeper-Anlaesse / Mini-Story.
      - Recap-Daten am Levelende.
-     - eventuell erweiterten Seed mit mehr Produkten, Kunden und Lagerdaten.
+   - Level 2 Seed/Layout sind bereits vorbereitet.
+   - Naechster Schritt fuer Level 2:
+     - Platzhaltermission ersetzen.
+     - 5-8 WHERE-Missionen schreiben.
+     - Validatoren fuer WHERE-Missionen bauen.
+     - Recap-Daten am Levelende ergaenzen.
 
 2. Help Panel und kaufbare Hilfe-Items bauen.
-   - Neue Shop-Items:
+   - Neue Shop-Items sind visuell vorbereitet:
      - hint.png als Shopkeeper-Hinweis.
      - blueprint.png als Query Blueprint / Loesungsgeruest.
    - Help-Items sind Key-Items, keine normalen Lagerwaren:
@@ -158,7 +180,7 @@ Naechster grosser Schritt
      - Der sichtbare Bestand kann im Seed erstmal 1 sein.
      - Die echte "pro Mission gekauft"-Logik soll spaeter ueber gameState / Help Panel laufen,
        nicht dauerhaft ueber den SQL-Lagerbestand.
-   - Beide Items sollen als kaufbare Hilfen pro Mission funktionieren.
+   - Beide Items sollen spaeter als kaufbare Hilfen pro Mission funktionieren.
    - Wer die Hilfen nicht kauft, behaelt mehr Geld fuer andere Dinge.
    - Nach Kauf erscheinen kleine klickbare UI-Buttons im Help Panel unten rechts.
    - Help Panel:
@@ -299,9 +321,12 @@ Naechster grosser Schritt
 Kurzfristige Prioritaet fuer morgen
 - Zuerst Level 2 didaktisch und storymaessig ausarbeiten.
 - Level 2 soll WHERE einfuehren und mit SELECT / FROM / Spaltenauswahl kombinieren.
-- Parallel dazu Help Panel und kaufbare Hilfe-Items planen:
-  - hint.png fuer Shopkeeper-Hinweise.
-  - blueprint.png fuer Query-Gerueste / Lueckentexte.
+- Bestehenden Level-2-Platzhalter durch echte WHERE-Missionen ersetzen.
+- Danach Help Panel und kaufbare Hilfe-Items funktional bauen:
+  - Pro Mission genau ein Shopkeeper Hint.
+  - Pro Mission genau ein Query Blueprint.
+  - Aktuell gibt es nur Tooltip und Item-Acquired-Popup.
+  - Kauf, Geldabzug und Help-Panel-State fehlen noch bewusst.
 - Danach Grosses SQL Notebook planen und bauen.
 - Danach Tablet/iPad Querformat pruefen und Layout anpassen.
 - Danach Radio / Musik / erste Soundeffekte.
@@ -330,6 +355,12 @@ Session Summary
   - Aufgaben eignen sich als Roh-Curriculum, aber sollen spaeter geclustert und spielerisch ueberarbeitet werden.
 
 Naechster konkreter Startpunkt
-- Level 2 Missionen mit WHERE entwerfen.
-- Help Panel unten rechts bauen.
-- Kaufbare Hilfe-Items hint.png und blueprint.png einbinden.
+- Level 2 Missionen mit WHERE entwerfen und level2.js-Platzhalter ersetzen.
+- Vorgeschlagene Reihenfolge:
+  - Produkt mit bestimmtem Namen finden.
+  - Produkte unter einem Preis finden.
+  - Produkte ueber einem Preis finden.
+  - Kunden mit budget >= bestimmtem Wert finden.
+  - Inventory-Eintraege mit stock <= 2 finden.
+  - SELECT-Spaltenauswahl mit WHERE kombinieren.
+- Danach Help Panel unten rechts bauen und Hint/Blueprint-Kaeufe an gameState koppeln.
