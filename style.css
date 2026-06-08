@@ -129,6 +129,13 @@ h1 {
     display: none;
 }
 
+.svg-filters {
+    position: absolute;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+}
+
 #game-screen {
     position: relative;
     min-height: 790px;
@@ -137,6 +144,7 @@ h1 {
 #title-image-frame {
     width: min(760px, 92vw);
     padding: 10px;
+    position: relative;
     background:
         linear-gradient(180deg, #7b5d3b 0%, #3b2a22 100%);
     border: 4px solid #1b100e;
@@ -160,6 +168,26 @@ h1 {
     image-rendering: pixelated;
     border: 3px solid #2a1b18;
     box-sizing: border-box;
+}
+
+.title-banner {
+    position: absolute;
+    top: -110px;
+    width: clamp(180px, 13vw, 250px);
+    image-rendering: pixelated;
+    pointer-events: none;
+    z-index: 2;
+    filter:
+        drop-shadow(0 8px 8px rgba(0,0,0,0.42));
+    will-change: filter;
+}
+
+.title-banner-left {
+    left: max(24px, calc(50% - 760px));
+}
+
+.title-banner-right {
+    right: max(24px, calc(50% - 760px));
 }
 
 .top-layout {

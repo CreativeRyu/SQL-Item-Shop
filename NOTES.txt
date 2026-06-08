@@ -6,14 +6,8 @@ Core idea
 - Essential SQL concepts should come from learning progress, not from paid unlocks.
 
 Current next feature direction
-- Mission feedback is now in-world:
-  - Coin reward animation.
-  - +Gold popup.
-  - Complete stamp on the mission paper.
-  - Level recap / next-level intro scroll.
 - Next focus is content and progression:
-  - Level 2 missions with WHERE.
-  - Purchasable help items and help panel.
+  - Level 2 test / polish pass.
   - Large Notebook View.
   - Tablet/iPad landscape layout.
   - Radio, music, and sound effects.
@@ -139,15 +133,27 @@ Aktueller Stand
   - seed2.sql enthaelt Produkte, Inventar und Kundenbudgets fuer WHERE-Aufgaben.
   - level2ShopLayout.js platziert frische Waren, Rubin, Fitness-Items, Hint und Blueprint.
   - SQL Notebook ist nicht mehr Teil des Level-2-Seeds.
-- Shopkeeper Hint und Query Blueprint sind als Level-2-Key-Items vorbereitet:
-  - Hover vergroessert das Item und zeigt Tooltip.
-  - Klick zeigt aktuell nur das Item-Acquired-Popup mit Icon.
-  - Noch kein Geldabzug, kein Entfernen aus Inventory, kein Help-Panel-State.
+- Level 2 WHERE-Missionen sind eingebaut:
+  - 7 Missionen mit WHERE, Textvergleich, Zahlenvergleich und Spaltenauswahl.
+  - Mission 1 fuehrt WHERE per Soft-Tutorial ein.
+  - Mission 3 fuehrt Shopkeeper Hint und Query Blueprint storymaessig ein.
+  - Recap-Daten fuer Level 2 sind vorhanden.
+- Shopkeeper Hint und Query Blueprint sind aus der SQL-Datenbank herausgeloest:
+  - Sie liegen nicht mehr in products / inventory.
+  - Sie werden als missionsbasierte Spezialitems ueber gameState und shopLayout gerendert.
+  - Die Layout-IDs bleiben visuelle Slots, keine SQL-Produkt-IDs.
+- Help Panel ist eingebaut:
+  - Ab Level 2 Mission 3 erscheinen rechts unten inactive Icons.
+  - Gekaufte Hilfen werden aktiv und koennen angeklickt werden.
+  - Shopkeeper Hint kostet Gold, verschwindet nach Kauf aus dem Shop und zeigt einen Papier/Klemmbrett-Hinweis.
+  - Query Blueprint kostet Gold, verschwindet nach Kauf aus dem Shop und zeigt eine nicht kopierbare Blueprint-Karte.
+  - Help-Kaeufe sind pro Mission gespeichert.
+  - Alte automatische Questpanel-Hints und Timer sind entfernt.
 - Debug-Funktionen sind in debugTools.js ausgelagert.
-  - debugLastMissionLevel1() springt zum Testen direkt zur letzten Level-1-Mission.
+  - debug(level, mission) laedt Level, Seed und Mission gezielt.
 
 Naechster grosser Schritt
-1. Level 2 didaktisch sauber ausarbeiten.
+1. Level 2 testen und polishen.
    - Level 1 festigt die in Level 0 gelernten Skills:
      - SELECT
      - FROM
@@ -161,52 +167,15 @@ Naechster grosser Schritt
      - Vergleichsoperatoren einfuehren.
      - SELECT-Spaltenauswahl mit WHERE kombinieren.
      - Noch keine komplexen AND/OR-Kombinationen erzwingen.
-   - Moegliche Level-2-Aufgaben:
-     - Produkt mit bestimmtem Namen finden.
-     - Produkte unter / ueber einem Preis finden.
-     - Kunden mit genug Geld finden.
-     - Inventory-Eintraege mit wenig oder viel Bestand finden.
-     - Passende Spalten anzeigen statt immer SELECT *.
-   - Level 2 braucht:
-     - eigene Missionenfolge.
-     - Shopkeeper-Anlaesse / Mini-Story.
-     - Recap-Daten am Levelende.
-   - Level 2 Seed/Layout sind bereits vorbereitet.
-   - Naechster Schritt fuer Level 2:
-     - Platzhaltermission ersetzen.
-     - 5-8 WHERE-Missionen schreiben.
-     - Validatoren fuer WHERE-Missionen bauen.
-     - Recap-Daten am Levelende ergaenzen.
+   - Naechster Schritt:
+     - Level 2 komplett durchtesten.
+     - Missionstexte und Shopkeeper-Stimme sauber nachziehen.
+     - Validatoren gegen zu leichte / falsche Loesungen pruefen.
+     - Help-Panel-Flow in jeder Mission pruefen.
+     - Rewards und Geldbalance pruefen.
+     - Umlaute / Browserdarstellung pruefen.
 
-2. Help Panel und kaufbare Hilfe-Items bauen.
-   - Neue Shop-Items sind visuell vorbereitet:
-     - hint.png als Shopkeeper-Hinweis.
-     - blueprint.png als Query Blueprint / Loesungsgeruest.
-   - Help-Items sind Key-Items, keine normalen Lagerwaren:
-     - Pro Mission gibt es genau einen Shopkeeper Hint.
-     - Pro Mission gibt es genau einen Query Blueprint.
-     - Beide erscheinen im Shop als kaufbare Spezialitems.
-     - Der sichtbare Bestand kann im Seed erstmal 1 sein.
-     - Die echte "pro Mission gekauft"-Logik soll spaeter ueber gameState / Help Panel laufen,
-       nicht dauerhaft ueber den SQL-Lagerbestand.
-   - Beide Items sollen spaeter als kaufbare Hilfen pro Mission funktionieren.
-   - Wer die Hilfen nicht kauft, behaelt mehr Geld fuer andere Dinge.
-   - Nach Kauf erscheinen kleine klickbare UI-Buttons im Help Panel unten rechts.
-   - Help Panel:
-     - zeigt gekaufte Hilfeelemente zur aktuellen Mission.
-     - kann zwischen Hinweis und Blueprint wechseln.
-     - bleibt getrennt vom Questpanel.
-     - verdeckt keine wichtigen Quest- oder Editor-Elemente.
-   - Hinweis:
-     - kurzer Shopkeeper-Tipp.
-     - gibt Richtung, aber keine komplette Loesung.
-   - Blueprint:
-     - zeigt Query-Geruest oder Lueckentext.
-     - hilft beim Aufbau der Query, ohne sie komplett abzunehmen.
-   - Diese Funktion ist wahrscheinlich kleiner als die grosse Notebook-Ansicht,
-     weil sie erstmal nur missionsbezogene Inhalte anzeigen muss.
-
-3. Story-Verteilung fuer Missionen konkretisieren.
+2. Story-Verteilung fuer Missionen konkretisieren.
    - Questpanel:
      - klare Aufgabe.
      - kurz, praktisch, waehrend der Mission nutzbar.
@@ -224,7 +193,7 @@ Naechster grosser Schritt
      - Texte duerfen wichtige UI nicht verdecken.
      - Spaeter besonders wegen Tablet-Layout pruefen.
 
-4. Grosses SQL Notebook planen und bauen.
+3. Grosses SQL Notebook planen und bauen.
    - Das kleine Notebook bleibt Schnelluebersicht im Hauptscreen.
    - Die grosse Notebook-Ansicht wird das eigentliche Lernwerkzeug.
    - Inhalte:
@@ -239,7 +208,7 @@ Naechster grosser Schritt
      - Danach ist das Schema dauerhaft ueber das Notebook abrufbar.
      - SQL bleibt dadurch das Werkzeug, nicht ein Klick-Shortcut.
 
-5. Tablet / iPad Anpassung planen.
+4. Tablet / iPad Anpassung planen.
    - Zielgeraet erstmal Tablet im Querformat.
    - Hochformat muss nicht priorisiert werden.
    - Aktuelles Desktop-Layout ist sehr breit:
@@ -253,7 +222,7 @@ Naechster grosser Schritt
      - Wie wird das Notebook auf Tablet platziert?
      - Verdecken Shopkeeper-Bubbles, Tutorial oder Popups wichtige UI?
 
-6. Radio, Musik und Soundeffekte.
+5. Radio, Musik und Soundeffekte.
    - Radio als kaufbares Atmosphaere-Item.
    - Nach Kauf werden die vorbereiteten Audio-Buttons sichtbar.
    - Musik ins Spiel bringen.
@@ -264,7 +233,7 @@ Naechster grosser Schritt
      - Item gekauft.
      - Warnung / Fehler.
 
-7. Weitere sinnvolle Geld-Sinks planen.
+6. Weitere sinnvolle Geld-Sinks planen.
    - Geld soll mehr Bedeutung bekommen als nur Notebook kaufen.
    - Moegliche Items:
      - Radio.
@@ -279,7 +248,7 @@ Naechster grosser Schritt
      - Spieler koennen sie im Shop/Archiv kaufen oder dauerhaft sichern.
      - Letzte Szene erst nach Spielabschluss.
 
-8. Cutscene-System planen.
+7. Cutscene-System planen.
    - Fuer besondere Momente:
      - Levelende
      - Item-Freischaltung
@@ -293,7 +262,7 @@ Naechster grosser Schritt
    - Nicht jede Mission braucht Cutscene. Normale Missionen bekommen hoechstens kurzen Shopkeeper-Anlass.
    - Vermutlich eher spaeter bauen, wenn Levelinhalt, Notebook und Geld-Sinks klarer sind.
 
-9. Source Material / Jupyter Aufgaben auswerten.
+8. Source Material / Jupyter Aufgaben auswerten.
    - Notebook liegt in source_material/sql_aufgaben.ipynb.
    - Aufgaben nicht 1:1 uebernehmen.
    - Erst clustern:
@@ -311,7 +280,7 @@ Naechster grosser Schritt
      - Transaktionen / Archivierung
    - Danach pro Level 5-8 Hauptmissionen plus optionale Bonusquests bauen.
 
-10. Datenmodell v2 planen.
+9. Datenmodell v2 planen.
    - Aktuell sauberer als vorher, aber spaeter brauchen wir wahrscheinlich:
      - categories
      - suppliers
@@ -328,15 +297,15 @@ Naechster grosser Schritt
    - Visuals bleiben ausserhalb der SQL-Lerndaten.
 
 Kurzfristige Prioritaet fuer morgen
-- Zuerst Level 2 didaktisch und storymaessig ausarbeiten.
-- Level 2 soll WHERE einfuehren und mit SELECT / FROM / Spaltenauswahl kombinieren.
-- Bestehenden Level-2-Platzhalter durch echte WHERE-Missionen ersetzen.
-- Danach Help Panel und kaufbare Hilfe-Items funktional bauen:
-  - Pro Mission genau ein Shopkeeper Hint.
-  - Pro Mission genau ein Query Blueprint.
-  - Aktuell gibt es nur Tooltip und Item-Acquired-Popup.
-  - Kauf, Geldabzug und Help-Panel-State fehlen noch bewusst.
-- Danach Grosses SQL Notebook planen und bauen.
+- Zuerst Level 2 komplett testen und aufraeumen:
+  - Missionen spielen.
+  - Texte und Shopkeeper-Stimme polishen.
+  - Validatoren pruefen.
+  - Help-Panel und Spezialitems in Mission 3+ testen.
+  - Geldabzug, Item-Entfernung und per-Mission-Help-State pruefen.
+  - Umlaute / Browserdarstellung checken.
+- Danach das letzte grosse UI-Element planen und bauen:
+  - Grosses SQL Notebook als erweiterte Lernansicht.
 - Danach Tablet/iPad Querformat pruefen und Layout anpassen.
 - Danach Radio / Musik / erste Soundeffekte.
 - Cutscenes und Video-Sammlung eher spaeter planen, wenn Progression und Geld-Sinks klarer sind.
@@ -364,12 +333,6 @@ Session Summary
   - Aufgaben eignen sich als Roh-Curriculum, aber sollen spaeter geclustert und spielerisch ueberarbeitet werden.
 
 Naechster konkreter Startpunkt
-- Level 2 Missionen mit WHERE entwerfen und level2.js-Platzhalter ersetzen.
-- Vorgeschlagene Reihenfolge:
-  - Produkt mit bestimmtem Namen finden.
-  - Produkte unter einem Preis finden.
-  - Produkte ueber einem Preis finden.
-  - Kunden mit budget >= bestimmtem Wert finden.
-  - Inventory-Eintraege mit stock <= 2 finden.
-  - SELECT-Spaltenauswahl mit WHERE kombinieren.
-- Danach Help Panel unten rechts bauen und Hint/Blueprint-Kaeufe an gameState koppeln.
+- Level 2 mit debug(2, 1) bis debug(2, 7) bzw. normalem Levelwechsel testen.
+- Danach Level-2-Texte, Missionen, Rewards und Validatoren polishen.
+- Danach Grosses SQL Notebook als letztes grosses UI-Element planen und als MVP bauen.
