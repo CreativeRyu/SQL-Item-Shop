@@ -65,6 +65,15 @@ Pedagogical notes
 - Good players can spend extra money on cosmetics or shop upgrades.
 - Struggling players can spend money on hints, blueprints, or schema tools.
 
+Shopkeeper voice / Tonalitaet
+- Der Shopkeeper ist der weise Mentor und Ausbilder des Spielers.
+- Er macht keine Fehler und tritt mit ruhiger Autoritaet auf.
+- Er trainiert fleissig im Gym, weil Koerper und Geist fuer ihn eine Einheit sind.
+- Er ist Mentor, Ausbilder, Gym Bro und quasi der Beste, bleibt dabei aber immer respektvoll.
+- Sein Humor darf trocken, selbstbewusst und leicht uebertrieben sein, aber nie gemein.
+- Er motiviert den Spieler mit Disziplin, Klarheit und praktischen Ladenbeispielen.
+- SQL-Erklaerungen sollen sich anfuehlen wie Training: sauberer Aufbau, klare Technik, keine Hektik.
+
 Potential learning path
 - SELECT basics
 - Columns and FROM

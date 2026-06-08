@@ -22,17 +22,32 @@ let editor;
 let databaseReady = false;
 let currentLevel = LEVELS.level0;
 let currentMissionIndex = 0;
-let hintTimeout;
 let gameSystemsReady = false;
 let gameActive = false;
 let moneyCountAnimation;
 let missionTransitionActive = false;
 let levelTransitionActive = false;
 const SCROLL_ANIMATION_DURATION = 480;
+const HELP_ITEMS = {
+    hint: {
+        price: 10,
+        title: "SHOPKEEPER HINT",
+        icon: "./assets/sprites/shopItems/hint.png",
+        popupDescription: "Schaltet einen\nShopkeeper-Hinweis\nfür diese Mission frei."
+    },
+    blueprint: {
+        price: 25,
+        title: "QUERY BLUEPRINT",
+        icon: "./assets/sprites/shopItems/blueprint.png",
+        popupDescription: "Schaltet ein\nQuery-Gerüst\nfür diese Mission frei."
+    }
+};
+let activeHelpType = null;
 let gameState = {
     money: 0,
     hasNotebook: false,
-    is_notebook_unlocked: false
+    is_notebook_unlocked: false,
+    helpPurchases: {}
 };
 
 
@@ -116,6 +131,7 @@ async function initGameSystems() {
     await initSqlEngine();
     await loadQuotes();
     initNotebook();
+    initHelpPanel();
     gameSystemsReady = true;
 }
 
@@ -159,7 +175,8 @@ async function startNewGame() {
     gameState = {
         money: 0,
         hasNotebook: false,
-        is_notebook_unlocked: false
+        is_notebook_unlocked: false,
+        helpPurchases: {}
     };
 
     // später: altes Savegame löschen
@@ -179,7 +196,7 @@ async function continueGame() {
 
     currentLevel = LEVELS[save.levelId] || LEVELS.level0;
     currentMissionIndex = save.missionIndex;
-    gameState = save.gameState;
+    gameState = normalizeGameState(save.gameState);
     loadNotebookState(save.notebookState);
 
     await initCurrentLevelDatabase();
@@ -196,15 +213,18 @@ function enterGame() {
 }
 
 function renderGame() {
+    gameState = normalizeGameState(gameState);
+
     if(gameState.hasNotebook) {
         showNotebookUI();
     }
 
     syncUnlockedShopItems();
-    renderShopVisuals(db, getCurrentShopLayout(), buyNotebook, getKeyItemActions());
+    renderCurrentShopVisuals();
     refreshMoneyDisplay();
     refreshMission();
     updateEditorToolsVisibility();
+    updateHelpPanel();
     syncTutorialForCurrentMission();
 }
 
@@ -306,14 +326,15 @@ function advanceMission(mission) {
         return;
     }
 
+    renderCurrentShopVisuals();
     refreshMission();
     syncTutorialForCurrentMission();
+    updateHelpPanel();
     saveCurrentGame();
 }
 
 function completeCurrentLevel() {
     clearTutorial();
-    clearTimeout(hintTimeout);
 
     const completedLevel = currentLevel;
     const nextLevel = getNextLevel(completedLevel);
@@ -359,7 +380,6 @@ function getNextLevel(level) {
 function showLevelTransition(completedLevel, nextLevel, onComplete) {
     levelTransitionActive = true;
     clearTutorial();
-    clearTimeout(hintTimeout);
 
     const overlay = document.getElementById("level-transition-overlay");
     const content = document.getElementById("level-scroll-content");
@@ -524,7 +544,6 @@ function renderTable(results, header= null) {
 }
 
 function refreshMission() {
-    clearQuestHint();
     const missionText = document.getElementById("mission-text");
     const panelHeader = document.querySelector(".quest-panel-header");
     const mission = getCurrentMission();
@@ -539,8 +558,6 @@ function refreshMission() {
         ${renderMissionDescription(mission)}
     </div>
     `;
-
-    startMissionHintTimer();
 }
 
 function renderMissionDescription(mission) {
@@ -633,6 +650,15 @@ function getCurrentMission() {
         .missions[currentMissionIndex];
 }
 
+function normalizeGameState(state = {}) {
+    return {
+        money: state.money || 0,
+        hasNotebook: !!state.hasNotebook,
+        is_notebook_unlocked: !!state.is_notebook_unlocked,
+        helpPurchases: state.helpPurchases || {}
+    };
+}
+
 function getDb() {
     return db;
 }
@@ -653,6 +679,67 @@ function getCurrentShopLayout() {
     return SHOP_LAYOUTS[currentLevel.shopLayoutId] || SHOP_LAYOUTS.level0;
 }
 
+function getCurrentMissionKey() {
+    return `${currentLevel.levelId}:${getCurrentMission()?.id || currentMissionIndex}`;
+}
+
+function isHelpIntroduced() {
+    return currentLevel.levelId === "level2" && currentMissionIndex >= 2;
+}
+
+function getCurrentHelpPurchases() {
+    const missionKey = getCurrentMissionKey();
+    gameState.helpPurchases[missionKey] ||= {};
+    return gameState.helpPurchases[missionKey];
+}
+
+function hasHelpPurchase(type) {
+    return !!getCurrentHelpPurchases()[type];
+}
+
+function clearHelpPurchasesForLevel(levelId) {
+    Object.keys(gameState.helpPurchases).forEach(key => {
+        if(key.startsWith(`${levelId}:`)) {
+            delete gameState.helpPurchases[key];
+        }
+    });
+}
+
+function getCurrentSpecialShopItems() {
+    if(!isHelpIntroduced())
+        return [];
+
+    const items = [];
+
+    if(!hasHelpPurchase("hint")) {
+        items.push({
+            layoutId: 12,
+            name: "Shopkeeper Hint",
+            stock: 1
+        });
+    }
+
+    if(!hasHelpPurchase("blueprint")) {
+        items.push({
+            layoutId: 8,
+            name: "Query Blueprint",
+            stock: 1
+        });
+    }
+
+    return items;
+}
+
+function renderCurrentShopVisuals() {
+    renderShopVisuals(
+        db,
+        getCurrentShopLayout(),
+        buyNotebook,
+        getKeyItemActions(),
+        getCurrentSpecialShopItems()
+    );
+}
+
 function missionHasTutorial() {
     return !!getCurrentMission()?.tutorialSteps;
 }
@@ -670,33 +757,78 @@ function syncTutorialForCurrentMission() {
     }
 }
 
-function startMissionHintTimer() {
-    if(missionHasTutorial())
+function initHelpPanel() {
+    document
+        .getElementById("help-hint-tab")
+        .addEventListener("click", () => selectHelpType("hint"));
+    document
+        .getElementById("help-blueprint-tab")
+        .addEventListener("click", () => selectHelpType("blueprint"));
+}
+
+function selectHelpType(type) {
+    if(!hasHelpPurchase(type))
         return;
-    clearTimeout(hintTimeout);
+
+    activeHelpType = type;
+    updateHelpPanel();
+}
+
+function updateHelpPanel() {
+    const panel = document.getElementById("help-panel");
+    const hintTab = document.getElementById("help-hint-tab");
+    const blueprintTab = document.getElementById("help-blueprint-tab");
+    const card = document.getElementById("help-card");
+    const cardTitle = document.getElementById("help-card-title");
+    const cardContent = document.getElementById("help-card-content");
+
+    if(!isHelpIntroduced()) {
+        panel.classList.add("hidden");
+        activeHelpType = null;
+        return;
+    }
+
+    panel.classList.remove("hidden");
+    setHelpTabState(hintTab, "hint");
+    setHelpTabState(blueprintTab, "blueprint");
+
+    if(activeHelpType && !hasHelpPurchase(activeHelpType)) {
+        activeHelpType = null;
+    }
+
+    if(!activeHelpType) {
+        card.className = "hidden";
+        cardTitle.innerText = "";
+        cardContent.innerHTML = "";
+        return;
+    }
+
+    const content = getHelpContent(activeHelpType);
+    card.className = `help-card-${activeHelpType}`;
+    cardTitle.innerText = content.title;
+    cardContent.innerHTML = content.body;
+}
+
+function setHelpTabState(tab, type) {
+    tab.classList.toggle("unlocked", hasHelpPurchase(type));
+    tab.classList.toggle("active", activeHelpType === type);
+    tab.disabled = !hasHelpPurchase(type);
+}
+
+function getHelpContent(type) {
     const mission = getCurrentMission();
-    if(!mission.hint)
-        return;
-    hintTimeout = setTimeout(() => {
-        showHintMessage(mission.hint,true);
-        renderQuestHint(mission.hint);
-    }, 30000);
-}
 
-function renderQuestHint(text) {
-    const hintBox = document.getElementById("quest-hint");
-    hintBox.innerHTML = `
-        <div class="quest-hint-title">
-            Shopkeeper's HINT
-        </div>
-        <div class="quest-hint">
-            ${text}
-        </div>`;
-}
+    if(type === "hint") {
+        return {
+            title: "Shopkeeper's Hint",
+            body: mission.hint || "Für diese Mission liegt noch kein Hinweis bereit."
+        };
+    }
 
-function clearQuestHint() {
-    const hintBox = document.getElementById("quest-hint");
-    hintBox.innerHTML = "";
+    return {
+        title: "Query Blueprint",
+        body: mission.blueprint || "Für diese Mission liegt noch kein Blueprint bereit."
+    };
 }
 
 function clearEditor() {
@@ -746,7 +878,7 @@ function unlockNotebook() {
         (product_id, stock)
         VALUES (7, 1)
     `);
-    renderShopVisuals(db, getCurrentShopLayout(), buyNotebook, getKeyItemActions());
+    renderCurrentShopVisuals();
 }
 
 function buyNotebook() {
@@ -763,7 +895,7 @@ function buyNotebook() {
         WHERE product_id = 7
     `);
     refreshMoneyDisplay();
-    renderShopVisuals(db, getCurrentShopLayout(), buyNotebook, getKeyItemActions());
+    renderCurrentShopVisuals();
     showItemPopup(
         "SQL NOTEBOOK",
         "./assets/sprites/shopItems/notebook.png",
@@ -780,19 +912,53 @@ function buyNotebook() {
 }
 
 function showShopkeeperHintPopup() {
-    showItemPopup(
-        "SHOPKEEPER HINT",
-        "./assets/sprites/shopItems/hint.png",
-        "Schaltet einen\nShopkeeper-Hinweis\nfür diese Mission frei."
-    );
-    hideTooltip();
+    buyHelpItem("hint");
 }
 
 function showQueryBlueprintPopup() {
+    buyHelpItem("blueprint");
+}
+
+function buyHelpItem(type) {
+    const item = HELP_ITEMS[type];
+
+    if(!item)
+        return;
+
+    if(hasHelpPurchase(type)) {
+        selectHelpType(type);
+        return;
+    }
+
+    if(gameState.money < item.price) {
+        showHintMessage("Dafür brauchst du mehr Gold. Disziplin ist kostenlos, Hinweise nicht.");
+        hideTooltip();
+        return;
+    }
+
+    gameState.money -= item.price;
+    getCurrentHelpPurchases()[type] = true;
+    activeHelpType = type;
+
+    refreshMoneyDisplay();
+    renderCurrentShopVisuals();
+    updateHelpPanel();
+    saveCurrentGame();
+
     showItemPopup(
-        "QUERY BLUEPRINT",
-        "./assets/sprites/shopItems/blueprint.png",
-        "Schaltet ein\nQuery-Gerüst\nfür diese Mission frei."
+        item.title,
+        item.icon,
+        item.popupDescription,
+        () => {
+            if(type === "hint") {
+                const hint = getCurrentMission()?.hint;
+                if(hint) {
+                    showHintMessage(hint, true);
+                }
+            }
+
+            updateHelpPanel();
+        }
     );
     hideTooltip();
 }
@@ -838,8 +1004,9 @@ async function resetCurrentLevel() {
 
     databaseReady = false;
     clearTutorial();
-    clearTimeout(hintTimeout);
     currentMissionIndex = 0;
+    clearHelpPurchasesForLevel(currentLevel.levelId);
+    activeHelpType = null;
     await initCurrentLevelDatabase();
 
     if(editor) {
@@ -848,10 +1015,11 @@ async function resetCurrentLevel() {
 
     clearQueryPanels();
 
-    renderShopVisuals(db, getCurrentShopLayout(), buyNotebook, getKeyItemActions());
+    renderCurrentShopVisuals();
     refreshMoneyDisplay();
     refreshMission();
     syncTutorialForCurrentMission();
+    updateHelpPanel();
     saveCurrentGame();
 
     showHintMessage("Level wurde neu gestartet.");

@@ -1,6 +1,6 @@
 CREATE TABLE products (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL,
+    name TEXT COLLATE NOCASE NOT NULL,
     price REAL NOT NULL
 );
 
@@ -12,7 +12,7 @@ CREATE TABLE inventory (
 
 CREATE TABLE customers (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL,
+    name TEXT COLLATE NOCASE NOT NULL,
     budget REAL NOT NULL
 );
 

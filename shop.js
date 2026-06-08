@@ -1,7 +1,13 @@
 const shopItems = document.getElementById("shop-items");
 const tooltip = document.getElementById("shop-tooltip");
 
-export function renderShopVisuals(db, shopLayout, buyNotebook, keyItemActions = {}) {
+export function renderShopVisuals(
+    db,
+    shopLayout,
+    buyNotebook,
+    keyItemActions = {},
+    specialShopItems = []
+) {
     const keyItems = {
         "SQL Notebook": {
             label: "SQL NOTEBOOK",
@@ -32,60 +38,23 @@ export function renderShopVisuals(db, shopLayout, buyNotebook, keyItemActions = 
     shopItems.innerHTML = "";
 
     rows.forEach(row => {
-        const productId = row[0];
-        const name = row[1];
-        const stock = row[2];
-        const visual = shopLayout[productId];
+        renderItemStack({
+            productId: row[0],
+            name: row[1],
+            stock: row[2],
+            shopLayout,
+            keyItems
+        });
+    });
 
-        if(!visual)
-            return;
-
-        const sprite = visual.sprite;
-        const posX = visual.posX;
-        const posY = visual.posY;
-        const scale = visual.scale;
-
-        const keyItem = visual.keyItem || keyItems[name];
-        const tooltipX = visual.tooltipX ?? keyItem?.tooltipX ?? posX - 16;
-        const tooltipY = visual.tooltipY ?? keyItem?.tooltipY ?? posY - 58;
-
-        const zIndex = keyItem
-            ? "z-index:25;"
-            : "";
-        const keyItemAttributes = keyItem
-            ? `
-                data-key-item="true"
-                data-tooltip-label="${escapeAttribute(keyItem.label)}"
-                data-tooltip-price="${escapeAttribute(keyItem.price)}"
-                data-tooltip-x="${tooltipX}"
-                data-tooltip-y="${tooltipY}"
-                data-action="${keyItem.action || ""}"`
-            : "";
-
-        const html = `
-        <div class="item-stack ${keyItem ? "shop-key-item" : ""}"
-            ${keyItemAttributes}
-            style="
-            left:${posX}px;
-            top:${posY}px;
-            ${zIndex}">
-
-            <div class="shop-item-wrapper"
-                style="transform: scale(${scale});">
-
-                <img class="shop-item" src="${sprite}">
-            </div>
-
-            <div class="item-count"
-                style="
-                right:${-7 * scale}px;
-                bottom:${-8 * scale}px;">
-
-                ${stock}
-            </div>
-        </div>`;
-
-        shopItems.insertAdjacentHTML("beforeend", html);
+    specialShopItems.forEach(item => {
+        renderItemStack({
+            productId: item.layoutId,
+            name: item.name,
+            stock: item.stock,
+            shopLayout,
+            keyItems
+        });
     });
 
     shopItems.onpointerover = event => {
@@ -130,6 +99,60 @@ export function renderShopVisuals(db, shopLayout, buyNotebook, keyItemActions = 
 
 export function hideTooltip() {
     tooltip.style.display = "none";
+}
+
+function renderItemStack({ productId, name, stock, shopLayout, keyItems }) {
+    const visual = shopLayout[productId];
+
+    if(!visual)
+        return;
+
+    const sprite = visual.sprite;
+    const posX = visual.posX;
+    const posY = visual.posY;
+    const scale = visual.scale;
+
+    const keyItem = visual.keyItem || keyItems[name];
+    const tooltipX = visual.tooltipX ?? keyItem?.tooltipX ?? posX - 16;
+    const tooltipY = visual.tooltipY ?? keyItem?.tooltipY ?? posY - 58;
+
+    const zIndex = keyItem
+        ? "z-index:25;"
+        : "";
+    const keyItemAttributes = keyItem
+        ? `
+            data-key-item="true"
+            data-tooltip-label="${escapeAttribute(keyItem.label)}"
+            data-tooltip-price="${escapeAttribute(keyItem.price)}"
+            data-tooltip-x="${tooltipX}"
+            data-tooltip-y="${tooltipY}"
+            data-action="${keyItem.action || ""}"`
+        : "";
+
+    const html = `
+    <div class="item-stack ${keyItem ? "shop-key-item" : ""}"
+        ${keyItemAttributes}
+        style="
+        left:${posX}px;
+        top:${posY}px;
+        ${zIndex}">
+
+        <div class="shop-item-wrapper"
+            style="transform: scale(${scale});">
+
+            <img class="shop-item" src="${sprite}">
+        </div>
+
+        <div class="item-count"
+            style="
+            right:${-7 * scale}px;
+            bottom:${-8 * scale}px;">
+
+            ${stock}
+        </div>
+    </div>`;
+
+    shopItems.insertAdjacentHTML("beforeend", html);
 }
 
 function escapeAttribute(value) {

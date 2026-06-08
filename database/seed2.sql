@@ -7,11 +7,9 @@ VALUES
 (5, 'Gurke', 4.49),
 (6, 'Kartoffel', 5.99),
 (7, 'Rubin', 49.99),
-(8, 'Query Blueprint', 25.00),
 (9, 'Protein Shake', 4.99),
 (10, 'Creatine', 29.99),
-(11, 'Lifting Belt', 49.99),
-(12, 'Shopkeeper Hint', 10.00);
+(11, 'Lifting Belt', 49.99);
 
 INSERT INTO inventory (product_id, stock)
 VALUES
@@ -22,11 +20,9 @@ VALUES
 (5, 15),
 (6, 10),
 (7, 1),
-(8, 1),
 (9, 8),
 (10, 2),
-(11, 1),
-(12, 1);
+(11, 1);
 
 INSERT INTO customers (name, budget)
 VALUES
