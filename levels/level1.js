@@ -27,6 +27,27 @@ function hasColumns(result, expectedColumns) {
   );
 }
 
+function usesSqliteTableFilter(query) {
+  const normalized = normalizedQuery(query).replace(/\s+/g, " ");
+
+  return (
+    normalized.includes("where") &&
+    /\btype\s*=\s*['"]table['"]/.test(normalized)
+  );
+}
+
+function excludesViews(result) {
+  if(!hasResult(result)) {
+    return false;
+  }
+
+  const values = result[0].values.flat().map(value =>
+    String(value).toLowerCase()
+  );
+
+  return !values.includes("shop_items");
+}
+
 function selectsAllFrom(query, result, tableName) {
   return (
     usesTable(query, tableName) &&
@@ -127,6 +148,8 @@ const level1 = {
 
         return (
           normalized.includes("sqlite_master") &&
+          usesSqliteTableFilter(query) &&
+          excludesViews(result) &&
           hasResult(result)
         );
       }

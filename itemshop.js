@@ -6,7 +6,7 @@ import {initNotebook, showNotebookUI, unlockNotebookEntry, completeNotebookEntry
 import { renderShopVisuals, hideTooltip} from "./shop.js";
 import { processDiscoveries } from "./notebookDiscovery.js";
 import {saveGame,loadGame} from "./savegame.js";
-import { registerDebugTools } from "./debugTools.js";
+import { initDebugTools } from "./debugTools.js";
 import {
     loadQuotes,
     showHintMessage,
@@ -70,11 +70,6 @@ async function initDatabase(seedPath = "./database/seed.sql") {
 async function initCurrentLevelDatabase() {
     await initDatabase(currentLevel.seedPath);
 }
-
-window.inspectTable = function(table) {
-    const result = db.exec(`PRAGMA table_info(${table})`);
-    renderTable(result, `SCHEMA: ${table}`);
-};
 
 bootApp();
 
@@ -638,6 +633,22 @@ function getCurrentMission() {
         .missions[currentMissionIndex];
 }
 
+function getDb() {
+    return db;
+}
+
+function setCurrentLevel(level) {
+    currentLevel = level;
+}
+
+function setCurrentMissionIndex(index) {
+    currentMissionIndex = index;
+}
+
+function setGameState(nextGameState) {
+    gameState = nextGameState;
+}
+
 function getCurrentShopLayout() {
     return SHOP_LAYOUTS[currentLevel.shopLayoutId] || SHOP_LAYOUTS.level0;
 }
@@ -693,6 +704,11 @@ function clearEditor() {
         return;
 
     editor.setValue("");
+}
+
+function clearQueryPanels() {
+    document.getElementById("result").innerHTML = "";
+    document.getElementById("error-box").innerHTML = "";
 }
 
 function syncUnlockedShopItems() {
@@ -830,8 +846,7 @@ async function resetCurrentLevel() {
         editor.setValue("");
     }
 
-    document.getElementById("result").innerHTML = "";
-    document.getElementById("error-box").innerHTML = "";
+    clearQueryPanels();
 
     renderShopVisuals(db, getCurrentShopLayout(), buyNotebook, getKeyItemActions());
     refreshMoneyDisplay();
@@ -856,50 +871,17 @@ setInterval(() => {
 }, 12000);
 
 
-// DEBUG FEATURES
-
-function jumpToMission(index) {
-    currentMissionIndex = index;
-    refreshMission();
-    const mission = getCurrentMission();
-    if(mission?.tutorialSteps) {
-        loadTutorialSteps(mission.tutorialSteps);
-    }
-}
-
-function debugNotebook() {
-    gameState.money = 999;
-    unlockNotebook();
-    currentMissionIndex = 5;
-    refreshMoneyDisplay();
-    refreshMission();
-    loadTutorialSteps(
-        currentLevel.missions[5].tutorialSteps
-    );
-}
-
-async function debugLevel(levelId, missionIndex = 0) {
-    currentLevel = LEVELS[levelId];
-    currentMissionIndex = missionIndex;
-    gameState.money = 999;
-    gameState.hasNotebook = true;
-    gameState.is_notebook_unlocked = true;
-    await initCurrentLevelDatabase();
-    showNotebookUI();
-    clearTutorial();
-    document.getElementById("tutorial-overlay").style.display = "none";
-    refreshMoneyDisplay();
-    refreshMission();
-    syncTutorialForCurrentMission();
-    console.log(`${currentLevel.title} Debug gestartet`);
-}
-
-registerDebugTools({
-    jumpToMission,
-    debugNotebook,
-    debugLevel1: () => debugLevel("level1"),
-    debugLastMissionLevel1: () => {
-        const lastMissionIndex = LEVELS.level1.missions.length - 1;
-        return debugLevel("level1", lastMissionIndex);
-    }
+initDebugTools({
+    LEVELS,
+    getDb,
+    setCurrentLevel,
+    setCurrentMissionIndex,
+    setGameState,
+    initGameSystems,
+    initCurrentLevelDatabase,
+    enterGame,
+    clearEditor,
+    clearQueryPanels,
+    renderTable,
+    clearTutorial
 });

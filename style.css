@@ -129,6 +129,11 @@ h1 {
     display: none;
 }
 
+#game-screen {
+    position: relative;
+    min-height: 790px;
+}
+
 #title-image-frame {
     width: min(760px, 92vw);
     padding: 10px;
@@ -158,8 +163,10 @@ h1 {
 }
 
 .top-layout {
+    --top-decoration-space: 24px;
     width: fit-content;
-    margin: 0 auto 24px auto;
+    margin: 10px auto 24px auto;
+    padding-top: 10px;
     display: grid;
     grid-template-columns:
         470px
@@ -171,6 +178,7 @@ h1 {
 .bottom-layout {
     width: 720px;
     margin: 0 auto;
+    height: 270px;
 }
 
 #shop-screen {
@@ -460,6 +468,14 @@ h1 {
     gap: 10px;
 }
 
+#editor-zone {
+    position: absolute;
+    top: 464px;
+    left: 50%;
+    width: 720px;
+    transform: translateX(-50%);
+}
+
 .CodeMirror {
     height: 220px;
     overflow: hidden;
@@ -598,6 +614,7 @@ h1 {
     image-rendering: pixelated;
     width: 100%;
     box-sizing: border-box;
+    margin-top: calc(var(--top-decoration-space) * -1);
 }
 
 .quest-panel-header {
