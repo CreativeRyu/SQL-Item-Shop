@@ -64,8 +64,6 @@ export function showTutorialWarning(text) {
     const textBox = document.getElementById("tutorial-warning-text");
     textBox.innerHTML = text;
     box.classList.add("visible");
-    console.log(box);
-    console.log(textBox);
     clearTimeout(box.hideTimeout);
     box.hideTimeout = setTimeout(() => {
         box.classList.remove("visible");

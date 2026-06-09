@@ -28,6 +28,9 @@ let moneyCountAnimation;
 let missionTransitionActive = false;
 let levelTransitionActive = false;
 const SCROLL_ANIMATION_DURATION = 480;
+const GAME_BASE_WIDTH = 1718;
+const GAME_MIN_SCALE = 0.72;
+const GAME_SIDE_PADDING = 40;
 const HELP_ITEMS = {
     hint: {
         price: 10,
@@ -89,9 +92,26 @@ async function initCurrentLevelDatabase() {
 bootApp();
 
 function bootApp() {
+    updateGameScale();
+    window.addEventListener("resize", updateGameScale);
     initStartScreen();
     showStartScreen();
     clearTutorial();
+}
+
+function updateGameScale() {
+    const availableWidth = window.innerWidth - GAME_SIDE_PADDING;
+    const scale = Math.min(
+        1,
+        Math.max(GAME_MIN_SCALE, availableWidth / GAME_BASE_WIDTH)
+    );
+
+    document.documentElement.style.setProperty(
+        "--game-scale",
+        scale.toFixed(3)
+    );
+
+    window.dispatchEvent(new CustomEvent("game-scale-change"));
 }
 
 function initStartScreen() {

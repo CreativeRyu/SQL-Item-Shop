@@ -6,6 +6,11 @@
     overflow-x: hidden;
 }
 
+:root {
+    --game-scale: 1;
+    --game-base-width: 1718px;
+}
+
 @font-face {
     font-family: 'Ithaca';
     src: url('./assets/fonts/Ithaca-LVB75.ttf') format('truetype');
@@ -138,11 +143,14 @@ h1 {
 
 #game-screen {
     position: relative;
+    width: var(--game-base-width);
     min-height: 790px;
+    margin: 0 auto;
+    zoom: var(--game-scale);
 }
 
 #title-image-frame {
-    width: min(760px, 92vw);
+    width: min(760px, 86vw, calc(48vh * 16 / 9));
     padding: 10px;
     position: relative;
     background:
@@ -162,7 +170,8 @@ h1 {
 
 #title-image {
     width: 100%;
-    max-height: 420px;
+    height: auto;
+    max-height: none;
     display: block;
     object-fit: contain;
     image-rendering: pixelated;
@@ -309,7 +318,7 @@ h1 {
 
 #shopkeeper-hint.visible {
     opacity: 1;
-    transform: translateY(0px);
+    transform: translateX(-50%) translateY(0px);
 }
 
 #shopkeeper-warning {
@@ -343,7 +352,7 @@ h1 {
 
 #shopkeeper-warning.visible {
     opacity: 1;
-    transform: translateY(0px);
+    transform: translateX(-50%) translateY(0px);
 }
 
 #shop-background {
@@ -1578,7 +1587,7 @@ tr:hover td {
 ======================================================= */
 
 #tutorial-overlay {
-    position: fixed;
+    position: absolute;
     inset: 0;
     background: rgba(0, 0, 0, 0);
     z-index: 9999;
@@ -1810,6 +1819,48 @@ tr:hover td {
     border-top-color: #c47a5e;
     border-left-color: #c47a5e;
     border-bottom-color: #2a1512;
+}
+
+@media (max-width: 1100px) {
+    .title-banner {
+        display: none;
+    }
+
+    #start-screen {
+        gap: 12px;
+        justify-content: flex-start;
+        padding-top: 1vh;
+    }
+
+    #start-screen h1 {
+        font-size: clamp(42px, 6vw, 58px);
+        margin-bottom: 2px;
+    }
+
+    #title-image-frame {
+        width: min(760px, 78vw, calc(44vh * 16 / 9));
+        padding: 8px;
+    }
+
+    #start-screen #support-project-btn {
+        position: static;
+        margin-top: 4px;
+    }
+
+    #start-screen button {
+        width: 185px;
+        padding: 8px 12px;
+        font-size: 15px;
+        border-bottom-width: 5px;
+    }
+
+    #new-game-btn {
+        margin-top: 2px;
+    }
+
+    #load-game-btn {
+        margin-top: 0;
+    }
 }
 
 @media (max-width: 700px) {
