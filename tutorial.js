@@ -39,11 +39,13 @@ function showTutorialStep() {
     const nextButton = document.getElementById("tutorial-next-btn");
     if(runButtonIntroduced || step.waitForMission) {
         editorZone.style.zIndex = "10001";
+        editorZone.style.pointerEvents = step.waitForMission ? "" : "none";
         runButton.style.position = "relative";
         runButton.style.zIndex = "10002";
         runButton.style.pointerEvents = step.waitForMission ? "" : "none";
     } else {
         editorZone.style.zIndex = "";
+        editorZone.style.pointerEvents = "";
         runButton.style.position = "";
         runButton.style.zIndex = "";
         runButton.style.pointerEvents = "";
@@ -156,6 +158,7 @@ function hideTutorialOverlay() {
     overlay.style.display = "none";
     overlay.classList.remove("waiting-for-mission", "soft-tutorial");
     document.getElementById("editor-zone").style.zIndex = "";
+    document.getElementById("editor-zone").style.pointerEvents = "";
     document.getElementById("run-btn").style.position = "";
     document.getElementById("run-btn").style.zIndex = "";
     document.getElementById("run-btn").style.pointerEvents = "";
