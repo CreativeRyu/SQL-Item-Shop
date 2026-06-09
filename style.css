@@ -954,6 +954,13 @@ tr:hover td {
     background: transparent;
     box-shadow: none;
     cursor: default;
+    outline: none;
+}
+
+.help-tab:focus,
+.help-tab:focus-visible {
+    outline: none;
+    box-shadow: none;
 }
 
 .help-tab img {
@@ -1206,7 +1213,7 @@ tr:hover td {
 
 #support-popup {
     position: relative;
-    width: 360px;
+    width: min(460px, 94vw);
     image-rendering: pixelated;
     animation: popupAppear 0.22s ease-out;
 }
@@ -1220,8 +1227,8 @@ tr:hover td {
 
 #support-popup-close {
     position: absolute;
-    top: 34px;
-    right: 36px;
+    top: 44px;
+    right: 48px;
     width: 28px;
     height: 28px;
     padding: 0;
@@ -1248,32 +1255,34 @@ tr:hover td {
 
 #support-popup-title {
     position: absolute;
-    top: 66px;
-    left: 28px;
-    right: 28px;
+    top: 84px;
+    left: 42px;
+    right: 42px;
     text-align: center;
     font-family: 'Ithaca', sans-serif;
-    font-size: 30px;
+    font-size: 34px;
     letter-spacing: 1px;
     color: #5a3920;
 }
 
 #support-popup-description {
     position: absolute;
-    top: 126px;
-    left: 44px;
-    right: 44px;
+    top: 154px;
+    left: 58px;
+    right: 58px;
+    bottom: 240px;
+    overflow: auto;
     text-align: center;
     font-family: 'superhelio _regular', sans-serif;
-    font-size: 13px;
-    line-height: 1.45;
+    font-size: 14px;
+    line-height: 1.55;
     color: #4b3824;
 }
 
 #support-popup-heart {
     position: absolute;
     left: 50%;
-    bottom: 178px;
+    bottom: 204px;
     width: 34px;
     height: 34px;
     transform: translateX(-50%);
@@ -1284,9 +1293,9 @@ tr:hover td {
 #support-paypal-link {
     position: absolute;
     left: 50%;
-    bottom: 124px;
+    bottom: 142px;
     width: 215px;
-    padding: 9px 10px;
+    padding: 10px 12px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -1299,7 +1308,7 @@ tr:hover td {
     border-radius: 7px;
     color: white;
     font-family: 'superhelio _regular', sans-serif;
-    font-size: 14px;
+    font-size: 15px;
     text-align: center;
     text-decoration: none;
     text-shadow: 1px 1px 0 rgba(0,0,0,0.4);
@@ -1312,9 +1321,9 @@ tr:hover td {
 
 #support-popup-note {
     position: absolute;
-    left: 38px;
-    right: 38px;
-    bottom: 46px;
+    left: 52px;
+    right: 52px;
+    bottom: 58px;
     text-align: center;
     font-family: 'superhelio _regular', sans-serif;
     font-size: 10px;
@@ -1685,48 +1694,54 @@ tr:hover td {
 }
 
 #tutorial-overlay.soft-tutorial #tutorial-highlight {
-    border: 1px solid rgba(255,211,107,0.7);
-    border-radius: 20px;
-    box-shadow:
-        /* Laser Kern innen */
-        inset 0 0 4px #fff8d0,
-        /* Inneres Glühen */
-        inset 0 0 12px rgba(255,211,107,0.75),
-        /* Kante */
-        0 0 4px #ffd36b,
-        /* Glow */
-        0 0 12px rgba(255,211,107,0.5),
-        0 0 24px rgba(255,211,107,0.3);
-    animation: notebookGlow 2s ease-in-out infinite;
+    box-shadow: none;
+    border-radius: 0;
 }
+
+.tutorial-soft-glow-target {
+    filter:
+        drop-shadow(0 0 10px rgba(255, 238, 155, 0.95))
+        drop-shadow(0 0 22px rgba(255, 211, 88, 0.74))
+        drop-shadow(0 0 42px rgba(255, 160, 50, 0.40));
+    animation: softTargetGlow 2s ease-in-out infinite;
+}
+
+@keyframes softTargetGlow {
+    0%,
+    100% {
+        filter:
+            drop-shadow(0 0 10px rgba(255, 238, 155, 0.95))
+            drop-shadow(0 0 22px rgba(255, 211, 88, 0.74))
+            drop-shadow(0 0 42px rgba(255, 160, 50, 0.40));
+    }
+
+    50% {
+        filter:
+            drop-shadow(0 0 14px rgba(255, 246, 188, 1))
+            drop-shadow(0 0 32px rgba(255, 221, 98, 0.88))
+            drop-shadow(0 0 58px rgba(255, 168, 54, 0.52));
+    }
+}
+
 @keyframes notebookGlow {
 
     0% {
         box-shadow:
-            inset 0 0 4px #fff8d0,
-            inset 0 0 12px rgba(255,211,107,0.75),
-
-            0 0 4px #ffd36b,
-            0 0 12px rgba(255,211,107,0.5),
-            0 0 24px rgba(255,211,107,0.3);
+            0 0 12px rgba(255, 238, 155, 0.95),
+            0 0 28px rgba(255, 211, 88, 0.72),
+            0 0 54px rgba(255, 160, 50, 0.36);
     }
     50% {
         box-shadow:
-            inset 0 0 8px #fff8d0,
-            inset 0 0 20px rgba(255,211,107,0.9),
-
-            0 0 8px #ffd36b,
-            0 0 20px rgba(255,211,107,0.8),
-            0 0 40px rgba(255,211,107,0.5);
+            0 0 18px rgba(255, 245, 188, 1),
+            0 0 42px rgba(255, 220, 98, 0.88),
+            0 0 76px rgba(255, 168, 54, 0.48);
     }
     100% {
         box-shadow:
-            inset 0 0 4px #fff8d0,
-            inset 0 0 12px rgba(255,211,107,0.75),
-
-            0 0 4px #ffd36b,
-            0 0 12px rgba(255,211,107,0.5),
-            0 0 24px rgba(255,211,107,0.3);
+            0 0 12px rgba(255, 238, 155, 0.95),
+            0 0 28px rgba(255, 211, 88, 0.72),
+            0 0 54px rgba(255, 160, 50, 0.36);
     }
 }
 
@@ -1752,6 +1767,14 @@ tr:hover td {
 
 .sql-string {
     color: #ff9e7a;
+}
+
+.help-hint-keyword {
+    color: #f2c572;
+}
+
+.help-blueprint-keyword {
+    color: #74cfff;
 }
 
 /* =======================================================

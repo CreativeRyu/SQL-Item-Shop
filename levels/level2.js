@@ -109,10 +109,10 @@ const level2 = {
       title: "Der Apfel-Test",
       description: "Finde das Produkt mit dem Namen Apfel.",
       story:
-        "Ich habe heute ein paar mehr Gegenstände ausgepackt. Gemüse, Trainingsware, ein Rubin. " +
-        "Ein normaler Arbeitstag, wenn man Körper und Datenbank gleich ernst nimmt.",
+        "Neben Schwertern und Proteinriegeln findest du heute auch frisches Gemüse auf unserem Tresen. " +
+        "Je mehr Waren hier liegen, desto wichtiger wird es, das Richtige schnell zu finden.",
       task:
-        "Finde in der Tabelle products das Produkt mit dem Namen Apfel. Nutze dafür WHERE.",
+        "Zeige nur das Produkt mit dem Namen Apfel. Nutze dafür WHERE.",
       softTutorial: true,
       tutorialSteps: [
         {
@@ -120,15 +120,17 @@ const level2 = {
           disableHighlight: true,
           position: "editor-top",
           text:
-            "Bisher hast du ganze Tabellen gelesen. Das ist solide, aber nicht immer sauber. " +
-            "Wenn du nur bestimmte Zeilen brauchst, trainierst du mit <span class='sql-keyword'>WHERE</span>."
+            "Bisher hast du ganze Tabellen gelesen. Das ist solide, aber ein Kunde will keinen Blick auf den ganzen Tresen werfen. " +
+            "Er sucht nach genau dem, was er braucht. " +
+            "Mit <span class='sql-keyword'>WHERE</span> lernst du, gezielt auszuwählen. "
         },
         {
           target: ".CodeMirror",
           disableHighlight: true,
           position: "editor-top",
           text:
-            "<span class='sql-keyword'>WHERE</span> steht nach der Tabelle und beschreibt, welche Zeilen du sehen willst."
+            "<span class='sql-keyword'>WHERE</span> folgt auf die Tabelle. " +
+            "Danach schreibst du die Bedingung, die deine Auswahl einschränkt."
         },
         {
           target: ".CodeMirror",
@@ -143,9 +145,9 @@ const level2 = {
         }
       ],
       hint:
-        "Nutze WHERE name = 'Apfel', um nur den Apfel zu finden.",
+        "",
       blueprint:
-        "<code>SELECT *<br>FROM products<br>WHERE name = '...';</code>",
+        "",
       reward: {
         money: 20
       },
@@ -162,12 +164,13 @@ const level2 = {
       title: "Nur das Nötige",
       description: "Zeige Name und Preis der Banane.",
       story:
-        "Die Banane braucht kein komplettes Datenbank-Solo. Name und Preis reichen. " +
-        "Alles andere ist Showtraining vor dem Spiegel.",
+        "Bananen sind voller Kalium. " +
+        "Vielleicht führen wir eines Tages sogar Makronährstoffe in unserer Datenbank. " +
+        "Für heute reichen Name und Preis. ",
       task:
-        "Zeige nur die Spalten name und price aus products für das Produkt Banane.",
+        "Zeige nur name und preis der Banane an.",
       blueprint:
-        "<code>SELECT name, price<br>FROM products<br>WHERE name = '...';</code>",
+        "",
       reward: {
         money: 20
       },
@@ -185,10 +188,10 @@ const level2 = {
       title: "Unter der Preisgrenze",
       description: "Finde Produkte, die weniger als 3.00 kosten.",
       story:
-        "Billige Ware ist nicht automatisch schwach. Manchmal ist sie einfach effizient. " +
-        "So wie ein sauberer Satz Kniebeugen ohne Drama.",
+        "Teuer bedeutet nicht automatisch besser. " +
+        "Manchmal steckt der größte Nutzen in den einfachen Dingen.",
       task:
-        "Zeige alle Produkte aus products, deren price kleiner als 3.00 ist.",
+        "Zeige alle Produkte, deren price kleiner als 3.00 ist.",
       softTutorial: true,
       tutorialSteps: [
         {
@@ -196,27 +199,27 @@ const level2 = {
           disableHighlight: true,
           position: "editor-top",
           text:
-            "Übrigens: Dir sind die zwei kleinen Trainingshilfen im Shop aufgefallen. Natürlich sind sie dir aufgefallen."
+            "Übrigens, Sind dir die zwei kleinen Hilfsitems im Shop aufgefallen. Natürlich sind sie dir aufgefallen."
         },
         {
           target: "#shop-screen",
           disableHighlight: true,
           position: "editor-top",
           text:
-            "Der <span class='sql-value'>Shopkeeper Hint</span> gibt dir einen kleinen Hinweis zur aktuellen Mission. Kein Geschenk, eher ein sauberer Trainingsimpuls."
+            "Der <span class='help-hint-keyword'>Shopkeeper Hint</span> gibt dir einen kleinen Hinweis zur aktuellen Aufgabe. Kein Geschenk, eher ein sauberer Trainingsimpuls."
         },
         {
           target: "#shop-screen",
           disableHighlight: true,
           position: "editor-top",
           text:
-            "Der <span class='sql-value'>Query Blueprint</span> zeigt dir ein Query-Gerüst. Denken musst du trotzdem selbst. Das ist Absicht."
+            "Der <span class='help-blueprint-keyword'>Query Blueprint</span> zeigt dir ein Query-Gerüst. Den Weg musst du trotzdem selbst gehen."
         }
       ],
       hint:
-        "Nutze einen Zahlenvergleich: WHERE price < 3.00.",
+        "Nutze einen Zahlenvergleich mit kleiner als <.",
       blueprint:
-        "<code>SELECT *<br>FROM products<br>WHERE price < ...;</code>",
+        "<code>SELECT *<br>FROM products<br>WHERE ... < ...;</code>",
       reward: {
         money: 25
       },
@@ -232,14 +235,14 @@ const level2 = {
       title: "Premium-Regal",
       description: "Zeige Name und Preis von Produkten über 25.00.",
       story:
-        "Jetzt schauen wir auf die schwereren Gewichte im Regal. Teuer ist nicht immer besser, " +
-        "aber es sollte wenigstens auffindbar sein.",
+        "Die günstigen Waren kennen wir bereits. " +
+        "Jetzt wird es Zeit für das Premium-Regal.",
       task:
-        "Zeige name und price aus products für Produkte, deren price größer als 25.00 ist.",
+        "Zeige Name und Preis aller Produkte über 25 Gold.",
       hint:
-        "Du brauchst WHERE price > 25.00 und nur die Spalten name, price.",
+        "Wieder ein Zahlenvergleich aber dieses mal mit größer als >.",
       blueprint:
-        "<code>SELECT name, price<br>FROM products<br>WHERE price > ...;</code>",
+        "<code>SELECT name, ...<br>FROM products<br>WHERE ... > ...;</code>",
       reward: {
         money: 25
       },
@@ -256,14 +259,13 @@ const level2 = {
       title: "Solides Budget",
       description: "Finde Kunden mit mindestens 50 Budget.",
       story:
-        "Kunden mit Budget sind wie gute Vorbereitung: Sie machen den Satz nicht automatisch leicht, " +
-        "aber sie erhöhen die Erfolgschance deutlich.",
+        "Wenn die Tür aufgeht und der Geldbeutel schwer klingt, hört ein Händler automatisch genauer zu.",
       task:
-        "Zeige name und budget aus customers für Kunden mit budget größer oder gleich 50.",
+        "Zeige name und budget für Kunden mit mindestens 50 Gold.",
       hint:
         "Mindestens bedeutet größer oder gleich: >=.",
       blueprint:
-        "<code>SELECT name, budget<br>FROM customers<br>WHERE budget >= ...;</code>",
+        "<code>SELECT name, ...<br>FROM customers<br>WHERE ... >= ...;</code>",
       reward: {
         money: 25
       },
@@ -280,14 +282,14 @@ const level2 = {
       title: "Fast leer",
       description: "Finde Lagerbestände mit höchstens 2 Stück.",
       story:
-        "Wenn der Bestand niedrig ist, merkt man das nicht erst, wenn der Kunde traurig auf ein leeres Regal zeigt. " +
-        "Gute Technik erkennt Engpässe vorher.",
+        "Wenn der Bestand knapp ist, merkt man das nicht erst, wenn der Kunde heulend vo einem Regal steht. " +
+        "Gute Händler erkennen Engpässe vorher.",
       task:
-        "Zeige product_id und stock aus inventory für Einträge mit stock kleiner oder gleich 2.",
+        "Zeige ID und Bestand der kritischen Lagerbestände? Berücksichtige alle Bestände von 2 oder weniger.",
       hint:
-        "Höchstens 2 bedeutet: WHERE stock <= 2.",
+        "Höchstens bedeutet kleiner oder gleich <=.",
       blueprint:
-        "<code>SELECT product_id, stock<br>FROM inventory<br>WHERE stock <= ...;</code>",
+        "<code>SELECT product_id, ...<br>FROM inventory<br>WHERE stock ...;</code>",
       reward: {
         money: 25
       },

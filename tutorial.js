@@ -2,6 +2,7 @@ let tutorialSteps = [];
 let currentTutorialStep = 0;
 let finishCallback = null;
 let runButtonIntroduced = false;
+let softGlowTarget = null;
 
 export function loadTutorialSteps(steps, softTutorial = false) {
     tutorialSteps = steps;
@@ -26,6 +27,7 @@ function showTutorialStep() {
         overlay.classList.remove("waiting-for-mission");
     }
     const target = document.querySelector(step.target);
+    syncSoftGlowTarget(step, overlay, target);
     const rect = getStageRect(target);
     const highlight = document.getElementById("tutorial-highlight");
     highlight.style.display = step.disableHighlight ? "none" : "block";
@@ -37,12 +39,14 @@ function showTutorialStep() {
     highlight.style.height = rect.height + padding * 2 + "px";
     document.getElementById("tutorial-text").innerHTML = step.text;
     const nextButton = document.getElementById("tutorial-next-btn");
-    if(runButtonIntroduced || step.waitForMission) {
+    const keepEditorOnTop = shouldKeepEditorOnTop(step);
+
+    if(runButtonIntroduced || keepEditorOnTop) {
         editorZone.style.zIndex = "10001";
-        editorZone.style.pointerEvents = step.waitForMission ? "" : "none";
+        editorZone.style.pointerEvents = keepEditorOnTop ? "" : "none";
         runButton.style.position = "relative";
         runButton.style.zIndex = "10002";
-        runButton.style.pointerEvents = step.waitForMission ? "" : "none";
+        runButton.style.pointerEvents = keepEditorOnTop ? "" : "none";
     } else {
         editorZone.style.zIndex = "";
         editorZone.style.pointerEvents = "";
@@ -150,10 +154,12 @@ export function clearTutorial() {
     tutorialSteps = [];
     currentTutorialStep = 0;
     runButtonIntroduced = false;
+    clearSoftGlowTarget();
     hideTutorialOverlay();
 }
 
 function hideTutorialOverlay() {
+    clearSoftGlowTarget();
     const overlay = document.getElementById("tutorial-overlay");
     overlay.style.display = "none";
     overlay.classList.remove("waiting-for-mission", "soft-tutorial");
@@ -163,6 +169,30 @@ function hideTutorialOverlay() {
     document.getElementById("run-btn").style.zIndex = "";
     document.getElementById("run-btn").style.pointerEvents = "";
     document.body.style.overflow = "";
+}
+
+function syncSoftGlowTarget(step, overlay, target) {
+    clearSoftGlowTarget();
+
+    if(!overlay.classList.contains("soft-tutorial"))
+        return;
+
+    if(!step.glowTarget)
+        return;
+
+    if(!target || target === document.body)
+        return;
+
+    target.classList.add("tutorial-soft-glow-target");
+    softGlowTarget = target;
+}
+
+function clearSoftGlowTarget() {
+    if(!softGlowTarget)
+        return;
+
+    softGlowTarget.classList.remove("tutorial-soft-glow-target");
+    softGlowTarget = null;
 }
 
 function moveTutorialOverlayIntoGameScreen() {
@@ -189,6 +219,20 @@ function getStageRect(element) {
         width: rect.width / scale,
         height: rect.height / scale
     };
+}
+
+function shouldKeepEditorOnTop(step) {
+    if(!step.waitForMission)
+        return false;
+
+    const editorTargets = [
+        ".CodeMirror",
+        "#run-btn",
+        "#editor-zone",
+        "#sql-input"
+    ];
+
+    return editorTargets.includes(step.target);
 }
 
 function getGameScale() {

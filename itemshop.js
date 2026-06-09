@@ -36,13 +36,13 @@ const HELP_ITEMS = {
         price: 10,
         title: "SHOPKEEPER HINT",
         icon: "./assets/sprites/shopItems/hint.png",
-        popupDescription: "Schaltet einen\nShopkeeper-Hinweis\nfür diese Mission frei."
+        popupDescription: "Schaltet einen\nShopkeeper-Hinweis\nfür diese Aufgabe frei."
     },
     blueprint: {
         price: 25,
         title: "QUERY BLUEPRINT",
         icon: "./assets/sprites/shopItems/blueprint.png",
-        popupDescription: "Schaltet ein\nQuery-Gerüst\nfür diese Mission frei."
+        popupDescription: "Schaltet ein\nQuery-Gerüst\nfür diese Aufgabe frei."
     }
 };
 let activeHelpType = null;
@@ -809,12 +809,13 @@ function updateHelpPanel() {
     }
 
     panel.classList.remove("hidden");
-    setHelpTabState(hintTab, "hint");
-    setHelpTabState(blueprintTab, "blueprint");
 
     if(activeHelpType && !hasHelpPurchase(activeHelpType)) {
         activeHelpType = null;
     }
+
+    setHelpTabState(hintTab, "hint");
+    setHelpTabState(blueprintTab, "blueprint");
 
     if(!activeHelpType) {
         card.className = "hidden";

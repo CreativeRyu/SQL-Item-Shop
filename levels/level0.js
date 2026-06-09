@@ -356,7 +356,8 @@
         {
             target: "#sql-notebook-ui",
             text: "Jawoll. Das ist dein SQL Notebook.",
-            padding: 20
+            padding: 20,
+            glowTarget: true
         },
         {
             target: "#sql-notebook-ui",
