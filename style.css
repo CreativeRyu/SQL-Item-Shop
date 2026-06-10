@@ -37,7 +37,7 @@ h1 {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 20px;
+    gap: 26px;
     position: relative;
 }
 
@@ -78,7 +78,7 @@ h1 {
     position: fixed;
     right: 28px;
     bottom: 28px;
-    width: 235px;
+    width: 218px;
     padding-left: 8px;
     padding-right: 8px;
     display: inline-flex;
@@ -151,6 +151,7 @@ h1 {
 
 #title-image-frame {
     width: min(760px, 86vw, calc(48vh * 16 / 9));
+    margin-bottom: 8px;
     padding: 10px;
     position: relative;
     background:
@@ -1850,9 +1851,9 @@ tr:hover td {
     }
 
     #start-screen {
-        gap: 12px;
+        gap: 20px;
         justify-content: flex-start;
-        padding-top: 1vh;
+        padding-top: clamp(28px, 6vh, 64px);
     }
 
     #start-screen h1 {
@@ -1862,23 +1863,24 @@ tr:hover td {
 
     #title-image-frame {
         width: min(760px, 78vw, calc(44vh * 16 / 9));
+        margin-bottom: 14px;
         padding: 8px;
     }
 
     #start-screen #support-project-btn {
         position: static;
-        margin-top: 4px;
+        margin-top: 6px;
     }
 
     #start-screen button {
-        width: 185px;
+        width: 218px;
         padding: 8px 12px;
         font-size: 15px;
         border-bottom-width: 5px;
     }
 
     #new-game-btn {
-        margin-top: 2px;
+        margin-top: 0;
     }
 
     #load-game-btn {
@@ -1887,9 +1889,18 @@ tr:hover td {
 }
 
 @media (max-width: 700px) {
+    #start-screen {
+        gap: 22px;
+        padding-top: clamp(36px, 7vh, 72px);
+    }
+
+    #title-image-frame {
+        margin-bottom: 18px;
+    }
+
     #start-screen #support-project-btn {
         position: static;
-        margin-top: 2px;
-        width: 235px;
+        margin-top: 8px;
+        width: 218px;
     }
 }

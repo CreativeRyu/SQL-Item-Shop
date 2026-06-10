@@ -282,7 +282,7 @@ const level2 = {
       title: "Fast leer",
       description: "Finde Lagerbestände mit höchstens 2 Stück.",
       story:
-        "Wenn der Bestand knapp ist, merkt man das nicht erst, wenn der Kunde heulend vo einem Regal steht. " +
+        "Wenn der Bestand knapp ist, merkt man das nicht erst, wenn der Kunde heulend vor einem Regal steht. " +
         "Gute Händler erkennen Engpässe vorher.",
       task:
         "Zeige ID und Bestand der kritischen Lagerbestände? Berücksichtige alle Bestände von 2 oder weniger.",
@@ -306,14 +306,14 @@ const level2 = {
       title: "Der Rubin-Check",
       description: "Zeige Name und Preis vom Rubin.",
       story:
-        "Der Rubin liegt nicht da, weil er praktisch ist. Er liegt da, weil ein Laden Haltung braucht. " +
-        "Und Haltung beginnt mit einer präzisen Abfrage.",
+        "Der Rubin ist unser teuerstes Stueck im Regal. Nicht anfassen, nicht anstarren, nur sauber abfragen. " +
+        "Ein guter Händler weiss, wo der Wert liegt.",
       task:
-        "Zeige name und price aus products für das Produkt Rubin.",
+        "Zeige Name und Preis des Rubins.",
       hint:
-        "Filtere nach dem Textwert 'Rubin' und zeige nur name, price.",
+        "Filtere nach dem Textwert 'Rubin'.",
       blueprint:
-        "<code>SELECT name, price<br>FROM products<br>WHERE name = '...';</code>",
+        "<code>SELECT ... <br>FROM products<br>WHERE ... = '...';</code>",
       reward: {
         money: 30
       },
