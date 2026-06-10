@@ -7,9 +7,8 @@ Core idea
 
 Current next feature direction
 - Next focus is content and progression:
-  - Level 2 test / polish pass.
+  - Level 3 WHERE Advanced test / polish pass.
   - Large Notebook View.
-  - Tablet/iPad landscape layout.
   - Radio, music, and sound effects.
 
 Money / shop item ideas
@@ -72,6 +71,7 @@ Potential learning path
 - SELECT basics
 - Columns and FROM
 - WHERE and comparison operators
+- WHERE combinations: AND, OR, BETWEEN, LIKE
 - ORDER BY and LIMIT
 - Aggregates: COUNT, SUM, AVG
 - GROUP BY
@@ -127,6 +127,7 @@ Aktueller Stand
   - level0 nutzt database/seed.sql.
   - level1 nutzt database/seed1.sql ohne SQL Notebook.
   - level2 nutzt database/seed2.sql mit erweiterten WHERE-Testdaten.
+  - level3 nutzt database/seed3.sql als eigenen Level-Seed.
 - customers.money wurde zu customers.budget umbenannt.
 - Level 2 Grundgeruest ist angelegt:
   - level2.js hat intro, seedPath und shopLayoutId.
@@ -138,12 +139,20 @@ Aktueller Stand
   - Mission 1 fuehrt WHERE per Soft-Tutorial ein.
   - Mission 3 fuehrt Shopkeeper Hint und Query Blueprint storymaessig ein.
   - Recap-Daten fuer Level 2 sind vorhanden.
+  - Level 2 ist durchgetestet und didaktisch abgeschlossen.
+- Level 3 Grundgeruest ist angelegt:
+  - level3.js hat intro, recap, seedPath und shopLayoutId.
+  - Level 3 fuehrt WHERE Advanced ein: AND, OR, BETWEEN und LIKE.
+  - seed3.sql ist als eigener Level-Seed angelegt und basiert aktuell auf seed2.sql.
+  - level3ShopLayout.js ist als eigenes Level-Layout angelegt und basiert aktuell auf level2ShopLayout.js.
+  - Level 2 kann ueber den bestehenden Scroll-Transition-Flow in Level 3 uebergehen.
 - Shopkeeper Hint und Query Blueprint sind aus der SQL-Datenbank herausgeloest:
   - Sie liegen nicht mehr in products / inventory.
   - Sie werden als missionsbasierte Spezialitems ueber gameState und shopLayout gerendert.
   - Die Layout-IDs bleiben visuelle Slots, keine SQL-Produkt-IDs.
 - Help Panel ist eingebaut:
   - Ab Level 2 Mission 3 erscheinen rechts unten inactive Icons.
+  - Ab Level 3 stehen Shopkeeper Hint und Query Blueprint direkt ab Missionsstart zur Verfuegung.
   - Gekaufte Hilfen werden aktiv und koennen angeklickt werden.
   - Shopkeeper Hint kostet Gold, verschwindet nach Kauf aus dem Shop und zeigt einen Papier/Klemmbrett-Hinweis.
   - Query Blueprint kostet Gold, verschwindet nach Kauf aus dem Shop und zeigt eine nicht kopierbare Blueprint-Karte.
@@ -151,29 +160,36 @@ Aktueller Stand
   - Alte automatische Questpanel-Hints und Timer sind entfernt.
 - Debug-Funktionen sind in debugTools.js ausgelagert.
   - debug(level, mission) laedt Level, Seed und Mission gezielt.
+- Tablet / iPad Querformat und responsive Anpassungen sind erledigt:
+  - Startscreen hat mehr Luft zwischen Titelbild und Buttons.
+  - Mobile/Tablet-Buttons sind gleich breit und sauber verteilt.
+  - Querformat-Layout ist aktuell ausreichend stabil.
 
 Naechster grosser Schritt
-1. Level 2 testen und polishen.
-   - Level 1 festigt die in Level 0 gelernten Skills:
-     - SELECT
-     - FROM
-     - einzelne Spalten
-     - mehrere Spalten
-     - verschiedene Tabellen
-     - PRAGMA table_info
-   - Level 2 fuehrt als neues Konzept WHERE ein.
+1. Level 3 testen und polishen.
+   - Level 2 hat WHERE mit einzelnen Bedingungen abgeschlossen:
+     - Textvergleich
+     - Zahlenvergleich
+     - Spaltenauswahl mit WHERE
+     - einfache Vergleichsoperatoren
+   - Level 3 baut WHERE als neues Hauptthema aus:
+     - AND fuer mehrere Pflichtbedingungen.
+     - OR fuer alternative Treffer.
+     - BETWEEN fuer Wertebereiche.
+     - LIKE fuer Textmuster.
    - Ziel:
-     - einzelne Bedingungen verstehen.
-     - Vergleichsoperatoren einfuehren.
-     - SELECT-Spaltenauswahl mit WHERE kombinieren.
-     - Noch keine komplexen AND/OR-Kombinationen erzwingen.
+     - Bedingungen bewusst kombinieren.
+     - AND und OR klar voneinander unterscheiden.
+     - BETWEEN als lesbare Bereichsform verstehen.
+     - LIKE mit % als Platzhalter nutzen.
+     - Noch kein ORDER BY in Level 3.
    - Naechster Schritt:
-     - Level 2 komplett durchtesten.
+     - Level 3 komplett durchtesten.
      - Missionstexte und Shopkeeper-Stimme sauber nachziehen.
      - Validatoren gegen zu leichte / falsche Loesungen pruefen.
-     - Help-Panel-Flow in jeder Mission pruefen.
+     - Help-Panel-Flow ab Mission 1 pruefen.
      - Rewards und Geldbalance pruefen.
-     - Umlaute / Browserdarstellung pruefen.
+     - Pruefen, ob seed3.sql mehr gezielte LIKE-/AND-/OR-Daten braucht.
 
 2. Story-Verteilung fuer Missionen konkretisieren.
    - Questpanel:
@@ -208,21 +224,7 @@ Naechster grosser Schritt
      - Danach ist das Schema dauerhaft ueber das Notebook abrufbar.
      - SQL bleibt dadurch das Werkzeug, nicht ein Klick-Shortcut.
 
-4. Tablet / iPad Anpassung planen.
-   - Zielgeraet erstmal Tablet im Querformat.
-   - Hochformat muss nicht priorisiert werden.
-   - Aktuelles Desktop-Layout ist sehr breit:
-     - Questpanel links.
-     - Shop in der Mitte.
-     - Output rechts.
-     - Editor / Notebook unten.
-   - Zu pruefen:
-     - Passt die Drei-Spalten-Ansicht im Querformat noch?
-     - Muss Output unter Shop oder neben Quest wandern?
-     - Wie wird das Notebook auf Tablet platziert?
-     - Verdecken Shopkeeper-Bubbles, Tutorial oder Popups wichtige UI?
-
-5. Radio, Musik und Soundeffekte.
+4. Radio, Musik und Soundeffekte.
    - Radio als kaufbares Atmosphaere-Item.
    - Nach Kauf werden die vorbereiteten Audio-Buttons sichtbar.
    - Musik ins Spiel bringen.
@@ -233,7 +235,7 @@ Naechster grosser Schritt
      - Item gekauft.
      - Warnung / Fehler.
 
-6. Weitere sinnvolle Geld-Sinks planen.
+5. Weitere sinnvolle Geld-Sinks planen.
    - Geld soll mehr Bedeutung bekommen als nur Notebook kaufen.
    - Moegliche Items:
      - Radio.
@@ -248,7 +250,7 @@ Naechster grosser Schritt
      - Spieler koennen sie im Shop/Archiv kaufen oder dauerhaft sichern.
      - Letzte Szene erst nach Spielabschluss.
 
-7. Cutscene-System planen.
+6. Cutscene-System planen.
    - Fuer besondere Momente:
      - Levelende
      - Item-Freischaltung
@@ -262,7 +264,7 @@ Naechster grosser Schritt
    - Nicht jede Mission braucht Cutscene. Normale Missionen bekommen hoechstens kurzen Shopkeeper-Anlass.
    - Vermutlich eher spaeter bauen, wenn Levelinhalt, Notebook und Geld-Sinks klarer sind.
 
-8. Source Material / Jupyter Aufgaben auswerten.
+7. Source Material / Jupyter Aufgaben auswerten.
    - Notebook liegt in source_material/sql_aufgaben.ipynb.
    - Aufgaben nicht 1:1 uebernehmen.
    - Erst clustern:
@@ -280,7 +282,7 @@ Naechster grosser Schritt
      - Transaktionen / Archivierung
    - Danach pro Level 5-8 Hauptmissionen plus optionale Bonusquests bauen.
 
-9. Datenmodell v2 planen.
+8. Datenmodell v2 planen.
    - Aktuell sauberer als vorher, aber spaeter brauchen wir wahrscheinlich:
      - categories
      - suppliers
@@ -297,16 +299,18 @@ Naechster grosser Schritt
    - Visuals bleiben ausserhalb der SQL-Lerndaten.
 
 Kurzfristige Prioritaet fuer morgen
-- Zuerst Level 2 komplett testen und aufraeumen:
+- Zuerst Level 3 komplett testen und aufraeumen:
   - Missionen spielen.
   - Texte und Shopkeeper-Stimme polishen.
   - Validatoren pruefen.
-  - Help-Panel und Spezialitems in Mission 3+ testen.
+  - Help-Panel und Spezialitems ab Mission 1 testen.
   - Geldabzug, Item-Entfernung und per-Mission-Help-State pruefen.
-  - Umlaute / Browserdarstellung checken.
+  - Pruefen, ob seed3.sql eigene Daten statt nur seed2-Kopie braucht.
+- Danach entscheiden, ob Level 3 ein eigenes Shop-Visual-Update braucht:
+  - level3ShopLayout.js ist aktuell ein Platzhalter auf Basis von Level 2.
+  - Neue Waren nur dann einbauen, wenn sie didaktisch fuer AND / OR / BETWEEN / LIKE helfen.
 - Danach das letzte grosse UI-Element planen und bauen:
   - Grosses SQL Notebook als erweiterte Lernansicht.
-- Danach Tablet/iPad Querformat pruefen und Layout anpassen.
 - Danach Radio / Musik / erste Soundeffekte.
 - Cutscenes und Video-Sammlung eher spaeter planen, wenn Progression und Geld-Sinks klarer sind.
 
@@ -333,6 +337,7 @@ Session Summary
   - Aufgaben eignen sich als Roh-Curriculum, aber sollen spaeter geclustert und spielerisch ueberarbeitet werden.
 
 Naechster konkreter Startpunkt
-- Level 2 mit debug(2, 1) bis debug(2, 7) bzw. normalem Levelwechsel testen.
-- Danach Level-2-Texte, Missionen, Rewards und Validatoren polishen.
+- Level 3 mit debug(3, 1) bis debug(3, 6) bzw. normalem Levelwechsel aus Level 2 testen.
+- Danach Level-3-Texte, Missionen, Rewards und Validatoren polishen.
+- Pruefen, ob seed3.sql fuer LIKE und OR mehr eindeutige Beispieldaten braucht.
 - Danach Grosses SQL Notebook als letztes grosses UI-Element planen und als MVP bauen.

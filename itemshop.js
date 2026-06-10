@@ -704,7 +704,11 @@ function getCurrentMissionKey() {
 }
 
 function isHelpIntroduced() {
-    return currentLevel.levelId === "level2" && currentMissionIndex >= 2;
+    if(currentLevel.levelId === "level2") {
+        return currentMissionIndex >= 2;
+    }
+
+    return currentLevel.levelId !== "level0" && currentLevel.levelId !== "level1";
 }
 
 function getCurrentHelpPurchases() {
