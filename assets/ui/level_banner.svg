@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 92 42" shape-rendering="geometricPrecision">
+  <defs>
+    <linearGradient id="cloth" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#6f325f"/>
+      <stop offset="0.58" stop-color="#4d254e"/>
+      <stop offset="1" stop-color="#2b1734"/>
+    </linearGradient>
+  </defs>
+  <polygon points="2,3 67,3 88,21 67,39 2,39" fill="#2a1b18"/>
+  <polygon points="5,6 65,6 83,21 65,36 5,36" fill="#d89b3c"/>
+  <polygon points="8,9 63,9 77,21 63,33 8,33" fill="url(#cloth)"/>
+  <path d="M14 12H58L69 21L58 30H14" fill="none" stroke="#28172f" stroke-width="2"/>
+</svg>

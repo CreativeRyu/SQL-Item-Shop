@@ -62,6 +62,7 @@ function showTutorialStep() {
     }
 
     const textBox = document.getElementById("tutorial-text-box");
+    moveNextButtonIntoOverlay();
     textBox.style.top = "auto";
     textBox.style.bottom = "auto";
     switch(step.position) {
@@ -83,6 +84,8 @@ function showTutorialStep() {
         default:
             placeTextBoxAtCounter(textBox);
     }
+
+    placeNextButtonBesideTextBox(textBox);
 }
 
 function placeTextBoxAtCounter(textBox) {
@@ -117,6 +120,32 @@ function placeTextBoxAtEditorTop(textBox) {
     );
 
     textBox.style.top = `${top}px`;
+}
+
+function moveNextButtonIntoOverlay() {
+    const buttonBox = document.getElementById("tutorial-button-box");
+    const overlay = document.getElementById("tutorial-overlay");
+
+    if(buttonBox.parentElement === overlay)
+        return;
+
+    overlay.appendChild(buttonBox);
+}
+
+function placeNextButtonBesideTextBox(textBox) {
+    const buttonBox = document.getElementById("tutorial-button-box");
+    const textBoxRect = textBox.getBoundingClientRect();
+    const overlay = document.getElementById("tutorial-overlay");
+    const overlayRect = overlay.getBoundingClientRect();
+    const scale = getGameScale();
+    const left = (textBoxRect.right - overlayRect.left) / scale + 14;
+    const top = (textBoxRect.top - overlayRect.top) / scale;
+
+    buttonBox.style.left = `${left}px`;
+    buttonBox.style.right = "auto";
+    buttonBox.style.top = `${top}px`;
+    buttonBox.style.bottom = "auto";
+    buttonBox.style.transform = "none";
 }
 
 document.getElementById("tutorial-next-btn").onclick = () => {

@@ -243,6 +243,7 @@ function renderGame() {
     renderCurrentShopVisuals();
     refreshMoneyDisplay();
     refreshMission();
+    renderLevelBanners();
     updateEditorToolsVisibility();
     updateHelpPanel();
     syncTutorialForCurrentMission();
@@ -578,6 +579,34 @@ function refreshMission() {
         ${renderMissionDescription(mission)}
     </div>
     `;
+}
+
+function renderLevelBanners() {
+    const stack = document.getElementById("level-banner-stack");
+
+    if(!stack)
+        return;
+
+    const levels = Object.values(LEVELS);
+    const currentIndex = levels.findIndex(
+        level => level.levelId === currentLevel.levelId
+    );
+
+    if(currentIndex < 0) {
+        stack.innerHTML = "";
+        return;
+    }
+
+    stack.innerHTML = levels
+        .slice(0, currentIndex + 1)
+        .map((level, index) => `
+            <div
+                class="level-banner ${index === currentIndex ? "current" : "completed"}"
+                title="${level.title}">
+                <span>${index}</span>
+            </div>
+        `)
+        .join("");
 }
 
 function renderMissionDescription(mission) {
