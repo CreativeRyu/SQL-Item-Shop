@@ -23,6 +23,11 @@ export function renderShopVisuals(
         "Query Blueprint": {
             label: "QUERY BLUEPRINT",
             price: "25$"
+        },
+        "Retro Radio": {
+            label: "RETRO RADIO",
+            price: "100$",
+            action: "buyRadio"
         }
     };
 

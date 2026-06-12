@@ -31,6 +31,17 @@ const SCROLL_ANIMATION_DURATION = 480;
 const GAME_BASE_WIDTH = 1718;
 const GAME_MIN_SCALE = 0.72;
 const GAME_SIDE_PADDING = 40;
+const RADIO_PRICE = 100;
+const MUSIC_TRACKS = [
+    "./assets/music/pl_pl_fantasy_shop_item_shop_01.mp3",
+    "./assets/music/pl_pl_fantasy_shop_item_shop_02.mp3",
+    "./assets/music/pl_pl_fantasy_shop_merchant_01.mp3",
+    "./assets/music/pl_pl_fantasy_shop_merchant_02.mp3",
+    "./assets/music/pl_pl_fantasy_shop_shop_interior_01.mp3",
+    "./assets/music/pl_pl_fantasy_shop_shop_interior_02.mp3",
+    "./assets/music/pl_pl_fantasy_shop_magic_shop_01.mp3",
+    "./assets/music/pl_pl_fantasy_shop_magic_shop_02.mp3"
+];
 const HELP_ITEMS = {
     hint: {
         price: 10,
@@ -46,10 +57,14 @@ const HELP_ITEMS = {
     }
 };
 let activeHelpType = null;
+let musicPlayer;
 let gameState = {
     money: 0,
     hasNotebook: false,
     is_notebook_unlocked: false,
+    hasRadio: false,
+    musicEnabled: false,
+    currentTrackIndex: 0,
     helpPurchases: {}
 };
 
@@ -152,6 +167,7 @@ async function initGameSystems() {
     await loadQuotes();
     initNotebook();
     initHelpPanel();
+    initSoundControls();
     gameSystemsReady = true;
 }
 
@@ -196,6 +212,9 @@ async function startNewGame() {
         money: 0,
         hasNotebook: false,
         is_notebook_unlocked: false,
+        hasRadio: false,
+        musicEnabled: false,
+        currentTrackIndex: 0,
         helpPurchases: {}
     };
 
@@ -245,6 +264,7 @@ function renderGame() {
     refreshMission();
     renderLevelBanners();
     updateEditorToolsVisibility();
+    updateSoundControls();
     updateHelpPanel();
     syncTutorialForCurrentMission();
 }
@@ -704,6 +724,9 @@ function normalizeGameState(state = {}) {
         money: state.money || 0,
         hasNotebook: !!state.hasNotebook,
         is_notebook_unlocked: !!state.is_notebook_unlocked,
+        hasRadio: !!state.hasRadio,
+        musicEnabled: !!state.musicEnabled,
+        currentTrackIndex: state.currentTrackIndex || 0,
         helpPurchases: state.helpPurchases || {}
     };
 }
@@ -901,6 +924,13 @@ function syncUnlockedShopItems() {
     if(gameState.is_notebook_unlocked && !gameState.hasNotebook) {
         ensureInventoryItem(7, 1);
     }
+
+    if(gameState.hasRadio) {
+        db.run(`
+            DELETE FROM inventory
+            WHERE product_id = 8
+        `);
+    }
 }
 
 function ensureInventoryItem(productId, stock) {
@@ -973,6 +1003,41 @@ function showQueryBlueprintPopup() {
     buyHelpItem("blueprint");
 }
 
+function buyRadio() {
+    if(gameState.hasRadio)
+        return;
+
+    if(gameState.money < RADIO_PRICE) {
+        showHintMessage("Das Radio kostet 100 Gold. Erst verdienen, dann aufdrehen.");
+        hideTooltip();
+        return;
+    }
+
+    gameState.money -= RADIO_PRICE;
+    gameState.hasRadio = true;
+    gameState.musicEnabled = false;
+
+    db.run(`
+        DELETE FROM inventory
+        WHERE product_id = 8
+    `);
+
+    refreshMoneyDisplay();
+    renderCurrentShopVisuals();
+    updateSoundControls();
+    saveCurrentGame();
+
+    showItemPopup(
+        "RETRO RADIO",
+        "./assets/sprites/shopItems/radio.png",
+        "Schaltet Musik\nund Soundsteuerung\nfür den Laden frei.",
+        () => {
+            showHintMessage("Endlich Atmosphäre. Play drücken, dann arbeitet der Laden mit Rhythmus.");
+        }
+    );
+    hideTooltip();
+}
+
 function buyHelpItem(type) {
     const item = HELP_ITEMS[type];
 
@@ -1020,8 +1085,79 @@ function buyHelpItem(type) {
 function getKeyItemActions() {
     return {
         showShopkeeperHintPopup,
-        showQueryBlueprintPopup
+        showQueryBlueprintPopup,
+        buyRadio
     };
+}
+
+function initSoundControls() {
+    const soundOnButton = document.getElementById("sound-on-btn");
+    const soundOffButton = document.getElementById("sound-off-btn");
+    const soundNextButton = document.getElementById("sound-next-btn");
+
+    soundOnButton.addEventListener("click", playMusic);
+    soundOffButton.addEventListener("click", stopMusic);
+    soundNextButton.addEventListener("click", playNextTrack);
+}
+
+function getMusicPlayer() {
+    if(musicPlayer)
+        return musicPlayer;
+
+    musicPlayer = new Audio();
+    musicPlayer.volume = 0.45;
+    musicPlayer.addEventListener("ended", playNextTrack);
+    return musicPlayer;
+}
+
+function playMusic() {
+    if(!gameState.hasRadio)
+        return;
+
+    const player = getMusicPlayer();
+    player.src = MUSIC_TRACKS[getCurrentTrackIndex()];
+    gameState.musicEnabled = true;
+    player.play().catch(() => {
+        gameState.musicEnabled = false;
+        saveCurrentGame();
+    });
+    saveCurrentGame();
+}
+
+function stopMusic() {
+    if(musicPlayer) {
+        musicPlayer.pause();
+        musicPlayer.currentTime = 0;
+    }
+    gameState.musicEnabled = false;
+    saveCurrentGame();
+}
+
+function playNextTrack() {
+    if(!gameState.hasRadio)
+        return;
+
+    gameState.currentTrackIndex = (getCurrentTrackIndex() + 1) % MUSIC_TRACKS.length;
+
+    if(gameState.musicEnabled) {
+        const player = getMusicPlayer();
+        player.src = MUSIC_TRACKS[gameState.currentTrackIndex];
+        player.play().catch(() => {
+            gameState.musicEnabled = false;
+            saveCurrentGame();
+        });
+    }
+
+    saveCurrentGame();
+}
+
+function getCurrentTrackIndex() {
+    return gameState.currentTrackIndex % MUSIC_TRACKS.length;
+}
+
+function updateSoundControls() {
+    const controls = document.getElementById("sound-controls");
+    controls.classList.toggle("hidden", !gameState.hasRadio);
 }
 
 function showItemPopup(title,icon,description,onClose) {
@@ -1073,6 +1209,7 @@ async function resetCurrentLevel() {
     refreshMoneyDisplay();
     refreshMission();
     syncTutorialForCurrentMission();
+    updateSoundControls();
     updateHelpPanel();
     saveCurrentGame();
 

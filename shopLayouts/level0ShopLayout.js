@@ -40,5 +40,13 @@ export const level0ShopLayout = {
         posX: 346,
         posY: 295,
         scale: 1.4
+    },
+    8: {
+        sprite: "./assets/sprites/shopItems/radio.png",
+        posX: 56,
+        posY: 154,
+        scale: 1.5,
+        tooltipX: 119,
+        tooltipY: 122
     }
 };

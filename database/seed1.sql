@@ -7,6 +7,10 @@ VALUES
 ('Creatine', 29.99),
 ('Protein Shake', 4.99);
 
+INSERT INTO products (id, name, price)
+VALUES
+(8, 'Retro Radio', 100.00);
+
 INSERT INTO inventory (product_id, stock)
 VALUES
 (1, 10),
@@ -14,7 +18,8 @@ VALUES
 (3, 1),
 (4, 1),
 (5, 3),
-(6, 8);
+(6, 8),
+(8, 1);
 
 INSERT INTO customers (name, budget)
 VALUES

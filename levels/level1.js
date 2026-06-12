@@ -170,6 +170,21 @@ const level1 = {
           position: "editor-top",
           text:
             "Sauber. Das <span class='sql-keyword'>WHERE</span> war gerade nur ein kleiner SQL Filter für die Tabellenliste. Darüber werden wir später reden."
+        },
+        {
+          target: "#shopkeeper",
+          text:
+            "Hörst du das? Genau. Nichts. Ein Laden ohne Musik hat keine Atmosphaere, nur Inventar mit Beleuchtung."
+        },
+        {
+          target: "#shop-screen",
+          text:
+            "Ist dir das Retro Radio hinter mir aufgefallen? Noch steht es nur herum. Aber das muss nicht so bleiben..."
+        },
+        {
+          target: "#mission-panel",
+          text:
+            "Ab jetzt stehen viele Aufgaben direkt im Questzettel. Weniger Gerede, mehr Ladenbetrieb. Genau so waechst Technik."
         }
       ],
       reward: {
