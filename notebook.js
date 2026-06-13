@@ -5,6 +5,10 @@ const ddlTab = document.getElementById("ddl-tab");
 const dclTab = document.getElementById("dcl-tab");
 const tclTab = document.getElementById("tcl-tab");
 const notebookContent = document.getElementById("notebook-content");
+const notebookExpandButton = document.getElementById("notebook-expand-btn");
+const largeNotebookOverlay = document.getElementById("large-notebook-overlay");
+const largeNotebookCloseButton = document.getElementById("large-notebook-close");
+const largeNotebookTabs = document.querySelectorAll(".large-notebook-tab");
 const notebookState = {
     commands: {},
     tables: {}
@@ -13,57 +17,129 @@ const notebookState = {
 let currentPage = "TABLES";
 export function initNotebook() {
     renderTablesPage();
+    initLargeNotebook();
 
     tablesTab.onclick = () => {
-        resetTabs();
         currentPage = "TABLES";
-        tablesTab.src = "./assets/ui/table_tab.png";
+        syncNotebookTabs();
         renderTablesPage();
     };
 
     dqlTab.onclick = () => {
-        resetTabs();
         currentPage = "DQL";
-        dqlTab.src = "./assets/ui/dql_tab.png";
+        syncNotebookTabs();
         renderCategoryPage("DQL");
     };
 
     dmlTab.onclick = () => {
-        resetTabs();
         currentPage = "DML";
-        dmlTab.src = "./assets/ui/dml_tab.png";
+        syncNotebookTabs();
         renderCategoryPage("DML");
     };
 
     ddlTab.onclick = () => {
-        resetTabs();
         currentPage = "DDL";
-        ddlTab.src = "./assets/ui/ddl_tab.png";
+        syncNotebookTabs();
         renderCategoryPage("DDL");
     };
 
     dclTab.onclick = () => {
-        resetTabs();
         currentPage = "DCL";
-        dclTab.src = "./assets/ui/dcl_tab.png";
+        syncNotebookTabs();
         renderCategoryPage("DCL");
     };
 
     tclTab.onclick = () => {
-        resetTabs();
         currentPage = "TCL";
-        tclTab.src = "./assets/ui/tcl_tab.png";
+        syncNotebookTabs();
         renderCategoryPage("TCL");
     };
 }
 
-function resetTabs() {
-    tablesTab.src = "./assets/ui/table_tab_unselected.png";
-    dqlTab.src = "./assets/ui/dql_tab_unselected.png";
-    dmlTab.src = "./assets/ui/dml_tab_unselected.png";
-    ddlTab.src = "./assets/ui/ddl_tab_unselected.png";
-    dclTab.src = "./assets/ui/dcl_tab_unselected.png";
-    tclTab.src = "./assets/ui/tcl_tab_unselected.png";
+function initLargeNotebook() {
+    notebookExpandButton.onclick = showLargeNotebook;
+    largeNotebookCloseButton.onclick = hideLargeNotebook;
+    largeNotebookOverlay.onclick = event => {
+        if(event.target === largeNotebookOverlay) {
+            hideLargeNotebook();
+        }
+    };
+
+    largeNotebookTabs.forEach(tab => {
+        tab.onclick = () => {
+            currentPage = tab.dataset.page;
+            syncNotebookTabs();
+            renderCurrentPage();
+        };
+    });
+}
+
+function showLargeNotebook() {
+    syncNotebookTabs();
+    largeNotebookOverlay.classList.remove("hidden");
+}
+
+function hideLargeNotebook() {
+    largeNotebookOverlay.classList.add("hidden");
+}
+
+function renderCurrentPage() {
+    if(currentPage === "TABLES") {
+        renderTablesPage();
+        return;
+    }
+
+    renderCategoryPage(currentPage);
+}
+
+function syncNotebookTabs() {
+    const tabData = {
+        TABLES: {
+            small: tablesTab,
+            selected: "./assets/ui/table_tab.png",
+            unselected: "./assets/ui/table_tab_unselected.png"
+        },
+        DQL: {
+            small: dqlTab,
+            selected: "./assets/ui/dql_tab.png",
+            unselected: "./assets/ui/dql_tab_unselected.png"
+        },
+        DML: {
+            small: dmlTab,
+            selected: "./assets/ui/dml_tab.png",
+            unselected: "./assets/ui/dml_tab_unselected.png"
+        },
+        DDL: {
+            small: ddlTab,
+            selected: "./assets/ui/ddl_tab.png",
+            unselected: "./assets/ui/ddl_tab_unselected.png"
+        },
+        DCL: {
+            small: dclTab,
+            selected: "./assets/ui/dcl_tab.png",
+            unselected: "./assets/ui/dcl_tab_unselected.png"
+        },
+        TCL: {
+            small: tclTab,
+            selected: "./assets/ui/tcl_tab.png",
+            unselected: "./assets/ui/tcl_tab_unselected.png"
+        }
+    };
+
+    Object.entries(tabData).forEach(([page, data]) => {
+        const src = page === currentPage
+            ? data.selected
+            : data.unselected;
+        data.small.src = src;
+    });
+
+    largeNotebookTabs.forEach(tab => {
+        const data = tabData[tab.dataset.page];
+        const src = tab.dataset.page === currentPage
+            ? data.selected
+            : data.unselected;
+        tab.src = src;
+    });
 }
 
 export function showNotebookUI() {

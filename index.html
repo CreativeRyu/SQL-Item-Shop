@@ -29,7 +29,7 @@
           <img class="support-heart-gif" src="./assets/sprites/HeartDetailed_Bounce.gif" alt="">
         </button>
 
-        <div id="version-label">v0.3.2-dev</div>
+        <div id="version-label">v0.3.3-dev</div>
     </div>
     <div id="game-screen" class="hidden">
         <div id="level-banner-stack" aria-label="Level-Fortschritt"></div>
@@ -63,6 +63,16 @@
         <div class="bottom-layout">
           <div id="sql-notebook-ui">
             <img id="sql-notebook-image" src="./assets/ui/sql_notebook.png">
+            <button
+              id="notebook-expand-btn"
+              type="button"
+              title="Großes Notebook öffnen"
+              aria-label="Großes Notebook öffnen">
+              <img
+                id="notebook-expand-icon"
+                src="./assets/ui/expand.png"
+                alt="">
+            </button>
             <div id="notebook-content"></div>
             <div id="notebook-tabs">
               <img class="notebook-tab" id="tables-tab" src="./assets/ui/table_tab.png">
@@ -145,6 +155,35 @@
         <div id="item-popup-title"></div>
         <img id="item-popup-icon" />
         <div id="item-popup-description"></div>
+      </div>
+    </div>
+
+    <div id="large-notebook-overlay" class="hidden">
+      <div id="large-notebook">
+        <img id="large-notebook-image" src="./assets/ui/sql_notebook.png" alt="">
+        <button
+          id="large-notebook-close"
+          type="button"
+          title="Großes Notebook schließen"
+          aria-label="Großes Notebook schließen">
+          <img
+            id="large-notebook-close-icon"
+            src="./assets/ui/close.png"
+            alt="">
+        </button>
+        <div id="large-notebook-content">
+          <div class="large-notebook-placeholder">
+            Dieses Feature wird als nächstes implementiert
+          </div>
+        </div>
+        <div id="large-notebook-tabs">
+          <img class="large-notebook-tab" data-page="TABLES" src="./assets/ui/table_tab.png" alt="">
+          <img class="large-notebook-tab" data-page="DQL" src="./assets/ui/dql_tab_unselected.png" alt="">
+          <img class="large-notebook-tab" data-page="DML" src="./assets/ui/dml_tab_unselected.png" alt="">
+          <img class="large-notebook-tab" data-page="DDL" src="./assets/ui/ddl_tab_unselected.png" alt="">
+          <img class="large-notebook-tab" data-page="DCL" src="./assets/ui/dcl_tab_unselected.png" alt="">
+          <img class="large-notebook-tab" data-page="TCL" src="./assets/ui/tcl_tab_unselected.png" alt="">
+        </div>
       </div>
     </div>
 
