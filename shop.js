@@ -54,6 +54,7 @@ export function renderShopVisuals(
 
     specialShopItems.forEach(item => {
         renderItemStack({
+            ...item,
             productId: item.layoutId,
             name: item.name,
             stock: item.stock,
@@ -106,8 +107,18 @@ export function hideTooltip() {
     tooltip.style.display = "none";
 }
 
-function renderItemStack({ productId, name, stock, shopLayout, keyItems }) {
-    const visual = shopLayout[productId];
+function renderItemStack({
+    productId,
+    name,
+    stock,
+    shopLayout,
+    keyItems,
+    visual: visualOverride,
+    isDecorative = false,
+    className = "",
+    hideCount = false
+}) {
+    const visual = visualOverride || shopLayout[productId];
 
     if(!visual)
         return;
@@ -117,7 +128,9 @@ function renderItemStack({ productId, name, stock, shopLayout, keyItems }) {
     const posY = visual.posY;
     const scale = visual.scale;
 
-    const keyItem = visual.keyItem || keyItems[name];
+    const keyItem = isDecorative
+        ? null
+        : visual.keyItem || keyItems[name];
     const tooltipX = visual.tooltipX ?? keyItem?.tooltipX ?? posX - 16;
     const tooltipY = visual.tooltipY ?? keyItem?.tooltipY ?? posY - 58;
 
@@ -135,7 +148,7 @@ function renderItemStack({ productId, name, stock, shopLayout, keyItems }) {
         : "";
 
     const html = `
-    <div class="item-stack ${keyItem ? "shop-key-item" : ""}"
+    <div class="item-stack ${keyItem ? "shop-key-item" : ""} ${className}"
         ${keyItemAttributes}
         style="
         left:${posX}px;
@@ -148,6 +161,7 @@ function renderItemStack({ productId, name, stock, shopLayout, keyItems }) {
             <img class="shop-item" src="${sprite}">
         </div>
 
+        ${hideCount ? "" : `
         <div class="item-count"
             style="
             right:${-7 * scale}px;
@@ -155,6 +169,7 @@ function renderItemStack({ productId, name, stock, shopLayout, keyItems }) {
 
             ${stock}
         </div>
+        `}
     </div>`;
 
     shopItems.insertAdjacentHTML("beforeend", html);

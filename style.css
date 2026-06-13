@@ -1152,6 +1152,41 @@ tr:hover td {
     transform-origin: bottom center;
 }
 
+.shop-radio-decoration {
+    pointer-events: none;
+    z-index: 24;
+}
+
+.shop-radio-decoration .shop-item {
+    transform-origin: 50% 82%;
+}
+
+.shop-radio-playing .shop-item {
+    animation: radioJazzGroove 2.4s ease-in-out infinite;
+    filter:
+        drop-shadow(0px 3px 2px rgba(0,0,0,0.35))
+        drop-shadow(0 0 7px rgba(255,220,120,0.26));
+}
+
+@keyframes radioJazzGroove {
+    0%,
+    100% {
+        transform: translateY(0) rotate(0deg) scale(1);
+    }
+
+    24% {
+        transform: translateY(-1px) rotate(-1.2deg) scale(1.045);
+    }
+
+    52% {
+        transform: translateY(0) rotate(0.8deg) scale(1.015);
+    }
+
+    76% {
+        transform: translateY(-1px) rotate(1.2deg) scale(1.04);
+    }
+}
+
 #shop-tooltip {
     position: absolute;
     display: none;

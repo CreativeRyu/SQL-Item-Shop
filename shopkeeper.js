@@ -1,4 +1,5 @@
 let quotes = [];
+let musicQuotes = [];
 
 const tutorialWarnings = [
     "Langsam, Azubi. Für solche Befehle fehlt dir noch die Ausbildung.",
@@ -17,8 +18,17 @@ const tutorialWarnings = [
 
 
 export async function loadQuotes() {
-    quotes = await fetch("./shopkeeperQuotes.json")
+    const quoteData = await fetch("./shopkeeperQuotes.json")
         .then(res => res.json());
+
+    if(Array.isArray(quoteData)) {
+        quotes = quoteData;
+        musicQuotes = [];
+        return;
+    }
+
+    quotes = quoteData.default || [];
+    musicQuotes = quoteData.music || [];
 }
 
 export function showHintMessage(text, duration = 7000) {
@@ -34,12 +44,18 @@ export function showHintMessage(text, duration = 7000) {
         }, displayDuration);
 }
 
-export function showRandomQuote() {
-    if(quotes.length === 0)
+export function showRandomQuote(options = {}) {
+    const availableQuotes = options.includeMusicQuotes
+        ? quotes.concat(musicQuotes)
+        : quotes;
+
+    if(availableQuotes.length === 0)
         return;
 
     const bubble = document.getElementById("shopkeeper-dialogue");
-    const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+    const randomQuote = availableQuotes[
+        Math.floor(Math.random() * availableQuotes.length)
+    ];
     bubble.innerText = randomQuote;
     bubble.style.opacity = 1;
 

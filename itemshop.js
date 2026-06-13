@@ -32,15 +32,22 @@ const GAME_BASE_WIDTH = 1718;
 const GAME_MIN_SCALE = 0.72;
 const GAME_SIDE_PADDING = 40;
 const RADIO_PRICE = 100;
+const RADIO_DECORATION_VISUAL = {
+    sprite: "./assets/sprites/shopItems/radio.png",
+    posX: 56,
+    posY: 154,
+    scale: 1.5
+};
 const MUSIC_TRACKS = [
-    "./assets/music/pl_pl_fantasy_shop_item_shop_01.mp3",
-    "./assets/music/pl_pl_fantasy_shop_item_shop_02.mp3",
-    "./assets/music/pl_pl_fantasy_shop_merchant_01.mp3",
-    "./assets/music/pl_pl_fantasy_shop_merchant_02.mp3",
-    "./assets/music/pl_pl_fantasy_shop_shop_interior_01.mp3",
-    "./assets/music/pl_pl_fantasy_shop_shop_interior_02.mp3",
-    "./assets/music/pl_pl_fantasy_shop_magic_shop_01.mp3",
-    "./assets/music/pl_pl_fantasy_shop_magic_shop_02.mp3"
+    "./assets/music/LSV_Bossa_031_bpm_100bpm_G4.mp3",
+    "./assets/music/LSV_Bossa_030_Jazz_94bpm_C5.mp3",
+    "./assets/music/LSV_Bossa_028_bpm_106bpm_F4.mp3",
+    "./assets/music/LSV_Bossa_027_bpm_106bpm_E4.mp3",
+    "./assets/music/LSV_Bossa_025_NuJazz_104bpm_G4.mp3",
+    "./assets/music/LSV_Bossa_016_laidback_104bpm_C4.mp3",
+    "./assets/music/LSV_Bossa_011_lush_94bpm_E4.mp3",
+    "./assets/music/LSV_Bossa_007_solos_137bpm_F4.mp3",
+    "./assets/music/bossanovasong_1.wav"
 ];
 const HELP_ITEMS = {
     hint: {
@@ -236,6 +243,7 @@ async function continueGame() {
     currentLevel = LEVELS[save.levelId] || LEVELS.level0;
     currentMissionIndex = save.missionIndex;
     gameState = normalizeGameState(save.gameState);
+    gameState.musicEnabled = false;
     loadNotebookState(save.notebookState);
 
     await initCurrentLevelDatabase();
@@ -390,7 +398,7 @@ function completeCurrentLevel() {
     saveGame({
         levelId: nextLevel.levelId,
         missionIndex: 0,
-        gameState,
+        gameState: getSaveableGameState(),
         notebookState: getNotebookState()
     });
 
@@ -782,10 +790,24 @@ function clearHelpPurchasesForLevel(levelId) {
 }
 
 function getCurrentSpecialShopItems() {
-    if(!isHelpIntroduced())
-        return [];
-
     const items = [];
+
+    if(gameState.hasRadio) {
+        items.push({
+            layoutId: "radio-decoration",
+            name: "Retro Radio",
+            stock: 1,
+            visual: RADIO_DECORATION_VISUAL,
+            isDecorative: true,
+            hideCount: true,
+            className: gameState.musicEnabled
+                ? "shop-radio-decoration shop-radio-playing"
+                : "shop-radio-decoration"
+        });
+    }
+
+    if(!isHelpIntroduced())
+        return items;
 
     if(!hasHelpPurchase("hint")) {
         items.push({
@@ -1115,10 +1137,13 @@ function playMusic() {
         return;
 
     const player = getMusicPlayer();
-    player.src = MUSIC_TRACKS[getCurrentTrackIndex()];
+    gameState.currentTrackIndex = getRandomTrackIndex();
+    player.src = MUSIC_TRACKS[gameState.currentTrackIndex];
     gameState.musicEnabled = true;
+    renderCurrentShopVisuals();
     player.play().catch(() => {
         gameState.musicEnabled = false;
+        renderCurrentShopVisuals();
         saveCurrentGame();
     });
     saveCurrentGame();
@@ -1130,6 +1155,7 @@ function stopMusic() {
         musicPlayer.currentTime = 0;
     }
     gameState.musicEnabled = false;
+    renderCurrentShopVisuals();
     saveCurrentGame();
 }
 
@@ -1155,6 +1181,20 @@ function getCurrentTrackIndex() {
     return gameState.currentTrackIndex % MUSIC_TRACKS.length;
 }
 
+function getRandomTrackIndex() {
+    if(MUSIC_TRACKS.length <= 1)
+        return 0;
+
+    const currentIndex = getCurrentTrackIndex();
+    let nextIndex = Math.floor(Math.random() * MUSIC_TRACKS.length);
+
+    while(nextIndex === currentIndex) {
+        nextIndex = Math.floor(Math.random() * MUSIC_TRACKS.length);
+    }
+
+    return nextIndex;
+}
+
 function updateSoundControls() {
     const controls = document.getElementById("sound-controls");
     controls.classList.toggle("hidden", !gameState.hasRadio);
@@ -1177,9 +1217,16 @@ function saveCurrentGame() {
     saveGame({
         levelId: currentLevel.levelId,
         missionIndex: currentMissionIndex,
-        gameState,
+        gameState: getSaveableGameState(),
         notebookState: getNotebookState()
     });
+}
+
+function getSaveableGameState() {
+    return {
+        ...gameState,
+        musicEnabled: false
+    };
 }
 
 function updateEditorToolsVisibility() {
@@ -1225,7 +1272,9 @@ setInterval(() => {
         return;
     const chance = Math.random();
     if(chance < 0.4) {
-        showRandomQuote();
+        showRandomQuote({
+            includeMusicQuotes: gameState.musicEnabled
+        });
     }
 }, 12000);
 
