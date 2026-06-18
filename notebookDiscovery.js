@@ -1,6 +1,7 @@
 import {
     unlockNotebookEntry,
-    completeNotebookEntry
+    completeNotebookEntry,
+    rememberTableSchema
 } from "./notebook.js";
 
 export function processDiscoveries(query, result, db) {
@@ -21,6 +22,14 @@ function discoverTables(query, db) {
     if(!tableExists)
         return;
 
-    unlockNotebookEntry(tableName);
-    completeNotebookEntry(tableName);
+    rememberTableSchema(
+        tableName,
+        schemaResult[0].values.map(row => ({
+            name: row[1],
+            type: row[2],
+            notNull: row[3] === 1,
+            defaultValue: row[4],
+            pk: row[5] === 1
+        }))
+    );
 }

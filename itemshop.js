@@ -2,7 +2,7 @@
 
 import { LEVELS } from "./levels/index.js";
 import { SHOP_LAYOUTS } from "./shopLayouts/index.js";
-import {initNotebook, showNotebookUI, unlockNotebookEntry, completeNotebookEntry, getNotebookState, loadNotebookState} from "./notebook.js";
+import {initNotebook, showNotebookUI, unlockNotebookEntry, completeNotebookEntry, getNotebookState, loadNotebookState, setNotebookDatabaseProvider} from "./notebook.js";
 import { renderShopVisuals, hideTooltip} from "./shop.js";
 import { processDiscoveries } from "./notebookDiscovery.js";
 import {saveGame,loadGame} from "./savegame.js";
@@ -173,6 +173,7 @@ async function initGameSystems() {
     await initSqlEngine();
     await loadQuotes();
     initNotebook();
+    setNotebookDatabaseProvider(getDb);
     initHelpPanel();
     initSoundControls();
     gameSystemsReady = true;

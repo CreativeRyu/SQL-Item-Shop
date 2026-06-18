@@ -151,7 +151,7 @@ const level2 = {
       reward: {
         money: 20
       },
-      completes: ["WHERE"],
+      completes: ["WHERE", "COMPARISON_OPERATORS"],
       validator: (query, result) => (
         usesTable(query, "products") &&
         usesWhere(query) &&

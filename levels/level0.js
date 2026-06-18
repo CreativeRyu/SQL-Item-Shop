@@ -184,7 +184,7 @@
         money: 15,
       },
       unlocks: [],
-      completes: ["FROM"],
+      completes: ["FROM", "*"],
       validator: (query, result) => {
         const normalized = query.toLowerCase();
         return normalized.includes("from shop_items");

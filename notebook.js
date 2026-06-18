@@ -1,3 +1,8 @@
+import {
+    NOTEBOOK_CATEGORIES,
+    NOTEBOOK_TOPICS
+} from "./notebookContent.js";
+
 const tablesTab = document.getElementById("tables-tab");
 const dqlTab = document.getElementById("dql-tab");
 const dmlTab = document.getElementById("dml-tab");
@@ -9,51 +14,60 @@ const notebookExpandButton = document.getElementById("notebook-expand-btn");
 const largeNotebookOverlay = document.getElementById("large-notebook-overlay");
 const largeNotebookCloseButton = document.getElementById("large-notebook-close");
 const largeNotebookTabs = document.querySelectorAll(".large-notebook-tab");
+const largeNotebookContent = document.getElementById("large-notebook-content");
 const notebookState = {
     commands: {},
-    tables: {}
+    tables: {},
+    schemas: {}
 };
 
+const SMALL_NOTEBOOK_CATEGORIES = {
+    TABLES: {
+        title: "TABLES",
+        description: "Bekannte Tabellen und freigeschaltete Datenstrukturen."
+    },
+    DQL: {
+        title: "DQL",
+        description: "Data Query Language<br><br>Abfragen von Daten"
+    },
+    DML: {
+        title: "DML",
+        description: "Data Manipulation Language<br><br>Daten verändern"
+    },
+    DDL: {
+        title: "DDL",
+        description: "Data Definition Language<br><br>Tabellen und Struktur"
+    },
+    DCL: {
+        title: "DCL",
+        description: "Data Control Language<br><br>Rechte und Zugriffe"
+    },
+    TCL: {
+        title: "TCL",
+        description: "Transaction Control Language<br><br>Transaktionen steuern"
+    }
+};
+
+const PAGE_SIZE = 12;
+const selectedEntries = {};
+const pageOffsets = {};
 let currentPage = "TABLES";
+let getDatabase = () => null;
+
 export function initNotebook() {
     renderTablesPage();
     initLargeNotebook();
 
-    tablesTab.onclick = () => {
-        currentPage = "TABLES";
-        syncNotebookTabs();
-        renderTablesPage();
-    };
+    tablesTab.onclick = () => selectPage("TABLES");
+    dqlTab.onclick = () => selectPage("DQL");
+    dmlTab.onclick = () => selectPage("DML");
+    ddlTab.onclick = () => selectPage("DDL");
+    dclTab.onclick = () => selectPage("DCL");
+    tclTab.onclick = () => selectPage("TCL");
+}
 
-    dqlTab.onclick = () => {
-        currentPage = "DQL";
-        syncNotebookTabs();
-        renderCategoryPage("DQL");
-    };
-
-    dmlTab.onclick = () => {
-        currentPage = "DML";
-        syncNotebookTabs();
-        renderCategoryPage("DML");
-    };
-
-    ddlTab.onclick = () => {
-        currentPage = "DDL";
-        syncNotebookTabs();
-        renderCategoryPage("DDL");
-    };
-
-    dclTab.onclick = () => {
-        currentPage = "DCL";
-        syncNotebookTabs();
-        renderCategoryPage("DCL");
-    };
-
-    tclTab.onclick = () => {
-        currentPage = "TCL";
-        syncNotebookTabs();
-        renderCategoryPage("TCL");
-    };
+export function setNotebookDatabaseProvider(provider) {
+    getDatabase = provider;
 }
 
 function initLargeNotebook() {
@@ -66,16 +80,22 @@ function initLargeNotebook() {
     };
 
     largeNotebookTabs.forEach(tab => {
-        tab.onclick = () => {
-            currentPage = tab.dataset.page;
-            syncNotebookTabs();
-            renderCurrentPage();
-        };
+        tab.onclick = () => selectPage(tab.dataset.page);
     });
 }
 
-function showLargeNotebook() {
+function selectPage(page) {
+    currentPage = page;
+    ensureSelectedEntry(page);
     syncNotebookTabs();
+    renderCurrentPage();
+    renderLargeNotebookPage();
+}
+
+function showLargeNotebook() {
+    ensureSelectedEntry(currentPage);
+    syncNotebookTabs();
+    renderLargeNotebookPage();
     largeNotebookOverlay.classList.remove("hidden");
 }
 
@@ -93,7 +113,24 @@ function renderCurrentPage() {
 }
 
 function syncNotebookTabs() {
-    const tabData = {
+    const tabData = getTabData();
+
+    Object.entries(tabData).forEach(([page, data]) => {
+        data.small.src = page === currentPage
+            ? data.selected
+            : data.unselected;
+    });
+
+    largeNotebookTabs.forEach(tab => {
+        const data = tabData[tab.dataset.page];
+        tab.src = tab.dataset.page === currentPage
+            ? data.selected
+            : data.unselected;
+    });
+}
+
+function getTabData() {
+    return {
         TABLES: {
             small: tablesTab,
             selected: "./assets/ui/table_tab.png",
@@ -125,21 +162,6 @@ function syncNotebookTabs() {
             unselected: "./assets/ui/tcl_tab_unselected.png"
         }
     };
-
-    Object.entries(tabData).forEach(([page, data]) => {
-        const src = page === currentPage
-            ? data.selected
-            : data.unselected;
-        data.small.src = src;
-    });
-
-    largeNotebookTabs.forEach(tab => {
-        const data = tabData[tab.dataset.page];
-        const src = tab.dataset.page === currentPage
-            ? data.selected
-            : data.unselected;
-        tab.src = src;
-    });
 }
 
 export function showNotebookUI() {
@@ -148,95 +170,41 @@ export function showNotebookUI() {
 }
 
 function renderCategoryPage(category) {
-    const categories = {
-        DQL: {
-            description: "Data Query Language<br><br>Abfragen von Daten",
-            commands: [
-                "SELECT",
-                "WHERE",
-                "JOIN",
-                "GROUP BY",
-                "HAVING"
-            ]
-        },
-
-        DML: {
-            description: "Data Manipulation Language<br><br>Daten verändern",
-            commands: [
-                "INSERT INTO",
-                "UPDATE",
-                "DELETE"
-            ]
-        },
-
-        DDL: {
-            description: "Data Definition Language<br><br>Tabellen und Struktur",
-            commands: [
-                "PRAGMA table_info",
-                "CREATE TABLE",
-                "ALTER TABLE",
-                "DROP TABLE"
-            ]
-        },
-
-        DCL: {
-            description: "Data Control Language<br><br>Rechte und Zugriffe",
-            commands: [
-                "GRANT",
-                "REVOKE"
-            ]
-        },
-
-        TCL: {
-            description: "Transaction Control Language<br><br>Transaktionen steuern",
-            commands: [
-                "COMMIT",
-                "ROLLBACK",
-                "SAVEPOINT"
-            ]
-        }
-    };
-
-    const data = categories[category];
+    const data = SMALL_NOTEBOOK_CATEGORIES[category];
+    const topics = NOTEBOOK_TOPICS[category] || [];
 
     let html = `
         <div class="notebook-left-page">
             <div class="notebook-category-title">
-                ${category}
+                ${data.title}
             </div>
 
             <div class="notebook-category-description">
                 ${data.description}
             </div>
-
         </div>
         <div class="notebook-right-page">
     `;
 
-    data.commands.filter(command =>
-        command in notebookState.commands).forEach(command => {
-        const unlocked = notebookState.commands[command] === true;
-        html += `
-            <div class="notebook-list-entry">
-                <div class="notebook-list-text">
-                    ${command}
-                </div>
-                <div class="notebook-list-status ${unlocked ? "unlocked" : "locked"}"></div>
-            </div>
-        `;
-    });
+    topics
+        .filter(topic => isEntryKnown(topic.unlockKey))
+        .forEach(topic => {
+            html += renderSmallEntry(topic.label, getEntryStatus(topic.unlockKey));
+        });
+
     html += `</div>`;
     notebookContent.innerHTML = html;
 }
 
 function renderTablesPage() {
+    const data = SMALL_NOTEBOOK_CATEGORIES.TABLES;
     let html = `
         <div class="notebook-left-page">
             <div class="notebook-category-title">
                 TABLES
             </div>
             <div class="notebook-category-description">
-                Bekannte Tabellen und freigeschaltete Datenstrukturen.
+                ${data.description}
             </div>
         </div>
         <div class="notebook-right-page">
@@ -244,81 +212,383 @@ function renderTablesPage() {
 
     Object.entries(notebookState.tables)
         .forEach(([table, unlocked]) => {
-            html += `
-                <div class="notebook-list-entry notebook-table-entry ${unlocked ? "clickable" : "locked"}" data-table="${table}">
-                    <div class="notebook-list-text">
-                        ${table}
-                    </div>
-                    <div class="notebook-list-status ${unlocked ? "unlocked" : ""}">
-                    </div>
-                </div>
-            `;
-    });
+            html += renderSmallEntry(table, unlocked ? "complete" : "known", "notebook-table-entry");
+        });
 
     html += `</div>`;
     notebookContent.innerHTML = html;
-    attachTableListeners();
 }
 
-function attachTableListeners() {
-    document
-        .querySelectorAll(".notebook-table-entry")
-        .forEach(entry => {
+function renderSmallEntry(label, status, extraClass = "") {
+    return `
+        <div class="notebook-list-entry ${extraClass}">
+            <div class="notebook-list-text">
+                ${escapeHtml(label)}
+            </div>
+            <div class="notebook-list-status ${status === "complete" ? "unlocked" : ""}"></div>
+        </div>
+    `;
+}
 
-            const table = entry.dataset.table;
-            if(!notebookState.tables[table])
-                return;
+function renderLargeNotebookPage() {
+    if(currentPage === "TABLES") {
+        renderLargeTablesPage();
+        return;
+    }
 
-            entry.onclick = () => {
-                const table = entry.dataset.table;
-                window.inspectTable(table);
+    renderLargeTopicPage(currentPage);
+}
+
+function renderLargeTopicPage(category) {
+    const categoryData = NOTEBOOK_CATEGORIES[category];
+    const topics = NOTEBOOK_TOPICS[category] || [];
+    ensureSelectedEntry(category);
+    const selectedTopic = topics.find(topic => topic.id === selectedEntries[category]) || topics[0];
+
+    largeNotebookContent.innerHTML = `
+        <div class="large-notebook-left-page">
+            <div class="large-notebook-category-title">${categoryData.title}</div>
+            <div class="large-notebook-category-description">${categoryData.description}</div>
+            ${renderLargeEntryList(topics, category)}
+        </div>
+        <div class="large-notebook-right-page">
+            ${renderTopicDetails(selectedTopic)}
+        </div>
+        ${renderLargeNextButton(topics)}
+    `;
+
+    attachLargeEntryListeners(category, topics);
+}
+
+function renderLargeTablesPage() {
+    const categoryData = NOTEBOOK_CATEGORIES.TABLES;
+    const tables = Object.keys(notebookState.tables).map(table => ({
+        id: table,
+        label: table,
+        unlockKey: table
+    }));
+    ensureSelectedEntry("TABLES");
+    const selectedTable = selectedEntries.TABLES || tables[0]?.id;
+
+    largeNotebookContent.innerHTML = `
+        <div class="large-notebook-left-page">
+            <div class="large-notebook-category-title">${categoryData.title}</div>
+            <div class="large-notebook-category-description">${categoryData.description}</div>
+            ${renderLargeEntryList(tables, "TABLES")}
+        </div>
+        <div class="large-notebook-right-page">
+            ${renderTableDetails(selectedTable)}
+        </div>
+        ${renderLargeNextButton(tables)}
+    `;
+
+    attachLargeEntryListeners("TABLES", tables);
+}
+
+function renderLargeEntryList(entries, page) {
+    const offset = pageOffsets[page] || 0;
+    const visibleEntries = entries.slice(offset, offset + PAGE_SIZE);
+
+    return `
+        <div class="large-notebook-entry-list">
+            ${visibleEntries.map(entry => renderLargeEntry(entry, page)).join("")}
+        </div>
+    `;
+}
+
+function renderLargeNextButton(entries) {
+    if(entries.length <= PAGE_SIZE) {
+        return "";
+    }
+
+    return `
+        <button
+            class="large-notebook-next-page"
+            type="button"
+            title="Weitere Einträge"
+            aria-label="Weitere Einträge anzeigen">
+            &gt;
+        </button>
+    `;
+}
+
+function renderLargeEntry(entry, page) {
+    const status = getEntryStatus(entry.unlockKey);
+    const active = selectedEntries[page] === entry.id;
+
+    return `
+        <button
+            class="large-notebook-entry ${status} ${active ? "active" : ""}"
+            type="button"
+            data-entry-id="${escapeAttribute(entry.id)}">
+            <span class="large-notebook-entry-label">${escapeHtml(entry.label)}</span>
+            <span class="notebook-list-status ${status === "complete" ? "unlocked" : ""}"></span>
+        </button>
+    `;
+}
+
+function renderTopicDetails(topic) {
+    if(!topic) {
+        return `
+            <div class="large-notebook-empty">
+                Hier erscheinen Lerninhalte, sobald diese Kategorie Einträge hat.
+            </div>
+        `;
+    }
+
+    const status = getEntryStatus(topic.unlockKey);
+
+    if(status === "locked") {
+        return `
+            <div class="large-notebook-detail-title">${escapeHtml(topic.label)}</div>
+            <div class="large-notebook-locked-note">
+                ${escapeHtml(topic.teaser || "Dieser Lerninhalt kommt in einer späteren Schicht.")}
+            </div>
+        `;
+    }
+
+    return `
+        <div class="large-notebook-detail-title">${escapeHtml(topic.label)}</div>
+        <div class="large-notebook-detail-section">
+            ${escapeHtml(topic.summary || topic.teaser || "")}
+        </div>
+        ${topic.syntax ? renderCodeBlock("Syntax", topic.syntax) : ""}
+        ${topic.example ? renderCodeBlock("Beispiel", topic.example) : ""}
+        ${topic.note ? `
+            <div class="large-notebook-shopkeeper-note">
+                ${escapeHtml(topic.note)}
+            </div>
+        ` : ""}
+    `;
+}
+
+function renderTableDetails(tableName) {
+    if(!tableName) {
+        return `
+            <div class="large-notebook-empty">
+                Sobald Tabellen bekannt sind, kannst du hier ihr Schema und eine kleine Vorschau ansehen.
+            </div>
+        `;
+    }
+
+    const schema = notebookState.schemas[tableName] || [];
+    return `
+        <div class="large-notebook-detail-title">${escapeHtml(tableName)}</div>
+        <div class="large-notebook-detail-section">
+            Schema und Vorschau helfen dir zu sehen, wie diese Tabelle aufgebaut ist und welche Daten darin liegen.
+        </div>
+        ${renderSchemaTable(tableName, schema)}
+        ${renderPreviewTable(tableName)}
+    `;
+}
+
+function renderSchemaTable(tableName, schema) {
+    if(schema.length === 0) {
+        return `
+            <div class="large-notebook-schema-missing">
+                Schema noch nicht untersucht.<br>
+                Nutze:<br>
+                <code>PRAGMA table_info(${escapeHtml(tableName)});</code>
+            </div>
+        `;
+    }
+
+    return `
+        <div class="large-notebook-section-title">Schema</div>
+        <table class="large-notebook-schema-table">
+            <thead>
+                <tr>
+                    <th>Spalte</th>
+                    <th>Typ</th>
+                    <th>Info</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${schema.map(column => `
+                    <tr>
+                        <td>${escapeHtml(column.name)}</td>
+                        <td>${escapeHtml(column.type || "-")}</td>
+                        <td>${column.pk ? "PRIMARY KEY" : ""}</td>
+                    </tr>
+                `).join("")}
+            </tbody>
+        </table>
+    `;
+}
+
+function renderPreviewTable(tableName) {
+    const db = getDatabase?.();
+
+    if(!db || !isSafeTableName(tableName)) {
+        return "";
+    }
+
+    const result = db.exec(`SELECT * FROM ${tableName} LIMIT 3`);
+    const table = result[0];
+
+    if(!table || table.values.length === 0) {
+        return `
+            <div class="large-notebook-section-title">Vorschau</div>
+            <div class="large-notebook-empty">Keine Beispieldaten vorhanden.</div>
+        `;
+    }
+
+    return `
+        <div class="large-notebook-section-title">Vorschau</div>
+        <table class="large-notebook-preview-table">
+            <thead>
+                <tr>
+                    ${table.columns.map(column => `<th>${escapeHtml(column)}</th>`).join("")}
+                </tr>
+            </thead>
+            <tbody>
+                ${table.values.map(row => `
+                    <tr>
+                        ${row.map(cell => `<td>${escapeHtml(cell)}</td>`).join("")}
+                    </tr>
+                `).join("")}
+            </tbody>
+        </table>
+    `;
+}
+
+function renderCodeBlock(label, code) {
+    return `
+        <div class="large-notebook-section-title">${label}</div>
+        <pre class="large-notebook-code"><code>${escapeHtml(code)}</code></pre>
+    `;
+}
+
+function attachLargeEntryListeners(page, entries) {
+    largeNotebookContent
+        .querySelectorAll(".large-notebook-entry")
+        .forEach(button => {
+            button.onclick = () => {
+                selectedEntries[page] = button.dataset.entryId;
+                renderLargeNotebookPage();
             };
         });
+
+    const nextButton = largeNotebookContent.querySelector(".large-notebook-next-page");
+    if(nextButton) {
+        nextButton.onclick = () => {
+            const currentOffset = pageOffsets[page] || 0;
+            const nextOffset = currentOffset + PAGE_SIZE;
+            pageOffsets[page] = nextOffset >= entries.length ? 0 : nextOffset;
+            selectedEntries[page] = entries[pageOffsets[page]]?.id || "";
+            renderLargeNotebookPage();
+        };
+    }
+}
+
+function ensureSelectedEntry(page) {
+    const entries = page === "TABLES"
+        ? Object.keys(notebookState.tables).map(table => ({ id: table }))
+        : NOTEBOOK_TOPICS[page] || [];
+    const selectedExists = entries.some(entry => entry.id === selectedEntries[page]);
+
+    if(!selectedExists) {
+        selectedEntries[page] = entries[pageOffsets[page] || 0]?.id || "";
+    }
+}
+
+function getEntryStatus(key) {
+    if(!key) {
+        return "locked";
+    }
+
+    if(isEntryComplete(key)) {
+        return "complete";
+    }
+
+    if(isEntryKnown(key)) {
+        return "known";
+    }
+
+    return "locked";
+}
+
+function isEntryKnown(key) {
+    return (
+        key in notebookState.commands ||
+        key in notebookState.tables
+    );
+}
+
+function isEntryComplete(key) {
+    return (
+        notebookState.commands[key] === true ||
+        notebookState.tables[key] === true
+    );
 }
 
 export function unlockNotebookEntry(entry) {
-    const isTable = entry === entry.toLowerCase();
+    const isTable = isTableEntry(entry);
     if(isTable) {
         if(!(entry in notebookState.tables)) {
             notebookState.tables[entry] = false;
         }
-        } else {
-        if(!(entry in notebookState.commands)) {
-            notebookState.commands[entry] = false;
-        }
+    } else if(!(entry in notebookState.commands)) {
+        notebookState.commands[entry] = false;
     }
-    if(currentPage === "TABLES") {
-        renderTablesPage();
-    } else {
-        renderCategoryPage(currentPage);
-    }
+
+    renderAfterNotebookStateChange();
 }
 
 export function completeNotebookEntry(entry) {
-    const isTable = entry === entry.toLowerCase();
+    const isTable = isTableEntry(entry);
     if(isTable) {
         notebookState.tables[entry] = true;
     } else {
         notebookState.commands[entry] = true;
     }
-    if(currentPage === "TABLES") {
-        renderTablesPage();
-    } else {
-        renderCategoryPage(currentPage);
+
+    renderAfterNotebookStateChange();
+}
+
+export function rememberTableSchema(tableName, columns) {
+    notebookState.schemas[tableName] = columns;
+    unlockNotebookEntry(tableName);
+    completeNotebookEntry(tableName);
+}
+
+function renderAfterNotebookStateChange() {
+    renderCurrentPage();
+    if(!largeNotebookOverlay.classList.contains("hidden")) {
+        ensureSelectedEntry(currentPage);
+        renderLargeNotebookPage();
     }
+}
+
+function isTableEntry(entry) {
+    return entry === entry.toLowerCase();
 }
 
 export function getNotebookState() {
     return notebookState;
 }
 
-export function loadNotebookState(data) {
+export function loadNotebookState(data = {}) {
     notebookState.commands = data.commands || {};
     notebookState.tables = data.tables || {};
+    notebookState.schemas = data.schemas || {};
 
-    if(currentPage === "TABLES") {
-        renderTablesPage();
-    } else {
-        renderCategoryPage(currentPage);
-    }
+    renderAfterNotebookStateChange();
+}
+
+function isSafeTableName(tableName) {
+    return /^[a-z_][a-z0-9_]*$/i.test(tableName);
+}
+
+function escapeHtml(value) {
+    return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
+
+function escapeAttribute(value) {
+    return escapeHtml(value);
 }

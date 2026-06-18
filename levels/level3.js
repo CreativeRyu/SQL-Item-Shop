@@ -168,6 +168,7 @@ const level3 = {
       reward: {
         money: 25
       },
+      completes: ["AND"],
       validator: (query, result) => (
         usesTable(query, "products") &&
         usesWhere(query) &&
@@ -203,6 +204,7 @@ const level3 = {
       reward: {
         money: 25
       },
+      completes: ["OR"],
       validator: (query, result) => (
         usesTable(query, "products") &&
         usesWhere(query) &&
@@ -240,6 +242,7 @@ const level3 = {
       reward: {
         money: 25
       },
+      completes: ["BETWEEN"],
       validator: (query, result) => (
         usesTable(query, "customers") &&
         usesWhere(query) &&
@@ -274,6 +277,7 @@ const level3 = {
       reward: {
         money: 25
       },
+      completes: ["LIKE"],
       validator: (query, result) => (
         usesTable(query, "products") &&
         usesWhere(query) &&
