@@ -1,13 +1,24 @@
+import {
+    playContinueSound,
+    playShopkeeperVoice,
+    stopShopkeeperVoice
+} from "./sounds.js";
+
 let tutorialSteps = [];
 let currentTutorialStep = 0;
 let finishCallback = null;
 let runButtonIntroduced = false;
 let softGlowTarget = null;
+let voicedTutorialStep = -1;
+let typewriterTimer = null;
+const TYPEWRITER_CHARACTER_DELAY = 24;
+const TYPEWRITER_PUNCTUATION_DELAY = 90;
 
 export function loadTutorialSteps(steps, softTutorial = false) {
     tutorialSteps = steps;
     currentTutorialStep = 0;
     runButtonIntroduced = false;
+    voicedTutorialStep = -1;
     moveTutorialOverlayIntoGameScreen();
     document.getElementById("tutorial-overlay").style.display = "block";
     const overlay = document.getElementById("tutorial-overlay");
@@ -37,7 +48,11 @@ function showTutorialStep() {
     highlight.style.top = rect.top - padding + "px";
     highlight.style.width = rect.width + padding * 2 + "px";
     highlight.style.height = rect.height + padding * 2 + "px";
-    document.getElementById("tutorial-text").innerHTML = step.text;
+    const tutorialText = document.getElementById("tutorial-text");
+    if(voicedTutorialStep !== currentTutorialStep) {
+        voicedTutorialStep = currentTutorialStep;
+        startTutorialTypewriter(tutorialText, step.text);
+    }
     const nextButton = document.getElementById("tutorial-next-btn");
     const keepEditorOnTop = shouldKeepEditorOnTop(step);
 
@@ -86,6 +101,65 @@ function showTutorialStep() {
     }
 
     placeNextButtonBesideTextBox(textBox);
+
+}
+
+function startTutorialTypewriter(container, html) {
+    stopTutorialTypewriter();
+    container.innerHTML = html;
+
+    const walker = document.createTreeWalker(
+        container,
+        NodeFilter.SHOW_TEXT
+    );
+    const textNodes = [];
+    let node;
+
+    while((node = walker.nextNode())) {
+        textNodes.push({
+            node,
+            text: node.textContent
+        });
+        node.textContent = "";
+    }
+
+    let nodeIndex = 0;
+    let characterIndex = 0;
+    playShopkeeperVoice();
+
+    function typeNextCharacter() {
+        while(
+            nodeIndex < textNodes.length &&
+            characterIndex >= textNodes[nodeIndex].text.length
+        ) {
+            nodeIndex++;
+            characterIndex = 0;
+        }
+
+        if(nodeIndex >= textNodes.length) {
+            typewriterTimer = null;
+            stopShopkeeperVoice();
+            return;
+        }
+
+        const current = textNodes[nodeIndex];
+        const character = current.text[characterIndex];
+        current.node.textContent += character;
+        characterIndex++;
+
+        const delay = /[.!?,:;]/.test(character)
+            ? TYPEWRITER_PUNCTUATION_DELAY
+            : TYPEWRITER_CHARACTER_DELAY;
+        typewriterTimer = setTimeout(typeNextCharacter, delay);
+    }
+
+    typeNextCharacter();
+}
+
+function stopTutorialTypewriter() {
+    clearTimeout(typewriterTimer);
+    typewriterTimer = null;
+    stopShopkeeperVoice();
 }
 
 function placeTextBoxAtCounter(textBox) {
@@ -149,6 +223,8 @@ function placeNextButtonBesideTextBox(textBox) {
 }
 
 document.getElementById("tutorial-next-btn").onclick = () => {
+    playContinueSound();
+    stopTutorialTypewriter();
     currentTutorialStep++;
     if(currentTutorialStep >= tutorialSteps.length) {
         hideTutorialOverlay();
@@ -183,11 +259,13 @@ export function clearTutorial() {
     tutorialSteps = [];
     currentTutorialStep = 0;
     runButtonIntroduced = false;
+    voicedTutorialStep = -1;
     clearSoftGlowTarget();
     hideTutorialOverlay();
 }
 
 function hideTutorialOverlay() {
+    stopTutorialTypewriter();
     clearSoftGlowTarget();
     const overlay = document.getElementById("tutorial-overlay");
     overlay.style.display = "none";

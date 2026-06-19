@@ -8,6 +8,12 @@ import { processDiscoveries } from "./notebookDiscovery.js";
 import {saveGame,loadGame} from "./savegame.js";
 import { initDebugTools } from "./debugTools.js";
 import {
+    initSoundEffects,
+    playItemAcquiredSound,
+    playSqlErrorSound,
+    playStampSound
+} from "./sounds.js";
+import {
     loadQuotes,
     showHintMessage,
     showRandomQuote,
@@ -114,6 +120,7 @@ async function initCurrentLevelDatabase() {
 bootApp();
 
 function bootApp() {
+    initSoundEffects();
     updateGameScale();
     window.addEventListener("resize", updateGameScale);
     initStartScreen();
@@ -313,6 +320,7 @@ function runQuery() {
 
     } catch (err) {
         errorBox.innerText = err.message;
+        playSqlErrorSound();
     }
 }
 
@@ -548,6 +556,7 @@ function showMissionCompleteStamp(onComplete) {
     stamp.classList.remove("visible");
 
     requestAnimationFrame(() => {
+        playStampSound();
         stamp.classList.add("visible");
     });
 
@@ -1203,6 +1212,7 @@ function updateSoundControls() {
 
 function showItemPopup(title,icon,description,onClose) {
     clearTutorial();
+    playItemAcquiredSound();
     const overlay = document.getElementById("item-popup-overlay");
     document.getElementById("item-popup-title").innerText = title;
     document.getElementById("item-popup-icon").src = icon;
