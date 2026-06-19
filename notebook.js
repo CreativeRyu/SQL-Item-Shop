@@ -52,6 +52,7 @@ const PAGE_SIZE = 12;
 const selectedEntries = {};
 const pageOffsets = {};
 let currentPage = "TABLES";
+let currentDetailPage = 1;
 let getDatabase = () => null;
 
 export function initNotebook() {
@@ -86,6 +87,7 @@ function initLargeNotebook() {
 
 function selectPage(page) {
     currentPage = page;
+    currentDetailPage = 1;
     ensureSelectedEntry(page);
     syncNotebookTabs();
     renderCurrentPage();
@@ -254,7 +256,8 @@ function renderLargeTopicPage(category) {
         <div class="large-notebook-right-page">
             ${renderTopicDetails(selectedTopic)}
         </div>
-        ${renderLargeNextButton(topics)}
+        ${renderLargePageNumber(currentDetailPage)}
+        ${renderLargeNextButton(topics, category)}
     `;
 
     attachLargeEntryListeners(category, topics);
@@ -279,7 +282,8 @@ function renderLargeTablesPage() {
         <div class="large-notebook-right-page">
             ${renderTableDetails(selectedTable)}
         </div>
-        ${renderLargeNextButton(tables)}
+        ${renderLargePageNumber(currentDetailPage)}
+        ${renderLargeNextButton(tables, "TABLES", selectedTable)}
     `;
 
     attachLargeEntryListeners("TABLES", tables);
@@ -296,8 +300,11 @@ function renderLargeEntryList(entries, page) {
     `;
 }
 
-function renderLargeNextButton(entries) {
-    if(entries.length <= PAGE_SIZE) {
+function renderLargeNextButton(entries, page, selectedTable = "") {
+    const hasMoreEntryPages = entries.length > PAGE_SIZE;
+    const hasTablePreviewPage = page === "TABLES" && hasSchema(selectedTable);
+
+    if(!hasMoreEntryPages && !hasTablePreviewPage) {
         return "";
     }
 
@@ -305,10 +312,16 @@ function renderLargeNextButton(entries) {
         <button
             class="large-notebook-next-page"
             type="button"
-            title="Weitere Einträge"
-            aria-label="Weitere Einträge anzeigen">
-            &gt;
-        </button>
+            title="Nächste Seite"
+            aria-label="Nächste Seite anzeigen"></button>
+    `;
+}
+
+function renderLargePageNumber(pageNumber) {
+    return `
+        <div class="large-notebook-page-number" aria-label="Seite ${pageNumber}">
+            ${pageNumber}
+        </div>
     `;
 }
 
@@ -371,14 +384,23 @@ function renderTableDetails(tableName) {
         `;
     }
 
-    const schema = notebookState.schemas[tableName] || [];
+    const schema = getKnownSchema(tableName);
+    if(schema.length > 0 && currentDetailPage === 2) {
+        return `
+            <div class="large-notebook-detail-title">${escapeHtml(tableName)}</div>
+            <div class="large-notebook-detail-section">
+                Vorschau der ersten drei Zeilen. Das Schema wurde bereits freigeschaltet.
+            </div>
+            ${renderPreviewTable(tableName)}
+        `;
+    }
+
     return `
         <div class="large-notebook-detail-title">${escapeHtml(tableName)}</div>
         <div class="large-notebook-detail-section">
-            Schema und Vorschau helfen dir zu sehen, wie diese Tabelle aufgebaut ist und welche Daten darin liegen.
+            Das Schema zeigt dir, welche Spalten diese Tabelle hat.
         </div>
         ${renderSchemaTable(tableName, schema)}
-        ${renderPreviewTable(tableName)}
     `;
 }
 
@@ -465,6 +487,7 @@ function attachLargeEntryListeners(page, entries) {
         .forEach(button => {
             button.onclick = () => {
                 selectedEntries[page] = button.dataset.entryId;
+                currentDetailPage = 1;
                 renderLargeNotebookPage();
             };
         });
@@ -472,13 +495,61 @@ function attachLargeEntryListeners(page, entries) {
     const nextButton = largeNotebookContent.querySelector(".large-notebook-next-page");
     if(nextButton) {
         nextButton.onclick = () => {
+            if(page === "TABLES" && hasSchema(selectedEntries.TABLES)) {
+                toggleTableDetailPage();
+                renderLargeNotebookPage();
+                return;
+            }
+
             const currentOffset = pageOffsets[page] || 0;
             const nextOffset = currentOffset + PAGE_SIZE;
             pageOffsets[page] = nextOffset >= entries.length ? 0 : nextOffset;
             selectedEntries[page] = entries[pageOffsets[page]]?.id || "";
+            currentDetailPage = 1;
             renderLargeNotebookPage();
         };
     }
+}
+
+function toggleTableDetailPage() {
+    currentDetailPage = currentDetailPage === 2 ? 1 : 2;
+}
+
+function hasSchema(tableName) {
+    return getKnownSchema(tableName).length > 0;
+}
+
+function getKnownSchema(tableName) {
+    const storedSchema = notebookState.schemas[tableName] || [];
+    if(storedSchema.length > 0) {
+        return storedSchema;
+    }
+
+    if(notebookState.tables[tableName] !== true) {
+        return [];
+    }
+
+    const db = getDatabase?.();
+    if(!db || !isSafeTableName(tableName)) {
+        return [];
+    }
+
+    const schemaResult = db.exec(`PRAGMA table_info(${tableName})`);
+    const rows = schemaResult[0]?.values || [];
+
+    if(rows.length === 0) {
+        return [];
+    }
+
+    notebookState.schemas[tableName] = rows.map(row => ({
+        name: row[1],
+        type: row[2],
+        notNull: row[3] === 1,
+        defaultValue: row[4],
+        pk: row[5] === 1
+    }));
+
+    return notebookState.schemas[tableName];
 }
 
 function ensureSelectedEntry(page) {

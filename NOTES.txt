@@ -9,7 +9,7 @@ Current next feature direction
 - Next focus is content and progression:
   - Level 3 WHERE Advanced test / polish pass.
   - Radio and music MVP.
-  - Large Notebook View.
+  - Large Notebook View polish / content expansion.
   - Sound effects later.
 
 Money / shop item ideas
@@ -182,6 +182,37 @@ Aktueller Stand
   - shopLayouts/level0ShopLayout.js hat einen Radio-Slot ueber Apfel/Banane.
   - assets/sprites/shopItems/radio.png ist der erwartete Sprite-Pfad.
   - User hat ein eigenes Radio-Sprite gezeichnet; dieses soll als naechstes im Shop geprueft/eingepasst werden.
+- Grosses SQL Notebook MVP ist eingebaut:
+  - Kleines Notebook bleibt Schnelluebersicht mit kurzen Beschreibungen.
+  - Grosses Notebook oeffnet als erweiterte Lernansicht ueber den Expand-Button.
+  - notebookContent.js enthaelt strukturierte Inhalte fuer Kategorien und Lern-Themen.
+  - DQL, DML, DDL, DCL und TCL haben Registereintraege mit locked / known / completed Status.
+  - DQL zeigt Erklaerungen, Syntax, Beispiele und Shopkeeper-Notizen fuer freigeschaltete Themen.
+  - Noch nicht freigeschaltete Lerninhalte bleiben sichtbar, aber gedimmt.
+  - Lerninhalte sind nicht mehr nur Befehle:
+    - SELECT
+    - FROM
+    - Wildcard *
+    - WHERE
+    - Vergleichsoperatoren
+    - AND / OR / BETWEEN / LIKE
+    - spaeter ORDER BY, LIMIT, JOIN usw.
+  - Level-Metadaten markieren neue Notebook-Themen als abgeschlossen:
+    - Level 0 markiert * zusammen mit FROM.
+    - Level 2 markiert Vergleichsoperatoren.
+    - Level 3 markiert AND, OR, BETWEEN und LIKE.
+  - Tabellenansicht ist als Register gebaut:
+    - Gruene Checkbox bedeutet: Tabellenschema ist freigeschaltet.
+    - Seite 1 zeigt das Schema der ausgewaehlten Tabelle.
+    - Seite 2 zeigt nach Schema-Unlock eine Vorschau mit SELECT * LIMIT 3.
+    - Ohne Schema-Unlock wird keine Vorschau angezeigt.
+  - PRAGMA table_info speichert echte Spalteninformationen dauerhaft im Notebook-State.
+  - Alte / debuggeladene gruen markierte Tabellen koennen ihr Schema aus der aktuellen DB nachladen.
+  - Grosses Notebook Layout wurde gepolisht:
+    - zweispaltige Registerliste links.
+    - Detailseite rechts.
+    - deutsche Umlaute in sichtbaren Notebook-Texten bleiben sauber erhalten.
+    - Abstaende, Registerbreiten und Checkbox-Platz wurden feinjustiert.
 
 Naechster grosser Schritt
 1. Level 3 testen und polishen.
@@ -243,16 +274,22 @@ Naechster grosser Schritt
      - Item gekauft.
      - Warnung / Fehler.
 
-4. Grosses SQL Notebook planen und bauen.
-   - Das kleine Notebook bleibt Schnelluebersicht im Hauptscreen.
-   - Die grosse Notebook-Ansicht wird das eigentliche Lernwerkzeug.
-   - Inhalte:
-     - Syntax der gelernten Befehle.
-     - kurze Erklaerungen.
-     - Beispiele.
-     - bekannte Tabellen.
-     - gespeicherte Tabellenschemata.
-     - eventuell typische Fehler.
+4. Grosses SQL Notebook weiter ausbauen und polishen.
+   - MVP ist eingebaut.
+   - Naechste Polishpunkte:
+     - Pfeilbutton / Naechste-Seite-Button visuell ueberarbeiten.
+     - Schema/Vorschau-Seitenwechsel klarer kommunizieren.
+     - Tabellen-Schema/Vorschau-Flow im Spiel testen.
+     - Mehr Inhalte fuer spaetere DQL-Themen ergaenzen:
+       - ORDER BY
+       - LIMIT
+       - Aggregationen
+       - GROUP BY
+       - HAVING
+       - JOIN
+       - Subqueries
+     - Typische Fehler spaeter als eigene Sektion ergaenzen.
+     - Optional spaeter eigenes i18n-Modell fuer notebookContent.js planen.
    - Schema Lupe entfaellt wahrscheinlich als eigenes Item:
      - Der Spieler soll PRAGMA table_info einmal selbst ausfuehren.
      - Danach ist das Schema dauerhaft ueber das Notebook abrufbar.
@@ -338,13 +375,28 @@ Kurzfristige Prioritaet fuer morgen
 - Danach entscheiden, ob Level 3 ein eigenes Shop-Visual-Update braucht:
   - level3ShopLayout.js ist aktuell ein Platzhalter auf Basis von Level 2.
   - Neue Waren nur dann einbauen, wenn sie didaktisch fuer AND / OR / BETWEEN / LIKE helfen.
-- Danach das letzte grosse UI-Element planen und bauen:
-  - Grosses SQL Notebook als erweiterte Lernansicht.
+- Danach Grosses SQL Notebook weiter polishen:
+  - Pfeilbutton / Naechste-Seite-Button gestalten.
+  - Tabellen-Schema/Vorschau-Flow im Spiel testen.
+  - Weitere Lerninhalte nach Level-Fortschritt ergaenzen.
 - Danach Soundeffekte.
 - Cutscenes und Video-Sammlung eher spaeter planen, wenn Progression und Geld-Sinks klarer sind.
 
 Session Summary
 - Aktuelle Session:
+  - Grosses SQL Notebook MVP gebaut.
+  - notebookContent.js als strukturierte Content-Datei angelegt.
+  - DQL/DDL/etc. als Register mit locked/known/completed Status umgesetzt.
+  - Tabellen-Schema und Vorschau als zweistufige Tabellen-Detailseiten eingebaut.
+  - PRAGMA table_info speichert Schemas im Notebook-State.
+  - Gruen markierte Tabellen koennen fehlende Schemas aus der aktuellen DB nachladen.
+  - Kleines Notebook wieder auf kurze Beschreibungen zurueckgesetzt.
+  - Grosses Notebook visuell gepolisht:
+    - Registerbreiten.
+    - Abstaende.
+    - Checkbox-Platz.
+    - rechte Detailseite.
+    - saubere deutsche Umlaute.
   - Level-Progressionsbanner links neben dem Questpanel gebaut.
   - Tutorial-Weiterbutton neu positioniert und als kleiner animierter Actionbutton gestaltet.
   - Level 1 um Radio-Teaser nach Mission 1 erweitert.
@@ -381,4 +433,7 @@ Naechster konkreter Startpunkt
 - Danach Level 3 mit debug(3, 1) bis debug(3, 6) bzw. normalem Levelwechsel aus Level 2 testen.
 - Danach Level-3-Texte, Missionen, Rewards und Validatoren polishen.
 - Pruefen, ob seed3.sql fuer LIKE und OR mehr eindeutige Beispieldaten braucht.
-- Danach Grosses SQL Notebook als letztes grosses UI-Element planen und als MVP bauen.
+- Danach Grosses SQL Notebook polishen:
+  - Pfeilbutton / Naechste-Seite-Button visuell anpassen.
+  - Schema/Vorschau-Seitenwechsel testen.
+  - Notebook-Inhalte fuer kommende Level erweitern.
