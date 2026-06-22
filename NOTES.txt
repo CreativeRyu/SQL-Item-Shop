@@ -273,6 +273,9 @@ Naechster grosser Schritt
      - Mission Complete / Stempel.
      - Item gekauft.
      - Warnung / Fehler.
+     - Spaeter Papier-Sounds fuer alle UI-Interaktionen im SQL Notebook einbauen.
+       - Registerwechsel, Seitenwechsel und weitere Aktionen im Buch sollen nach Papier / Umblattern klingen.
+       - Dafuer vorgesehene Sounds sind bereits besorgt, werden aber erst in einem spaeteren Notebook-Sound-Polish eingebunden.
 
 4. Grosses SQL Notebook weiter ausbauen und polishen.
    - MVP ist eingebaut.

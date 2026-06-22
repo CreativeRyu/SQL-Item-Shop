@@ -1,0 +1,11 @@
+Asset:        Shopkeeper Voice Files
+              shopkeeper_fast_voice.wav
+              shopkeeper_normal_voice.wav
+              shopkeeper_slow_voice.wav
+              shopkeeper_superslow_voice.wav
+Erstellt von: chrislsound
+Quelle:       https://chrislsound.itch.io/text-dialogue-sfx-pack
+Erworben am:  2026-06-19
+Lizenz:       Creative Commons Attribution v4.0 International
+
+Kaufbeleg: E-Mail-Bestätigung vorhanden (itch.io)

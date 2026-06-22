@@ -1,3 +1,14 @@
+Quelle:  ElvGames (https://elv-games.itch.io)
+
+Abgedeckte Dateien:
+- assets/sounds/UI_Keypad_3.mp3
+- assets/sounds/UI_Keypad_4.mp3
+- assets/sounds/UI_Keypad_5.mp3
+- assets/sounds/run_button.mp3
+- assets/sounds/weiter_button.mp3
+- assets/sounds/sql_error.mp3
+- assets/sounds/Item_Acquire.mp3
+
 You can:
     You are free to use, personal or commercial projects.
     You can edit/modify to fit your game.
