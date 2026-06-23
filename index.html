@@ -29,7 +29,7 @@
           <img class="support-heart-gif" src="./assets/sprites/HeartDetailed_Bounce.gif" alt="">
         </button>
 
-        <div id="version-label">v0.3.6-dev</div>
+        <div id="version-label">v0.3.7-dev</div>
     </div>
     <div id="game-screen" class="hidden">
         <div id="level-banner-stack" aria-label="Level-Fortschritt"></div>
@@ -100,24 +100,30 @@
         <div id="sound-controls" class="editor-tools hidden">
           <button
             id="sound-on-btn"
-            class="editor-tool-btn"
+            class="editor-tool-btn sound-control-btn"
             type="button"
             title="Sound an"
-            aria-label="Sound an">&#9835;</button>
+            aria-label="Sound an">
+            <span class="sound-control-icon">&#9835;</span>
+          </button>
 
           <button
             id="sound-off-btn"
-            class="editor-tool-btn"
+            class="editor-tool-btn sound-control-btn"
             type="button"
             title="Sound aus"
-            aria-label="Sound aus">x</button>
+            aria-label="Sound aus">
+            <span class="sound-control-icon">x</span>
+          </button>
 
           <button
             id="sound-next-btn"
-            class="editor-tool-btn"
+            class="editor-tool-btn sound-control-btn"
             type="button"
             title="Nächster Song"
-            aria-label="Nächster Song">&#187;</button>
+            aria-label="Nächster Song">
+            <span class="sound-control-icon">&#187;</span>
+          </button>
         </div>
       </div>
     </div>

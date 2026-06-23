@@ -211,7 +211,7 @@ function renderCategoryPage(category) {
     `;
 
     topics
-        .filter(topic => isEntryKnown(topic.unlockKey))
+        .filter(topic => shouldShowSmallNotebookTopic(topic))
         .forEach(topic => {
             html += renderSmallEntry(topic.label, getEntryStatus(topic.unlockKey));
         });
@@ -274,6 +274,14 @@ function attachSmallTableEntryListeners() {
         });
 }
 
+function shouldShowSmallNotebookTopic(topic) {
+    return (
+        isEntryKnown(topic.unlockKey) &&
+        topic.unlockKey !== "COMPARISON_OPERATORS"
+    );
+}
+
+
 function renderLargeNotebookPage() {
     if(currentPage === "TABLES") {
         renderLargeTablesPage();
@@ -288,6 +296,8 @@ function renderLargeTopicPage(category) {
     const topics = NOTEBOOK_TOPICS[category] || [];
     ensureSelectedEntry(category);
     const selectedTopic = topics.find(topic => topic.id === selectedEntries[category]) || topics[0];
+    const topicPages = getTopicDetailPages(selectedTopic);
+    currentDetailPage = clampDetailPage(currentDetailPage, topicPages.length);
 
     largeNotebookContent.innerHTML = `
         <div class="large-notebook-left-page">
@@ -296,10 +306,10 @@ function renderLargeTopicPage(category) {
             ${renderLargeEntryList(topics, category)}
         </div>
         <div class="large-notebook-right-page">
-            ${renderTopicDetails(selectedTopic)}
+            ${renderTopicDetails(selectedTopic, currentDetailPage)}
         </div>
         ${renderLargePageNumber(currentDetailPage)}
-        ${renderLargeNextButton(topics, category)}
+        ${renderLargeNextButton(topics, category, "", topicPages.length)}
     `;
 
     attachLargeEntryListeners(category, topics);
@@ -342,11 +352,12 @@ function renderLargeEntryList(entries, page) {
     `;
 }
 
-function renderLargeNextButton(entries, page, selectedTable = "") {
+function renderLargeNextButton(entries, page, selectedTable = "", detailPageCount = 1) {
     const hasMoreEntryPages = entries.length > PAGE_SIZE;
     const hasTablePreviewPage = page === "TABLES" && hasSchema(selectedTable);
+    const hasMoreDetailPages = detailPageCount > 1;
 
-    if(!hasMoreEntryPages && !hasTablePreviewPage) {
+    if(!hasMoreEntryPages && !hasTablePreviewPage && !hasMoreDetailPages) {
         return "";
     }
 
@@ -382,7 +393,7 @@ function renderLargeEntry(entry, page) {
     `;
 }
 
-function renderTopicDetails(topic) {
+function renderTopicDetails(topic, pageNumber = 1) {
     if(!topic) {
         return `
             <div class="large-notebook-empty">
@@ -402,19 +413,74 @@ function renderTopicDetails(topic) {
         `;
     }
 
-    return `
-        <div class="large-notebook-detail-title">${escapeHtml(topic.label)}</div>
-        <div class="large-notebook-detail-section">
-            ${escapeHtml(topic.summary || topic.teaser || "")}
-        </div>
-        ${topic.syntax ? renderCodeBlock("Syntax", topic.syntax) : ""}
-        ${topic.example ? renderCodeBlock("Beispiel", topic.example) : ""}
-        ${topic.note ? `
+    const pages = getTopicDetailPages(topic);
+    return pages[clampDetailPage(pageNumber, pages.length) - 1] || pages[0] || "";
+}
+
+function getTopicDetailPages(topic) {
+    if(!topic) {
+        return [];
+    }
+
+    const title = `<div class="large-notebook-detail-title">${escapeHtml(topic.label)}</div>`;
+    const pages = [];
+    const mainSections = [];
+
+    if(topic.summary || topic.teaser) {
+        mainSections.push(`
+            <div class="large-notebook-detail-section">
+                ${escapeHtml(topic.summary || topic.teaser)}
+            </div>
+        `);
+    }
+
+    if(topic.syntax) {
+        mainSections.push(renderCodeBlock("Syntax", topic.syntax));
+    }
+
+    if(topic.example) {
+        mainSections.push(renderCodeBlock("Beispiel", topic.example));
+    }
+
+    if(mainSections.length > 0) {
+        if(shouldSplitMainTopicPage(topic)) {
+            pages.push(`
+                ${title}
+                ${mainSections.slice(0, 2).join("")}
+            `);
+
+            pages.push(`
+                ${title}
+                ${mainSections.slice(2).join("")}
+            `);
+        } else {
+            pages.push(`
+                ${title}
+                ${mainSections.join("")}
+            `);
+        }
+    }
+
+    if(topic.note) {
+        pages.push(`
+            ${title}
             <div class="large-notebook-shopkeeper-note">
                 ${escapeHtml(topic.note)}
             </div>
-        ` : ""}
-    `;
+        `);
+    }
+
+    return pages.length > 0 ? pages : [title];
+}
+
+function shouldSplitMainTopicPage(topic) {
+    const textLength = [
+        topic.summary || topic.teaser || "",
+        topic.syntax || "",
+        topic.example || ""
+    ].join(" ").length;
+
+    return textLength > 420;
 }
 
 function renderTableDetails(tableName) {
@@ -546,6 +612,18 @@ function attachLargeEntryListeners(page, entries) {
                 return;
             }
 
+            const detailPageCount = getCurrentTopicDetailPageCount(page);
+            if(detailPageCount > 1) {
+                if(currentDetailPage < detailPageCount || entries.length <= PAGE_SIZE) {
+                    currentDetailPage =
+                        currentDetailPage >= detailPageCount
+                            ? 1
+                            : currentDetailPage + 1;
+                    renderLargeNotebookPage();
+                    return;
+                }
+            }
+
             const currentOffset = pageOffsets[page] || 0;
             const nextOffset = currentOffset + PAGE_SIZE;
             pageOffsets[page] = nextOffset >= entries.length ? 0 : nextOffset;
@@ -558,6 +636,24 @@ function attachLargeEntryListeners(page, entries) {
 
 function toggleTableDetailPage() {
     currentDetailPage = currentDetailPage === 2 ? 1 : 2;
+}
+
+function getCurrentTopicDetailPageCount(page) {
+    if(page === "TABLES") {
+        return 1;
+    }
+
+    const topics = NOTEBOOK_TOPICS[page] || [];
+    const selectedTopic = topics.find(topic => topic.id === selectedEntries[page]) || topics[0];
+    return getTopicDetailPages(selectedTopic).length;
+}
+
+function clampDetailPage(pageNumber, pageCount) {
+    if(pageCount <= 0) {
+        return 1;
+    }
+
+    return Math.min(Math.max(pageNumber, 1), pageCount);
 }
 
 function hasSchema(tableName) {
@@ -669,6 +765,7 @@ export function rememberTableSchema(tableName, columns) {
 }
 
 function renderAfterNotebookStateChange() {
+    migrateMisclassifiedNotebookEntries();
     renderCurrentPage();
     if(!largeNotebookOverlay.classList.contains("hidden")) {
         ensureSelectedEntry(currentPage);
@@ -677,7 +774,18 @@ function renderAfterNotebookStateChange() {
 }
 
 function isTableEntry(entry) {
-    return entry === entry.toLowerCase();
+    return String(entry) === String(entry).toLowerCase() && isSafeTableName(entry);
+}
+
+function migrateMisclassifiedNotebookEntries() {
+    Object.entries(notebookState.tables).forEach(([entry, completed]) => {
+        if(isTableEntry(entry))
+            return;
+
+        notebookState.commands[entry] ||= completed;
+        delete notebookState.tables[entry];
+        delete notebookState.schemas[entry];
+    });
 }
 
 export function getNotebookState() {

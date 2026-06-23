@@ -184,7 +184,7 @@ const level1 = {
         {
           target: "#mission-panel",
           text:
-            "Ab jetzt stehen viele Aufgaben direkt im Questzettel. Weniger Gerede, mehr Ladenbetrieb. Genau so waechst Technik."
+            "Ab jetzt stehen die Aufgaben direkt im Questzettel. Weniger Gerede, mehr Ladenbetrieb. Genau so wachsen Fähigkeiten."
         }
       ],
       reward: {
@@ -239,7 +239,7 @@ const level1 = {
       story:
         "Wenn jemand in den Laden kommt und wir nur ratlos nicken, wirkt das nicht professionell. " +
         "Besorg uns eine kurze Namensliste.",
-      task: "Zeige nur die Spalte name aus der Tabelle customers an.",
+      task: "Zeige nur die Namen aus der Tabelle customers an.",
       reward: {
         money: 20
       },
