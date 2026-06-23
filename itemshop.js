@@ -2,7 +2,7 @@
 
 import { LEVELS } from "./levels/index.js";
 import { SHOP_LAYOUTS } from "./shopLayouts/index.js";
-import {initNotebook, showNotebookUI, unlockNotebookEntry, completeNotebookEntry, getNotebookState, loadNotebookState, setNotebookDatabaseProvider} from "./notebook.js";
+import {initNotebook, showNotebookUI, unlockNotebookEntry, completeNotebookEntry, getNotebookState, loadNotebookState, setNotebookDatabaseProvider, setNotebookSchemaRunner} from "./notebook.js";
 import { renderShopVisuals, hideTooltip} from "./shop.js";
 import { processDiscoveries } from "./notebookDiscovery.js";
 import {saveGame,loadGame} from "./savegame.js";
@@ -181,6 +181,7 @@ async function initGameSystems() {
     await loadQuotes();
     initNotebook();
     setNotebookDatabaseProvider(getDb);
+    setNotebookSchemaRunner(showNotebookTableSchema);
     initHelpPanel();
     initSoundControls();
     gameSystemsReady = true;
@@ -617,6 +618,26 @@ function refreshMission() {
         ${renderMissionDescription(mission)}
     </div>
     `;
+}
+
+function showNotebookTableSchema(tableName) {
+    if(!databaseReady || !db || !isSafeTableName(tableName))
+        return;
+
+    const errorBox = document.getElementById("error-box");
+    errorBox.innerHTML = "";
+
+    try {
+        const result = db.exec(`PRAGMA table_info(${tableName})`);
+        renderTable(result, `SCHEMA: ${tableName}`);
+    } catch (err) {
+        errorBox.innerText = err.message;
+        playSqlErrorSound();
+    }
+}
+
+function isSafeTableName(tableName) {
+    return /^[a-z_][a-z0-9_]*$/i.test(tableName);
 }
 
 function renderLevelBanners() {

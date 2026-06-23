@@ -2,6 +2,12 @@ import {
     NOTEBOOK_CATEGORIES,
     NOTEBOOK_TOPICS
 } from "./notebookContent.js";
+import {
+    playCloseGreatNotebookSound,
+    playNotebookPageSound,
+    playNotebookRegisterSound,
+    playOpenGreatNotebookSound
+} from "./sounds.js";
 
 const tablesTab = document.getElementById("tables-tab");
 const dqlTab = document.getElementById("dql-tab");
@@ -54,6 +60,7 @@ const pageOffsets = {};
 let currentPage = "TABLES";
 let currentDetailPage = 1;
 let getDatabase = () => null;
+let runSchemaQuery = () => {};
 
 export function initNotebook() {
     renderTablesPage();
@@ -71,9 +78,21 @@ export function setNotebookDatabaseProvider(provider) {
     getDatabase = provider;
 }
 
+export function setNotebookSchemaRunner(runner) {
+    runSchemaQuery = runner;
+}
+
 function initLargeNotebook() {
-    notebookExpandButton.onclick = showLargeNotebook;
-    largeNotebookCloseButton.onclick = hideLargeNotebook;
+    notebookExpandButton.onclick = () => {
+        playOpenGreatNotebookSound();
+        showLargeNotebook();
+    };
+
+    largeNotebookCloseButton.onclick = () => {
+        playCloseGreatNotebookSound();
+        hideLargeNotebook();
+    };
+
     largeNotebookOverlay.onclick = event => {
         if(event.target === largeNotebookOverlay) {
             hideLargeNotebook();
@@ -81,7 +100,10 @@ function initLargeNotebook() {
     };
 
     largeNotebookTabs.forEach(tab => {
-        tab.onclick = () => selectPage(tab.dataset.page);
+        tab.onclick = () => {
+            playNotebookRegisterSound();
+            selectPage(tab.dataset.page);
+        };
     });
 }
 
@@ -214,22 +236,42 @@ function renderTablesPage() {
 
     Object.entries(notebookState.tables)
         .forEach(([table, unlocked]) => {
-            html += renderSmallEntry(table, unlocked ? "complete" : "known", "notebook-table-entry");
+            html += renderSmallEntry(
+                table,
+                unlocked ? "complete" : "known",
+                unlocked
+                    ? "notebook-table-entry notebook-table-entry-clickable"
+                    : "notebook-table-entry",
+                unlocked ? table : ""
+            );
         });
 
     html += `</div>`;
     notebookContent.innerHTML = html;
+    attachSmallTableEntryListeners();
 }
 
-function renderSmallEntry(label, status, extraClass = "") {
+function renderSmallEntry(label, status, extraClass = "", tableName = "") {
     return `
-        <div class="notebook-list-entry ${extraClass}">
+        <div
+            class="notebook-list-entry ${extraClass}"
+            ${tableName ? `data-table-name="${escapeAttribute(tableName)}"` : ""}>
             <div class="notebook-list-text">
                 ${escapeHtml(label)}
             </div>
             <div class="notebook-list-status ${status === "complete" ? "unlocked" : ""}"></div>
         </div>
     `;
+}
+
+function attachSmallTableEntryListeners() {
+    notebookContent
+        .querySelectorAll(".notebook-table-entry-clickable")
+        .forEach(entry => {
+            entry.onclick = () => {
+                runSchemaQuery(entry.dataset.tableName);
+            };
+        });
 }
 
 function renderLargeNotebookPage() {
@@ -486,6 +528,7 @@ function attachLargeEntryListeners(page, entries) {
         .querySelectorAll(".large-notebook-entry")
         .forEach(button => {
             button.onclick = () => {
+                playNotebookRegisterSound();
                 selectedEntries[page] = button.dataset.entryId;
                 currentDetailPage = 1;
                 renderLargeNotebookPage();
@@ -495,6 +538,8 @@ function attachLargeEntryListeners(page, entries) {
     const nextButton = largeNotebookContent.querySelector(".large-notebook-next-page");
     if(nextButton) {
         nextButton.onclick = () => {
+            playNotebookPageSound();
+
             if(page === "TABLES" && hasSchema(selectedEntries.TABLES)) {
                 toggleTableDetailPage();
                 renderLargeNotebookPage();

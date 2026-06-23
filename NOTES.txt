@@ -7,8 +7,8 @@ Core idea
 
 Current next feature direction
 - Next focus is content and progression:
+  - Large Notebook paper sound polish.
   - Level 3 WHERE Advanced test / polish pass.
-  - Radio and music MVP.
   - Large Notebook View polish / content expansion.
   - Sound effects later.
 
@@ -175,13 +175,13 @@ Aktueller Stand
   - Button sitzt rechts neben der Tutorial-Textbox an der oberen Kante.
   - Button ist kleiner, gruen als Action-Flaeche, mit hellem Tutorialrahmen und dunkler Outline.
   - Button hat Hover-, Klick- und dezente Doppel-Pulse-Animation.
-- Radio ist in Level 1 vorbereitet:
+- Radio/Musik MVP ist fertig:
   - Nach Level 1 Mission 1 kommt ein Shopkeeper-Hinweis auf die Stille im Laden.
   - Danach wird das Retro-Radio storymaessig angeteasert.
   - database/seed1.sql enthaelt Retro Radio als Produkt mit ID 8 und Bestand 1.
   - shopLayouts/level0ShopLayout.js hat einen Radio-Slot ueber Apfel/Banane.
   - assets/sprites/shopItems/radio.png ist der erwartete Sprite-Pfad.
-  - User hat ein eigenes Radio-Sprite gezeichnet; dieses soll als naechstes im Shop geprueft/eingepasst werden.
+  - Radio-Kauf, Musiksteuerung und Savegame-State sind eingebaut.
 - Grosses SQL Notebook MVP ist eingebaut:
   - Kleines Notebook bleibt Schnelluebersicht mit kurzen Beschreibungen.
   - Grosses Notebook oeffnet als erweiterte Lernansicht ueber den Expand-Button.
@@ -258,24 +258,17 @@ Naechster grosser Schritt
      - Texte duerfen wichtige UI nicht verdecken.
      - Spaeter besonders wegen Tablet-Layout pruefen.
 
-3. Radio, Musik und Soundeffekte.
-   - Radio als kaufbares Atmosphaere-Item.
-   - Radio ist ab Level 1 vorbereitet und soll nach Mission 1 sichtbar sein.
-   - Naechster Schritt:
-     - User-Sprite radio.png im Shop pruefen.
-     - Radio-Kauf als Key-Item bauen.
-     - gameState um hasRadio / musicEnabled erweitern.
-     - Nach Kauf Musiksteuerung sichtbar machen.
-     - Erste Musik aus assets/music einbinden.
-   - Soundeffekte danach separat:
-     - Button-Klick.
+3. Grosses SQL Notebook Sound-Polish.
+   - Papier-Sounds fuer wichtige Buchinteraktionen einbauen:
+     - open_great_notebook beim Expand-Button des kleinen Notebooks.
+     - close_great_notebook beim X-Button im grossen Notebook.
+     - flipping_page_register beim Wechsel der Registerkarten.
+     - flipping_page beim Naechste-Seite-Pfeil.
+   - Registerkarten sollen dabei nicht den normalen Button-Sound abspielen.
+   - Danach koennen weitere Soundeffekte separat folgen:
      - Geld erhalten.
-     - Mission Complete / Stempel.
-     - Item gekauft.
-     - Warnung / Fehler.
-     - Spaeter Papier-Sounds fuer alle UI-Interaktionen im SQL Notebook einbauen.
-       - Registerwechsel, Seitenwechsel und weitere Aktionen im Buch sollen nach Papier / Umblattern klingen.
-       - Dafuer vorgesehene Sounds sind bereits besorgt, werden aber erst in einem spaeteren Notebook-Sound-Polish eingebunden.
+     - Warnung / Fehler weiter polishen.
+     - Spaeter Papier-Sounds fuer weitere Notebook-UI-Interaktionen pruefen.
 
 4. Grosses SQL Notebook weiter ausbauen und polishen.
    - MVP ist eingebaut.
@@ -362,12 +355,12 @@ Naechster grosser Schritt
    - Visuals bleiben ausserhalb der SQL-Lerndaten.
 
 Kurzfristige Prioritaet fuer morgen
-- Zuerst Radio/Musik MVP weiterbauen:
-  - Radio-Sprite im Shop visuell pruefen und Koordinaten/Scale feinjustieren.
-  - Radio als kaufbares Key-Item behandeln.
-  - Nach Kauf Musiksteuerung sichtbar machen.
-  - Gekaufte Radio-Info im Savegame speichern.
-  - Musikdateien aus assets/music pruefen und erste Track-Auswahl einbauen.
+- Zuerst Papier-Soundeffekte ins grosse SQL Notebook einbauen:
+  - Expand-Button spielt open_great_notebook.
+  - X-Button spielt close_great_notebook.
+  - Registerkarten spielen flipping_page_register.
+  - Naechste-Seite-Pfeil spielt flipping_page.
+  - Normale Button-Sounds bei diesen Interaktionen vermeiden.
 - Zuerst Level 3 komplett testen und aufraeumen:
   - Missionen spielen.
   - Texte und Shopkeeper-Stimme polishen.
@@ -428,11 +421,11 @@ Session Summary
   - Aufgaben eignen sich als Roh-Curriculum, aber sollen spaeter geclustert und spielerisch ueberarbeitet werden.
 
 Naechster konkreter Startpunkt
-- Radio-Sprite in Level 1 im Shop pruefen:
-  - debug(1, 2) laden.
-  - Pruefen, ob Radio ueber Apfel/Banane gut sitzt.
-  - Koordinaten/Scale in shopLayouts/level0ShopLayout.js feinjustieren.
-- Danach Radio-Kauf und Musik-MVP bauen.
+- Papier-Sounds im grossen Notebook testen:
+  - Expand-Button vom kleinen Notebook.
+  - X-Button im grossen Notebook.
+  - Registerkarten im grossen Notebook.
+  - Naechste-Seite-Pfeil fuer Schema/Vorschau.
 - Danach Level 3 mit debug(3, 1) bis debug(3, 6) bzw. normalem Levelwechsel aus Level 2 testen.
 - Danach Level-3-Texte, Missionen, Rewards und Validatoren polishen.
 - Pruefen, ob seed3.sql fuer LIKE und OR mehr eindeutige Beispieldaten braucht.

@@ -8,6 +8,10 @@ const SOUND_PATHS = {
     runButton: "./assets/sounds/run_button.mp3",
     sqlError: "./assets/sounds/sql_error.mp3",
     continueButton: "./assets/sounds/weiter_button.mp3",
+    openGreatNotebook: "./assets/sounds/open_great_notebook.wav",
+    closeGreatNotebook: "./assets/sounds/close_great_notebook.wav",
+    flippingPageRegister: "./assets/sounds/Flipping_page_register.wav",
+    flippingPage: "./assets/sounds/Flipping_page.wav",
     stamps: [
         "./assets/sounds/stamp1.mp3",
         "./assets/sounds/stamp2.mp3"
@@ -21,6 +25,10 @@ const SOUND_VOLUMES = {
     runButton: 0.35,
     sqlError: 0.42,
     continueButton: 0.34,
+    openGreatNotebook: 0.48,
+    closeGreatNotebook: 0.48,
+    flippingPageRegister: 0.42,
+    flippingPage: 0.42,
     stamp: 0.5,
     shopkeeper: 0.2
 };
@@ -58,6 +66,25 @@ export function playContinueSound() {
     playSound(SOUND_PATHS.continueButton, SOUND_VOLUMES.continueButton);
 }
 
+export function playOpenGreatNotebookSound() {
+    playSound(SOUND_PATHS.openGreatNotebook, SOUND_VOLUMES.openGreatNotebook);
+}
+
+export function playCloseGreatNotebookSound() {
+    playSound(SOUND_PATHS.closeGreatNotebook, SOUND_VOLUMES.closeGreatNotebook);
+}
+
+export function playNotebookRegisterSound() {
+    playSound(
+        SOUND_PATHS.flippingPageRegister,
+        SOUND_VOLUMES.flippingPageRegister
+    );
+}
+
+export function playNotebookPageSound() {
+    playSound(SOUND_PATHS.flippingPage, SOUND_VOLUMES.flippingPage);
+}
+
 export function playShopkeeperVoice() {
     stopShopkeeperVoice();
     shopkeeperVoice = createPlayback(
@@ -86,6 +113,9 @@ function handleButtonClick(event) {
     if(button.id === "tutorial-next-btn")
         return;
 
+    if(isNotebookPaperButton(button))
+        return;
+
     if(button.id === "run-btn") {
         playSound(SOUND_PATHS.runButton, SOUND_VOLUMES.runButton);
         return;
@@ -95,6 +125,15 @@ function handleButtonClick(event) {
         "regularUi",
         SOUND_PATHS.regularUi,
         SOUND_VOLUMES.regularUi
+    );
+}
+
+function isNotebookPaperButton(button) {
+    return (
+        button.id === "notebook-expand-btn" ||
+        button.id === "large-notebook-close" ||
+        button.classList.contains("large-notebook-entry") ||
+        button.classList.contains("large-notebook-next-page")
     );
 }
 

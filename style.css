@@ -2025,11 +2025,11 @@ tr:hover td {
     box-sizing: border-box;
 }
 
-.notebook-table-entry {
+.notebook-table-entry-clickable {
     cursor: pointer;
 }
 
-.notebook-table-entry:hover {
+.notebook-table-entry-clickable:hover {
     filter: brightness(1.05);
 }
 
