@@ -572,9 +572,31 @@ h1 {
     overflow: hidden;
     border: 2px solid #8b5a2b;
     border-radius: 10px;
+    font-family: Consolas, "Courier New", monospace;
     font-size: 18px;
+    line-height: 1.35;
+    letter-spacing: 0;
     border-right: 5px solid #d89b3c;
     box-shadow:inset 0 0 12px rgba(0,0,0,0.45), 0 0 10px rgba(0,0,0,0.25);
+}
+
+.CodeMirror pre,
+.CodeMirror textarea,
+.CodeMirror-code,
+.CodeMirror-line,
+.CodeMirror-lines,
+.CodeMirror-cursor,
+.CodeMirror-linenumber {
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 18px;
+    line-height: 1.35;
+    letter-spacing: 0;
+    font-variant-ligatures: none;
+    text-rendering: geometricPrecision;
+}
+
+.CodeMirror pre {
+    padding: 0 8px;
 }
 
 #money-display {

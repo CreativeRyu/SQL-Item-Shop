@@ -81,6 +81,14 @@ let gameState = {
     helpPurchases: {}
 };
 
+function refreshEditorLayout() {
+    if(!editor)
+        return;
+
+    requestAnimationFrame(() => {
+        editor.refresh();
+    });
+}
 
 async function initSqlEngine() {
     if(SQL)
@@ -123,6 +131,7 @@ function bootApp() {
     initSoundEffects();
     updateGameScale();
     window.addEventListener("resize", updateGameScale);
+    window.addEventListener("game-scale-change", refreshEditorLayout);
     initStartScreen();
     showStartScreen();
     clearTutorial();
@@ -196,8 +205,14 @@ function initEditor() {
     {
         mode: "text/x-sql",
         theme: "ambiance",
-        lineNumbers: true
+        lineNumbers: true,
+        lineWrapping: false
     });
+
+    editor.setSize("100%", 220);
+    refreshEditorLayout();
+    document.fonts?.ready?.then(refreshEditorLayout);
+    editor.on("focus", refreshEditorLayout);
 
     const runButton = document.getElementById("run-btn");
     runButton.addEventListener("click", runQuery);
@@ -264,6 +279,7 @@ function enterGame() {
     showGameScreen();
     window.scrollTo(0, 0);
     initEditor();
+    refreshEditorLayout();
     gameActive = true;
     renderGame();
 }

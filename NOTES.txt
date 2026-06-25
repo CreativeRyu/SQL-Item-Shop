@@ -213,6 +213,22 @@ Aktueller Stand
     - Detailseite rechts.
     - deutsche Umlaute in sichtbaren Notebook-Texten bleiben sauber erhalten.
     - Abstaende, Registerbreiten und Checkbox-Platz wurden feinjustiert.
+  - Grosses Notebook Sound- und Seiten-Polish ist eingebaut:
+    - Expand-Button spielt open_great_notebook.
+    - X-Button spielt close_great_notebook.
+    - Registerkarten und Inhalts-Unlocks spielen flipping_page_register statt normalem Buttonsound.
+    - Naechste-Seite-Pfeil spielt flipping_page.
+    - Lerninhalte nutzen Buchseiten statt nativer Scrollbars.
+    - Shopkeeper-Notizen liegen auf eigener Seite; Hauptinhalt bleibt zusammen, solange er passt.
+  - Notebook-Klassifizierung wurde gefixt:
+    - TABLES zeigt nur echte Tabellen.
+    - Wildcard * bleibt DQL-Inhalt und wird nicht als Tabelle einsortiert.
+    - WHERE erscheint im kleinen Notebook unter DQL.
+    - Vergleichsoperatoren erscheinen nur im grossen Notebook unter DQL.
+    - Gruene Tabellen im kleinen Notebook sind wieder klickbar und geben PRAGMA table_info im SQL Output aus.
+  - Radio-Steuerung wurde visuell gepolisht:
+    - Soundbuttons sind helle runde Poti-Buttons passend zum Radio-Sprite.
+    - Icons sind zentriert und lesbar.
 
 Naechster grosser Schritt
 1. Level 3 testen und polishen.
@@ -259,13 +275,14 @@ Naechster grosser Schritt
      - Spaeter besonders wegen Tablet-Layout pruefen.
 
 3. Grosses SQL Notebook Sound-Polish.
-   - Papier-Sounds fuer wichtige Buchinteraktionen einbauen:
+   - Papier-Sounds fuer wichtige Buchinteraktionen sind eingebaut:
      - open_great_notebook beim Expand-Button des kleinen Notebooks.
      - close_great_notebook beim X-Button im grossen Notebook.
      - flipping_page_register beim Wechsel der Registerkarten.
+     - flipping_page_register beim Wechsel der Inhalts-Unlocks.
      - flipping_page beim Naechste-Seite-Pfeil.
-   - Registerkarten sollen dabei nicht den normalen Button-Sound abspielen.
-   - Danach koennen weitere Soundeffekte separat folgen:
+   - Registerkarten und Buchnavigation spielen nicht mehr den normalen Button-Sound.
+   - Weitere Soundeffekte koennen spaeter separat folgen:
      - Geld erhalten.
      - Warnung / Fehler weiter polishen.
      - Spaeter Papier-Sounds fuer weitere Notebook-UI-Interaktionen pruefen.
@@ -355,13 +372,13 @@ Naechster grosser Schritt
    - Visuals bleiben ausserhalb der SQL-Lerndaten.
 
 Kurzfristige Prioritaet fuer morgen
-- Zuerst Papier-Soundeffekte ins grosse SQL Notebook einbauen:
-  - Expand-Button spielt open_great_notebook.
-  - X-Button spielt close_great_notebook.
-  - Registerkarten spielen flipping_page_register.
-  - Naechste-Seite-Pfeil spielt flipping_page.
-  - Normale Button-Sounds bei diesen Interaktionen vermeiden.
-- Zuerst Level 3 komplett testen und aufraeumen:
+- Zuerst kompletten Tool-Test fortsetzen:
+  - Kleines Notebook: TABLES/DQL sauber getrennt.
+  - Kleines Notebook: gruene Tabellen klicken und PRAGMA table_info im SQL Output pruefen.
+  - Grosses Notebook: DQL-Inhalte, Seitenwechsel, Shopkeeper-Notiz-Seiten und keine Scrollbars pruefen.
+  - Notebook-Sounds pruefen: Oeffnen, Schliessen, Register, Inhalts-Unlocks, Seitenpfeil.
+  - Radio-Poti-Buttons visuell und funktional pruefen.
+- Danach Level 3 komplett testen und aufraeumen:
   - Missionen spielen.
   - Texte und Shopkeeper-Stimme polishen.
   - Validatoren pruefen.
@@ -371,8 +388,7 @@ Kurzfristige Prioritaet fuer morgen
 - Danach entscheiden, ob Level 3 ein eigenes Shop-Visual-Update braucht:
   - level3ShopLayout.js ist aktuell ein Platzhalter auf Basis von Level 2.
   - Neue Waren nur dann einbauen, wenn sie didaktisch fuer AND / OR / BETWEEN / LIKE helfen.
-- Danach Grosses SQL Notebook weiter polishen:
-  - Pfeilbutton / Naechste-Seite-Button gestalten.
+- Danach Grosses SQL Notebook weiter polishen, falls beim Test noch etwas auffaellt:
   - Tabellen-Schema/Vorschau-Flow im Spiel testen.
   - Weitere Lerninhalte nach Level-Fortschritt ergaenzen.
 - Danach Soundeffekte.
@@ -421,11 +437,11 @@ Session Summary
   - Aufgaben eignen sich als Roh-Curriculum, aber sollen spaeter geclustert und spielerisch ueberarbeitet werden.
 
 Naechster konkreter Startpunkt
-- Papier-Sounds im grossen Notebook testen:
-  - Expand-Button vom kleinen Notebook.
-  - X-Button im grossen Notebook.
-  - Registerkarten im grossen Notebook.
-  - Naechste-Seite-Pfeil fuer Schema/Vorschau.
+- Tool-Test morgen fortsetzen:
+  - Notebook-Klassifizierung pruefen.
+  - Kleine Notebook-Tabellenklicks pruefen.
+  - Grosse Notebook-Seiten und Sounds pruefen.
+  - Radio-Poti-Controls pruefen.
 - Danach Level 3 mit debug(3, 1) bis debug(3, 6) bzw. normalem Levelwechsel aus Level 2 testen.
 - Danach Level-3-Texte, Missionen, Rewards und Validatoren polishen.
 - Pruefen, ob seed3.sql fuer LIKE und OR mehr eindeutige Beispieldaten braucht.
