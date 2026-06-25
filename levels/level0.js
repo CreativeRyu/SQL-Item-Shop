@@ -187,7 +187,21 @@
       completes: ["FROM", "*"],
       validator: (query, result) => {
         const normalized = query.toLowerCase();
-        return normalized.includes("from shop_items");
+        if(!normalized.includes("from shop_items")) {
+          return false;
+        }
+
+        if(result.length === 0) {
+          return false;
+        }
+
+        const columns = result[0].columns;
+        return (
+          columns.length === 3 &&
+          columns.includes("id") &&
+          columns.includes("name") &&
+          columns.includes("price")
+        );
       },
     },
     {

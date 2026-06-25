@@ -211,6 +211,7 @@ const level3 = {
         usesOperator(query, "or") &&
         hasTextCondition(query, "name", "Apfel") &&
         hasTextCondition(query, "name", "Banane") &&
+        hasColumns(result, ["id", "name", "price"]) &&
         hasRowCount(result, 2) &&
         resultIncludesValue(result, "Apfel") &&
         resultIncludesValue(result, "Banane")

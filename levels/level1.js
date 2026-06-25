@@ -48,11 +48,11 @@ function excludesViews(result) {
   return !values.includes("shop_items");
 }
 
-function selectsAllFrom(query, result, tableName) {
+function selectsAllFrom(query, result, tableName, expectedColumns) {
   return (
     usesTable(query, tableName) &&
     avoidsWhere(query) &&
-    hasResult(result)
+    hasColumns(result, expectedColumns)
   );
 }
 
@@ -190,7 +190,8 @@ const level1 = {
       reward: {
         money: 15
       },
-      validator: (query, result) => selectsAllFrom(query, result, "products")
+      validator: (query, result) =>
+        selectsAllFrom(query, result, "products", ["id", "name", "price"])
     },
     {
       id: "show_customers",
@@ -203,7 +204,8 @@ const level1 = {
       reward: {
         money: 15
       },
-      validator: (query, result) => selectsAllFrom(query, result, "customers")
+      validator: (query, result) =>
+        selectsAllFrom(query, result, "customers", ["id", "name", "budget"])
     },
     {
       id: "show_inventory",
@@ -216,7 +218,8 @@ const level1 = {
       reward: {
         money: 15
       },
-      validator: (query, result) => selectsAllFrom(query, result, "inventory")
+      validator: (query, result) =>
+        selectsAllFrom(query, result, "inventory", ["product_id", "stock"])
     },
     {
       id: "product_names",
