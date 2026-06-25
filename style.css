@@ -8,6 +8,7 @@
 
 :root {
     --game-scale: 1;
+    --game-scale-inverse: 1;
     --game-base-width: 1718px;
 }
 
@@ -561,10 +562,7 @@ h1 {
 
 #editor-zone {
     position: absolute;
-    top: 464px;
-    left: 50%;
     width: 720px;
-    transform: translateX(-50%);
 }
 
 .CodeMirror {
@@ -573,7 +571,7 @@ h1 {
     border: 2px solid #8b5a2b;
     border-radius: 10px;
     font-family: Consolas, "Courier New", monospace;
-    font-size: 18px;
+    font-size: calc(18px * var(--game-scale));
     line-height: 1.35;
     letter-spacing: 0;
     border-right: 5px solid #d89b3c;
@@ -588,7 +586,7 @@ h1 {
 .CodeMirror-cursor,
 .CodeMirror-linenumber {
     font-family: Consolas, "Courier New", monospace;
-    font-size: 18px;
+    font-size: calc(18px * var(--game-scale));
     line-height: 1.35;
     letter-spacing: 0;
     font-variant-ligatures: none;

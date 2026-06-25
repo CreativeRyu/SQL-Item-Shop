@@ -85,7 +85,12 @@ function refreshEditorLayout() {
     if(!editor)
         return;
 
+    const scale = parseFloat(
+        document.documentElement.style.getPropertyValue("--game-scale") || "1"
+    );
+
     requestAnimationFrame(() => {
+        editor.setSize("100%", Math.round(220 * scale));
         editor.refresh();
     });
 }
@@ -149,7 +154,25 @@ function updateGameScale() {
         scale.toFixed(3)
     );
 
+    positionEditorZone(scale);
+
     window.dispatchEvent(new CustomEvent("game-scale-change"));
+}
+
+function positionEditorZone(scale) {
+    const gameScreen = document.getElementById("game-screen");
+    const editorZone = document.getElementById("editor-zone");
+    if (!gameScreen || !editorZone) return;
+    if (gameScreen.classList.contains("hidden")) return;
+
+    const gameRect = gameScreen.getBoundingClientRect();
+    const editorWidth = 720 * scale;
+    const editorLeft = gameRect.left + window.scrollX + gameRect.width / 2 - editorWidth / 2;
+    const editorTop = gameRect.top + window.scrollY + 464 * scale;
+
+    editorZone.style.left = editorLeft + "px";
+    editorZone.style.top = editorTop + "px";
+    editorZone.style.width = editorWidth + "px";
 }
 
 function initStartScreen() {
@@ -224,6 +247,7 @@ function initEditor() {
 function showStartScreen() {
     document.getElementById("start-screen").classList.remove("hidden");
     document.getElementById("game-screen").classList.add("hidden");
+    document.getElementById("editor-zone").classList.add("hidden");
 }
 
 function hideStartScreen() {
@@ -232,6 +256,11 @@ function hideStartScreen() {
 
 function showGameScreen() {
     document.getElementById("game-screen").classList.remove("hidden");
+    document.getElementById("editor-zone").classList.remove("hidden");
+    const scale = parseFloat(
+        document.documentElement.style.getPropertyValue("--game-scale") || "1"
+    );
+    positionEditorZone(scale);
 }
 
 async function startNewGame() {
