@@ -259,6 +259,7 @@ function initEditor() {
 
 function showStartScreen() {
     document.getElementById("start-screen").classList.remove("hidden");
+    document.getElementById("game-shell").classList.add("hidden");
     document.getElementById("game-screen").classList.add("hidden");
     document.getElementById("editor-zone").classList.add("hidden");
 }
@@ -268,6 +269,7 @@ function hideStartScreen() {
 }
 
 function showGameScreen() {
+    document.getElementById("game-shell").classList.remove("hidden");
     document.getElementById("game-screen").classList.remove("hidden");
     document.getElementById("editor-zone").classList.remove("hidden");
     const scale = parseFloat(

@@ -1,4 +1,14 @@
-﻿const level0 = {
+﻿function normalizedQuery(query) {
+  return query.toLowerCase().replace(/\s+/g, " ").trim();
+}
+
+function usesTable(query, tableName) {
+  return new RegExp(`\\bfrom\\s+${tableName}\\b`).test(
+    normalizedQuery(query)
+  );
+}
+
+const level0 = {
     levelId: "level0",
     title: "Shop Training",
     seedPath: "./database/seed.sql",
@@ -186,8 +196,7 @@
       unlocks: [],
       completes: ["FROM", "*"],
       validator: (query, result) => {
-        const normalized = query.toLowerCase();
-        if(!normalized.includes("from shop_items")) {
+        if(!usesTable(query, "shop_items")) {
           return false;
         }
 
@@ -246,8 +255,7 @@
       },
       unlocks: [],
       validator: (query, result) => {
-        const normalized = query.toLowerCase();
-        if (!normalized.includes("from shop_items")) {
+        if (!usesTable(query, "shop_items")) {
           return false;
         }
         if (result.length === 0) {
@@ -296,8 +304,7 @@
       },
       unlocks: [],
       validator: (query, result) => {
-          const normalized = query.toLowerCase();
-          if(!normalized.includes("from shop_items")) {
+          if(!usesTable(query, "shop_items")) {
               return false;
           }
           if(result.length === 0) {
@@ -376,15 +383,18 @@
         {
             target: "#sql-notebook-ui",
             text: "Jedes Mal wenn du etwas Neues lernst, landet es hier. Neue SQL Befehle. Neue Tabellen. Neue Strukturen.",
-            padding: 20
+            padding: 20,
+            glowTarget: true
         },
         {
             target: "#tables-tab",
-            text: "Auf dieser Seite findest du bekannte Tabellen und Tabellenschemata."
+            text: "Auf dieser Seite findest du bekannte Tabellen und Tabellenschemata.",
+            glowTarget: true
         },
         {
             target: "#dql-tab",
-            text: "Weitere Seiten enthalten SQL Befehle, die du im Laufe deiner Ausbildung lernst."
+            text: "Weitere Seiten enthalten SQL Befehle, die du im Laufe deiner Ausbildung lernst.",
+            glowTarget: true
         },
         {
             target: "#sql-notebook-ui",

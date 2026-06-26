@@ -1,9 +1,11 @@
 function normalizedQuery(query) {
-  return query.toLowerCase();
+  return query.toLowerCase().replace(/\s+/g, " ").trim();
 }
 
 function usesTable(query, tableName) {
-  return normalizedQuery(query).includes(`from ${tableName}`);
+  return new RegExp(`\\bfrom\\s+${tableName}\\b`).test(
+    normalizedQuery(query)
+  );
 }
 
 function avoidsWhere(query) {

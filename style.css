@@ -131,6 +131,7 @@ h1 {
 }
 
 #start-screen.hidden,
+#game-shell.hidden,
 #game-screen.hidden {
     display: none;
 }
@@ -142,24 +143,35 @@ h1 {
     overflow: hidden;
 }
 
+#game-shell {
+    position: relative;
+    width: fit-content;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 0 var(--game-base-width);
+    align-items: start;
+    zoom: var(--game-scale);
+}
+
 #game-screen {
     position: relative;
     width: var(--game-base-width);
     min-height: 790px;
-    margin: 0 auto;
-    zoom: var(--game-scale);
+    margin: 0;
 }
 
 #level-banner-stack {
-    position: absolute;
-    top: 4px;
-    left: -146px;
+    position: relative;
+    grid-column: 1;
+    grid-row: 1;
+    top: 14px;
+    left: -148px;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     gap: 0;
     z-index: 30;
-    pointer-events: none;
+    pointer-events: auto;
 }
 
 .level-banner {
@@ -172,6 +184,11 @@ h1 {
     justify-content: center;
     background: url("./assets/ui/level_banner.svg") center / 100% 100% no-repeat;
     image-rendering: pixelated;
+    cursor: default;
+    transition:
+        transform 0.16s ease,
+        filter 0.16s ease,
+        opacity 0.16s ease;
 }
 
 .level-banner span {
@@ -194,6 +211,15 @@ h1 {
     filter: saturate(0.78) brightness(0.86);
 }
 
+.level-banner:hover {
+    opacity: 1;
+    transform: translateX(10px) scale(1.06);
+    filter:
+        saturate(1.12)
+        brightness(1.1)
+        drop-shadow(0 0 10px rgba(216, 155, 60, 0.36));
+}
+
 .level-banner.current {
     opacity: 1;
     transform: translateX(12px) scale(1.05);
@@ -201,6 +227,14 @@ h1 {
         saturate(1.15)
         brightness(1.08)
         drop-shadow(0 0 8px rgba(216, 155, 60, 0.30));
+}
+
+.level-banner.current:hover {
+    transform: translateX(18px) scale(1.09);
+    filter:
+        saturate(1.22)
+        brightness(1.16)
+        drop-shadow(0 0 12px rgba(255, 206, 98, 0.46));
 }
 
 #title-image-frame {
