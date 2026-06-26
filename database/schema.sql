@@ -25,10 +25,3 @@ CREATE TABLE sales (
     FOREIGN KEY(customer_id) REFERENCES customers(id),
     FOREIGN KEY(product_id) REFERENCES products(id)
 );
-
-CREATE VIEW shop_items AS
-SELECT
-    id,
-    name,
-    price
-FROM products;

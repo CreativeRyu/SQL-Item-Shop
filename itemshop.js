@@ -2,7 +2,7 @@
 
 import { LEVELS } from "./levels/index.js";
 import { SHOP_LAYOUTS } from "./shopLayouts/index.js";
-import {initNotebook, showNotebookUI, unlockNotebookEntry, completeNotebookEntry, getNotebookState, loadNotebookState, setNotebookDatabaseProvider, setNotebookSchemaRunner} from "./notebook.js";
+import {initNotebook, showNotebookUI, unlockNotebookEntry, completeNotebookEntry, forgetNotebookEntry, getNotebookState, loadNotebookState, setNotebookDatabaseProvider, setNotebookSchemaRunner} from "./notebook.js";
 import { renderShopVisuals, hideTooltip} from "./shop.js";
 import { processDiscoveries } from "./notebookDiscovery.js";
 import {saveGame,loadGame} from "./savegame.js";
@@ -44,6 +44,9 @@ const RADIO_DECORATION_VISUAL = {
     posY: 154,
     scale: 1.5
 };
+const TUTORIAL_ONLY_NOTEBOOK_ENTRIES = [
+    "shop_items"
+];
 const MUSIC_TRACKS = [
     "./assets/music/LSV_Bossa_031_bpm_100bpm_G4.mp3",
     "./assets/music/LSV_Bossa_030_Jazz_94bpm_C5.mp3",
@@ -128,6 +131,16 @@ async function initDatabase(seedPath = "./database/seed.sql") {
 
 async function initCurrentLevelDatabase() {
     await initDatabase(currentLevel.seedPath);
+    syncNotebookEntriesForCurrentLevel();
+}
+
+function syncNotebookEntriesForCurrentLevel() {
+    if(currentLevel.levelId === "level0")
+        return;
+
+    TUTORIAL_ONLY_NOTEBOOK_ENTRIES.forEach(entry => {
+        forgetNotebookEntry(entry);
+    });
 }
 
 bootApp();
@@ -300,6 +313,7 @@ async function continueGame() {
     loadNotebookState(save.notebookState);
 
     await initCurrentLevelDatabase();
+    saveCurrentGame();
     enterGame();
 }
 

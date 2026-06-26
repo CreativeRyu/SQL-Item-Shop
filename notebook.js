@@ -758,6 +758,20 @@ export function completeNotebookEntry(entry) {
     renderAfterNotebookStateChange();
 }
 
+export function forgetNotebookEntry(entry) {
+    delete notebookState.commands[entry];
+    delete notebookState.tables[entry];
+    delete notebookState.schemas[entry];
+
+    Object.keys(selectedEntries).forEach(page => {
+        if(selectedEntries[page] === entry) {
+            selectedEntries[page] = "";
+        }
+    });
+
+    renderAfterNotebookStateChange();
+}
+
 export function rememberTableSchema(tableName, columns) {
     notebookState.schemas[tableName] = columns;
     unlockNotebookEntry(tableName);

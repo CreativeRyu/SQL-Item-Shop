@@ -21,3 +21,10 @@ INSERT INTO customers (name, budget)
 VALUES
 ('Max', 20),
 ('Anna', 35);
+
+CREATE VIEW shop_items AS
+SELECT
+    id,
+    name,
+    price
+FROM products;

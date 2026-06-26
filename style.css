@@ -1164,7 +1164,7 @@ tr:hover td {
 }
 
 .shop-key-item:hover .shop-item {
-    transform: scale(1.55);
+    transform: scale(1.2);
     filter: drop-shadow(0 0 12px rgba(255,220,120,0.9));
 }
 
