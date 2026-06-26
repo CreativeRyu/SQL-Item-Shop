@@ -7,10 +7,11 @@ Core idea
 
 Current next feature direction
 - Next focus is content and progression:
-  - Large Notebook paper sound polish.
-  - Level 3 WHERE Advanced test / polish pass.
-  - Large Notebook View polish / content expansion.
-  - Sound effects later.
+  - Level 4 ORDER BY / LIMIT testen und didaktisch polishen.
+  - Lernpfad sauber weiterziehen und weitere Level missionenweise einbauen.
+  - Notebook-Inhalte passend zu neuen Level-Themen erweitern.
+  - Spaeter Shop-Progression mit Regal-Unlock und sichtbaren Slots planen.
+  - Soundeffekte und weitere Atmosphaeren-Polishs danach.
 
 Money / shop item ideas
 - SQL Notebook: existing core learning item.
@@ -147,6 +148,22 @@ Aktueller Stand
   - seed3.sql ist als eigener Level-Seed angelegt und basiert aktuell auf seed2.sql.
   - level3ShopLayout.js ist als eigenes Level-Layout angelegt und basiert aktuell auf level2ShopLayout.js.
   - Level 2 kann ueber den bestehenden Scroll-Transition-Flow in Level 3 uebergehen.
+- Level 3 ist getestet, gepolisht und didaktisch abgeschlossen:
+  - WHERE Advanced sitzt mit AND, OR, BETWEEN und LIKE.
+  - Protein Bar und Protein Cookies sind in seed3.sql und level3ShopLayout.js eingebaut.
+  - Level-3-Layout ist auf dem Tresen feinjustiert.
+  - Level 3 ist committet.
+- Level 4 Grundgeruest ist angelegt:
+  - level4.js hat intro, recap, seedPath und shopLayoutId.
+  - seed4.sql ist als eigener Level-Seed angelegt.
+  - products bekommt nur in seed4.sql eine category-Spalte.
+  - level4ShopLayout.js ist als eigenes Layout angelegt.
+  - Level 4 fuehrt ORDER BY, ASC / DESC und LIMIT ein.
+  - Level 4 festigt gleichzeitig Level-3-Filter:
+    - OR fuer Obst oder Gemuese.
+    - AND + BETWEEN fuer Preisbereiche.
+    - LIKE fuer Protein-Produkte.
+  - Kategorie bleibt vorerst eine Spalte in products, nicht eine eigene Tabelle.
 - Shopkeeper Hint und Query Blueprint sind aus der SQL-Datenbank herausgeloest:
   - Sie liegen nicht mehr in products / inventory.
   - Sie werden als missionsbasierte Spezialitems ueber gameState und shopLayout gerendert.
@@ -231,66 +248,67 @@ Aktueller Stand
     - Icons sind zentriert und lesbar.
 
 Naechster grosser Schritt
-1. Level 3 testen und polishen.
-   - Level 2 hat WHERE mit einzelnen Bedingungen abgeschlossen:
-     - Textvergleich
-     - Zahlenvergleich
-     - Spaltenauswahl mit WHERE
-     - einfache Vergleichsoperatoren
-   - Level 3 baut WHERE als neues Hauptthema aus:
-     - AND fuer mehrere Pflichtbedingungen.
-     - OR fuer alternative Treffer.
-     - BETWEEN fuer Wertebereiche.
-     - LIKE fuer Textmuster.
-   - Ziel:
-     - Bedingungen bewusst kombinieren.
-     - AND und OR klar voneinander unterscheiden.
-     - BETWEEN als lesbare Bereichsform verstehen.
-     - LIKE mit % als Platzhalter nutzen.
-     - Noch kein ORDER BY in Level 3.
-   - Naechster Schritt:
-     - Level 3 komplett durchtesten.
-     - Missionstexte und Shopkeeper-Stimme sauber nachziehen.
-     - Validatoren gegen zu leichte / falsche Loesungen pruefen.
-     - Help-Panel-Flow ab Mission 1 pruefen.
-     - Rewards und Geldbalance pruefen.
-     - Pruefen, ob seed3.sql mehr gezielte LIKE-/AND-/OR-Daten braucht.
-
-2. Level 4 Konzept: ORDER BY / LIMIT mit Produktkategorien.
-   - Level 4 soll nach Level 3 als Sortier- und Begrenzungslevel kommen.
+1. Level 4 testen und polishen.
+   - Level 4 ist initial angelegt und soll jetzt im Spiel durchgetestet werden.
    - Hauptthemen:
      - ORDER BY fuer sortierte Ergebnisse.
      - ASC / DESC fuer aufsteigende und absteigende Sortierung.
      - LIMIT fuer kurze Ergebnislisten und Top-N-Fragen.
-   - Datenmodell-Erweiterung:
-     - products bekommt voraussichtlich eine category-Spalte.
-     - Kategorien koennen einfache, gut lesbare Ladenbereiche sein:
-       - Obst
-       - Gemuese
-       - Fitness
-       - Wertvoll
-       - Spezial / Werkzeug spaeter optional
-   - Gemuese soll bewusst weiter genutzt werden:
-     - Apfel, Banane, Karotte, Tomate, Gurke und Kartoffel bleiben visuell und didaktisch greifbare Lernobjekte.
-     - Kategorien machen daraus echte Ladenfragen statt abstrakter Tabellenuebungen.
-   - Moegliche Level-4-Missionen:
-     - Zeige alle Produkte nach Preis sortiert.
-     - Zeige das guenstigste Gemuese.
-     - Zeige die drei teuersten Produkte.
-     - Zeige Obstprodukte nach Preis absteigend.
-     - Finde guenstige Lebensmittel und sortiere sie sauber.
-     - Zeige die teuersten Fitness-Produkte.
-   - Didaktischer Zweck:
-     - Level 3 kombiniert Bedingungen.
-     - Level 4 nutzt diese Filter weiter und fuegt Sortierung / Begrenzung hinzu.
-     - Kategorien bereiten spaeter Aggregationen und GROUP BY vor.
-   - Level 5 kann darauf aufbauen:
+   - Level-3-Inhalte sollen bewusst weiter trainiert werden:
+     - OR mit Obst / Gemuese.
+     - AND + BETWEEN fuer Preisbereiche.
+     - LIKE fuer Protein-Produkte.
+   - Kategorie ist levelindividuell in seed4.sql geloest:
+     - Keine globale Schema-Aenderung.
+     - Kategorie bleibt vorerst products.category.
+     - Spaeter kann category in eine eigene Tabelle ausgelagert werden, wenn JOINs eingefuehrt werden.
+   - Polishpunkte:
+     - Missionen mit debug(4, 1) bis debug(4, 7) spielen.
+     - Einleitungstexte und Shopkeeper-Stimme pruefen.
+     - Validatoren gegen zu leichte / falsche Loesungen pruefen.
+     - Notebook-Unlocks fuer ORDER BY und LIMIT pruefen.
+     - Kategorie-Schema im kleinen/grossen Notebook pruefen.
+     - Rewards und Geldbalance pruefen.
+
+2. Lernpfad weiter ausbauen.
+   - Die grossen Systeme sind erstmal vorhanden:
+     - Levelwechsel.
+     - Missionen / Validatoren.
+     - pro-Level-Seeds.
+     - pro-Level-ShopLayouts.
+     - kleines und grosses Notebook.
+     - Help Panel mit Hint und Blueprint.
+     - Radio / Soundsteuerung.
+     - Level-Banner.
+   - Fokus verschiebt sich jetzt auf didaktisch saubere Level:
+     - Jede neue SQL-Technik braucht einen klaren Ladenanlass.
+     - Alte Inhalte werden in neuen Leveln weiter trainiert.
+     - Jede Mission soll kurz, pruefbar und nicht zu leicht umgehbar sein.
+     - Seeds sollen pro Level gezielt fuer die Lernziele gebaut werden.
+
+3. Naechste Lernkapitel planen.
+   - Level 5: Aggregationen
      - COUNT, SUM, AVG.
+     - COUNT(*) fuer Anzahl Produkte.
+     - AVG(price) fuer Durchschnittspreise.
+     - SUM(stock) auf inventory.
+     - Kategorien aus Level 4 bereiten GROUP BY vor.
+   - Level 6: GROUP BY
      - Anzahl Produkte pro Kategorie.
      - Durchschnittspreis pro Kategorie.
      - Gesamtbestand pro Kategorie.
+     - Optional HAVING als Abschluss oder eigenes Folgelevel.
+   - Level 7: JOIN Basics
+     - category kann spaeter aus products ausgelagert werden.
+     - products.category_id verbindet zu categories.
+     - inventory wird mit products verbunden.
+     - sales kann Kunden und Produkte verbinden.
+   - Level 8+: DML in sicherem Shop-Management
+     - INSERT, UPDATE, DELETE kontrolliert einfuehren.
+     - Refresh / Reset-Button aktivieren, falls Spieler Daten kaputt macht.
+     - Aufgaben nur in klaren, abgesicherten Trainingssituationen.
 
-3. Story-Verteilung fuer Missionen konkretisieren.
+4. Story-Verteilung fuer Missionen konkretisieren.
    - Questpanel:
      - klare Aufgabe.
      - kurz, praktisch, waehrend der Mission nutzbar.
@@ -308,7 +326,7 @@ Naechster grosser Schritt
      - Texte duerfen wichtige UI nicht verdecken.
      - Spaeter besonders wegen Tablet-Layout pruefen.
 
-4. Grosses SQL Notebook Sound-Polish.
+5. Grosses SQL Notebook Sound-Polish.
    - Papier-Sounds fuer wichtige Buchinteraktionen sind eingebaut:
      - open_great_notebook beim Expand-Button des kleinen Notebooks.
      - close_great_notebook beim X-Button im grossen Notebook.
@@ -321,7 +339,7 @@ Naechster grosser Schritt
      - Warnung / Fehler weiter polishen.
      - Spaeter Papier-Sounds fuer weitere Notebook-UI-Interaktionen pruefen.
 
-5. Grosses SQL Notebook weiter ausbauen und polishen.
+6. Grosses SQL Notebook weiter ausbauen und polishen.
    - MVP ist eingebaut.
    - Naechste Polishpunkte:
      - Pfeilbutton / Naechste-Seite-Button visuell ueberarbeiten.
@@ -342,7 +360,17 @@ Naechster grosser Schritt
      - Danach ist das Schema dauerhaft ueber das Notebook abrufbar.
      - SQL bleibt dadurch das Werkzeug, nicht ein Klick-Shortcut.
 
-6. Weitere sinnvolle Geld-Sinks planen.
+7. Spaetere Shop-Progression planen.
+   - Regal-Unlock / Shelf-Slots wird spaeter wieder interessant:
+     - Spieler kauft ein neues Regal oder ein Regal-Upgrade.
+     - Sichtbare Slots koennen Produkte aufnehmen.
+     - Slots koennen spaeter mit inventory / shelf_stock verbunden werden.
+     - Kunden kaufen aus sichtbaren Slots.
+     - Restocking, UPDATE und Transaktionen bekommen dadurch echten Spielgrund.
+   - Vorerst nicht als Blocker fuer den Lernpfad behandeln.
+   - Erst Level didaktisch sauber weiterbauen, dann Shop-Progression als naechste Gameplay-Schicht.
+
+8. Weitere sinnvolle Geld-Sinks planen.
    - Geld soll mehr Bedeutung bekommen als nur Notebook kaufen.
    - Moegliche Items:
      - Radio.
@@ -357,7 +385,7 @@ Naechster grosser Schritt
      - Spieler koennen sie im Shop/Archiv kaufen oder dauerhaft sichern.
      - Letzte Szene erst nach Spielabschluss.
 
-7. Cutscene-System planen.
+9. Cutscene-System planen.
    - Fuer besondere Momente:
      - Levelende
      - Item-Freischaltung
@@ -371,7 +399,7 @@ Naechster grosser Schritt
    - Nicht jede Mission braucht Cutscene. Normale Missionen bekommen hoechstens kurzen Shopkeeper-Anlass.
    - Vermutlich eher spaeter bauen, wenn Levelinhalt, Notebook und Geld-Sinks klarer sind.
 
-8. Source Material / Jupyter Aufgaben auswerten.
+10. Source Material / Jupyter Aufgaben auswerten.
    - Notebook liegt in source_material/sql_aufgaben.ipynb.
    - Aufgaben nicht 1:1 uebernehmen.
    - Erst clustern:
@@ -389,7 +417,7 @@ Naechster grosser Schritt
      - Transaktionen / Archivierung
    - Danach pro Level 5-8 Hauptmissionen plus optionale Bonusquests bauen.
 
-9. Datenmodell v2 planen.
+11. Datenmodell v2 planen.
    - Aktuell sauberer als vorher, aber spaeter brauchen wir wahrscheinlich:
      - categories
      - suppliers
@@ -406,31 +434,27 @@ Naechster grosser Schritt
    - Visuals bleiben ausserhalb der SQL-Lerndaten.
 
 Kurzfristige Prioritaet fuer morgen
-- Zuerst kompletten Tool-Test fortsetzen:
-  - Kleines Notebook: TABLES/DQL sauber getrennt.
-  - Kleines Notebook: gruene Tabellen klicken und PRAGMA table_info im SQL Output pruefen.
-  - Grosses Notebook: DQL-Inhalte, Seitenwechsel, Shopkeeper-Notiz-Seiten und keine Scrollbars pruefen.
-  - Notebook-Sounds pruefen: Oeffnen, Schliessen, Register, Inhalts-Unlocks, Seitenpfeil.
-  - Radio-Poti-Buttons visuell und funktional pruefen.
-- Danach Level 3 komplett testen und aufraeumen:
-  - Missionen spielen.
-  - Texte und Shopkeeper-Stimme polishen.
+- Level 4 komplett testen und polishen:
+  - debug(4, 1) bis debug(4, 7) spielen.
+  - ORDER BY / ASC / DESC / LIMIT Einfuehrung auf Tempo und Klarheit pruefen.
+  - Kategorie-Hinweis pruefen, ohne extra PRAGMA-Pflichtmission.
+  - Level-3-Festigungsmissionen pruefen:
+    - OR mit Obst / Gemuese.
+    - AND + BETWEEN.
+    - LIKE 'Protein%'.
   - Validatoren pruefen.
-  - Help-Panel und Spezialitems ab Mission 1 testen.
-  - Geldabzug, Item-Entfernung und per-Mission-Help-State pruefen.
-  - Pruefen, ob seed3.sql eigene Daten statt nur seed2-Kopie braucht.
-- Danach entscheiden, ob Level 3 ein eigenes Shop-Visual-Update braucht:
-  - level3ShopLayout.js ist aktuell ein Platzhalter auf Basis von Level 2.
-  - Neue Waren nur dann einbauen, wenn sie didaktisch fuer AND / OR / BETWEEN / LIKE helfen.
-- Danach Grosses SQL Notebook weiter polishen, falls beim Test noch etwas auffaellt:
-  - Tabellen-Schema/Vorschau-Flow im Spiel testen.
-  - Weitere Lerninhalte nach Level-Fortschritt ergaenzen.
-- Danach Level 4 konkret ausarbeiten:
-  - ORDER BY / ASC / DESC / LIMIT als naechstes DQL-Thema.
-  - products um category erweitern oder level4-seitig sauber vorbereiten.
-  - Gemuese und Obst bewusst als anschauliche Kategorien nutzen.
-  - Missionen bauen, die Level-3-Filter weiterverwenden und Sortierung / Begrenzung hinzufuegen.
+  - Rewards und Geldbalance pruefen.
+  - Notebook-Unlocks fuer ORDER BY und LIMIT pruefen.
+- Danach Level 5 Aggregationen konkret ausarbeiten:
+  - seed5.sql planen.
+  - Missionen fuer COUNT, SUM, AVG schreiben.
+  - Kategorie-Daten aus Level 4 fuer spaeteres GROUP BY vorbereiten.
+- Danach Grosses SQL Notebook weiter pflegen:
+  - Inhalte fuer ORDER BY und LIMIT final pruefen.
+  - Inhalte fuer Aggregationen ergaenzen.
+  - Schema/Vorschau-Seitenwechsel weiter testen.
 - Danach Soundeffekte.
+- Regal-Unlock / Slots spaeter als Gameplay-Erweiterung planen, nicht vor dem Lernpfad blockieren.
 - Cutscenes und Video-Sammlung eher spaeter planen, wenn Progression und Geld-Sinks klarer sind.
 
 Session Summary
@@ -476,15 +500,11 @@ Session Summary
   - Aufgaben eignen sich als Roh-Curriculum, aber sollen spaeter geclustert und spielerisch ueberarbeitet werden.
 
 Naechster konkreter Startpunkt
-- Tool-Test morgen fortsetzen:
-  - Notebook-Klassifizierung pruefen.
-  - Kleine Notebook-Tabellenklicks pruefen.
-  - Grosse Notebook-Seiten und Sounds pruefen.
-  - Radio-Poti-Controls pruefen.
-- Danach Level 3 mit debug(3, 1) bis debug(3, 6) bzw. normalem Levelwechsel aus Level 2 testen.
-- Danach Level-3-Texte, Missionen, Rewards und Validatoren polishen.
-- Pruefen, ob seed3.sql fuer LIKE und OR mehr eindeutige Beispieldaten braucht.
-- Danach Grosses SQL Notebook polishen:
-  - Pfeilbutton / Naechste-Seite-Button visuell anpassen.
-  - Schema/Vorschau-Seitenwechsel testen.
-  - Notebook-Inhalte fuer kommende Level erweitern.
+- Level 4 mit debug(4, 1) starten und einmal komplett spielen.
+- Bei jedem Level-4-Schritt pruefen:
+  - Ist der Shopkeeper-Anlass klar?
+  - Wird der neue SQL-Begriff erst eingefuehrt, bevor er verlangt wird?
+  - Trainiert die Mission alte Inhalte sinnvoll mit?
+  - Ist der Validator streng genug, aber nicht nervig?
+- Danach Level 4 Texte, Rewards und Validatoren polishen.
+- Danach Level 5 Aggregationen als naechstes Lernkapitel planen.
