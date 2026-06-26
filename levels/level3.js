@@ -164,7 +164,7 @@ const level3 = {
       hint:
         "AND verbindet zwei Bedingungen. Beide müssen für eine Zeile wahr sein.",
       blueprint:
-        "<code>SELECT name, price<br>FROM products<br>WHERE price > ... AND price < ...;</code>",
+        "<code>SELECT name, price<br>FROM products<br>WHERE price ... AND price < ...;</code>",
       reward: {
         money: 25
       },
@@ -200,7 +200,7 @@ const level3 = {
       hint:
         "OR ist richtig, wenn mehrere einzelne Treffer erlaubt sind.",
       blueprint:
-        "<code>SELECT *<br>FROM products<br>WHERE name = '...' OR name = '...';</code>",
+        "<code>SELECT *<br>FROM products<br>WHERE name '...' OR name = '...';</code>",
       reward: {
         money: 25
       },
@@ -225,7 +225,7 @@ const level3 = {
         "Manche Kunden kaufen spontan. Andere rechnen. Und einige haben genau genug Gold, um interessant zu werden. " +
         "Für Bereiche gibt es eine elegantere Technik.",
       task:
-        "Zeige name und budget aus customers für Kunden mit budget BETWEEN 20 AND 100.",
+        "Zeige name und budget für Kunden mit budget zwischen 20 AND 100.",
       softTutorial: true,
       tutorialSteps: [
         {
@@ -268,13 +268,21 @@ const level3 = {
           disableHighlight: true,
           position: "editor-top",
           text:
+            "Als Nächstes reden wir über <span class='sql-keyword'>LIKE</span>. " +
+            "Manchmal kennt ein Händler nicht den ganzen Namen, sondern nur den Anfang. Dafür gibt es eine saubere Technik."
+        },
+        {
+          target: ".CodeMirror",
+          disableHighlight: true,
+          position: "editor-top",
+          text:
             "<span class='sql-keyword'>LIKE</span> sucht nach Textmustern. Das Prozentzeichen <span class='sql-symbol'>%</span> steht für beliebige weitere Zeichen."
         }
       ],
       hint:
         "LIKE 'Protein%' bedeutet: Der Text beginnt mit Protein und danach darf noch etwas kommen.",
       blueprint:
-        "<code>SELECT name, price<br>FROM products<br>WHERE name LIKE 'Protein%';</code>",
+        "<code>SELECT ..., ...<br>FROM ...<br>WHERE name LIKE 'Protein%';</code>",
       reward: {
         money: 25
       },
@@ -284,8 +292,10 @@ const level3 = {
         usesWhere(query) &&
         hasLikeCondition(query, "name", "Protein%") &&
         hasColumns(result, ["name", "price"]) &&
-        hasRowCount(result, 1) &&
-        resultIncludesValue(result, "Protein Shake")
+        hasRowCount(result, 3) &&
+        resultIncludesValue(result, "Protein Shake") &&
+        resultIncludesValue(result, "Protein Bar") &&
+        resultIncludesValue(result, "Protein Cookies")
       )
     },
     {
@@ -293,14 +303,14 @@ const level3 = {
       title: "Kunden mit M",
       description: "Finde Kunden, deren Name mit M beginnt.",
       story:
-        "Der Shopkeeper erinnert sich an ein M. Mehr nicht. Stark im Kreuzheben, schwach bei Namen. " +
-        "Zum Glück kann SQL mit halben Erinnerungen arbeiten.",
+        "Der Shopkeeper merkt sich Namen erst, wenn jemand im Laden Haltung gezeigt hat. " +
+        "Bei diesem Kunden ist bisher nur ein M hängen geblieben. Das reicht. SQL arbeitet auch mit Teilen eines Wortes.",
       task:
-        "Zeige name und budget aus customers für Kunden, deren name mit M beginnt. Nutze LIKE 'M%'.",
+        "Zeige name und budget aus customers für Kunden, deren name mit einem M beginnt.",
       hint:
         "Das Muster 'M%' sucht Namen, die mit M anfangen.",
       blueprint:
-        "<code>SELECT name, budget<br>FROM customers<br>WHERE name LIKE 'M%';</code>",
+        "<code>SELECT ..., ...<br>FROM customers<br>WHERE name LIKE ...;</code>",
       reward: {
         money: 25
       },
@@ -326,7 +336,7 @@ const level3 = {
       hint:
         "Kombiniere LIKE mit AND. Erst das Textmuster, dann die Preisgrenze.",
       blueprint:
-        "<code>SELECT name, price<br>FROM products<br>WHERE name LIKE 'Protein%' AND price < ...;</code>",
+        "<code>SELECT ..., ...<br>FROM products<br>WHERE name LIKE 'Protein%' AND price < ...;</code>",
       reward: {
         money: 30
       },
@@ -337,8 +347,9 @@ const level3 = {
         hasLikeCondition(query, "name", "Protein%") &&
         hasNumberCondition(query, "price", "<", 5) &&
         hasColumns(result, ["name", "price"]) &&
-        hasRowCount(result, 1) &&
-        resultIncludesValue(result, "Protein Shake")
+        hasRowCount(result, 2) &&
+        resultIncludesValue(result, "Protein Shake") &&
+        resultIncludesValue(result, "Protein Bar")
       )
     }
   ]

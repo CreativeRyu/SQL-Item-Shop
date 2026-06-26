@@ -256,7 +256,41 @@ Naechster grosser Schritt
      - Rewards und Geldbalance pruefen.
      - Pruefen, ob seed3.sql mehr gezielte LIKE-/AND-/OR-Daten braucht.
 
-2. Story-Verteilung fuer Missionen konkretisieren.
+2. Level 4 Konzept: ORDER BY / LIMIT mit Produktkategorien.
+   - Level 4 soll nach Level 3 als Sortier- und Begrenzungslevel kommen.
+   - Hauptthemen:
+     - ORDER BY fuer sortierte Ergebnisse.
+     - ASC / DESC fuer aufsteigende und absteigende Sortierung.
+     - LIMIT fuer kurze Ergebnislisten und Top-N-Fragen.
+   - Datenmodell-Erweiterung:
+     - products bekommt voraussichtlich eine category-Spalte.
+     - Kategorien koennen einfache, gut lesbare Ladenbereiche sein:
+       - Obst
+       - Gemuese
+       - Fitness
+       - Wertvoll
+       - Spezial / Werkzeug spaeter optional
+   - Gemuese soll bewusst weiter genutzt werden:
+     - Apfel, Banane, Karotte, Tomate, Gurke und Kartoffel bleiben visuell und didaktisch greifbare Lernobjekte.
+     - Kategorien machen daraus echte Ladenfragen statt abstrakter Tabellenuebungen.
+   - Moegliche Level-4-Missionen:
+     - Zeige alle Produkte nach Preis sortiert.
+     - Zeige das guenstigste Gemuese.
+     - Zeige die drei teuersten Produkte.
+     - Zeige Obstprodukte nach Preis absteigend.
+     - Finde guenstige Lebensmittel und sortiere sie sauber.
+     - Zeige die teuersten Fitness-Produkte.
+   - Didaktischer Zweck:
+     - Level 3 kombiniert Bedingungen.
+     - Level 4 nutzt diese Filter weiter und fuegt Sortierung / Begrenzung hinzu.
+     - Kategorien bereiten spaeter Aggregationen und GROUP BY vor.
+   - Level 5 kann darauf aufbauen:
+     - COUNT, SUM, AVG.
+     - Anzahl Produkte pro Kategorie.
+     - Durchschnittspreis pro Kategorie.
+     - Gesamtbestand pro Kategorie.
+
+3. Story-Verteilung fuer Missionen konkretisieren.
    - Questpanel:
      - klare Aufgabe.
      - kurz, praktisch, waehrend der Mission nutzbar.
@@ -274,7 +308,7 @@ Naechster grosser Schritt
      - Texte duerfen wichtige UI nicht verdecken.
      - Spaeter besonders wegen Tablet-Layout pruefen.
 
-3. Grosses SQL Notebook Sound-Polish.
+4. Grosses SQL Notebook Sound-Polish.
    - Papier-Sounds fuer wichtige Buchinteraktionen sind eingebaut:
      - open_great_notebook beim Expand-Button des kleinen Notebooks.
      - close_great_notebook beim X-Button im grossen Notebook.
@@ -287,7 +321,7 @@ Naechster grosser Schritt
      - Warnung / Fehler weiter polishen.
      - Spaeter Papier-Sounds fuer weitere Notebook-UI-Interaktionen pruefen.
 
-4. Grosses SQL Notebook weiter ausbauen und polishen.
+5. Grosses SQL Notebook weiter ausbauen und polishen.
    - MVP ist eingebaut.
    - Naechste Polishpunkte:
      - Pfeilbutton / Naechste-Seite-Button visuell ueberarbeiten.
@@ -308,7 +342,7 @@ Naechster grosser Schritt
      - Danach ist das Schema dauerhaft ueber das Notebook abrufbar.
      - SQL bleibt dadurch das Werkzeug, nicht ein Klick-Shortcut.
 
-5. Weitere sinnvolle Geld-Sinks planen.
+6. Weitere sinnvolle Geld-Sinks planen.
    - Geld soll mehr Bedeutung bekommen als nur Notebook kaufen.
    - Moegliche Items:
      - Radio.
@@ -323,7 +357,7 @@ Naechster grosser Schritt
      - Spieler koennen sie im Shop/Archiv kaufen oder dauerhaft sichern.
      - Letzte Szene erst nach Spielabschluss.
 
-6. Cutscene-System planen.
+7. Cutscene-System planen.
    - Fuer besondere Momente:
      - Levelende
      - Item-Freischaltung
@@ -337,7 +371,7 @@ Naechster grosser Schritt
    - Nicht jede Mission braucht Cutscene. Normale Missionen bekommen hoechstens kurzen Shopkeeper-Anlass.
    - Vermutlich eher spaeter bauen, wenn Levelinhalt, Notebook und Geld-Sinks klarer sind.
 
-7. Source Material / Jupyter Aufgaben auswerten.
+8. Source Material / Jupyter Aufgaben auswerten.
    - Notebook liegt in source_material/sql_aufgaben.ipynb.
    - Aufgaben nicht 1:1 uebernehmen.
    - Erst clustern:
@@ -355,7 +389,7 @@ Naechster grosser Schritt
      - Transaktionen / Archivierung
    - Danach pro Level 5-8 Hauptmissionen plus optionale Bonusquests bauen.
 
-8. Datenmodell v2 planen.
+9. Datenmodell v2 planen.
    - Aktuell sauberer als vorher, aber spaeter brauchen wir wahrscheinlich:
      - categories
      - suppliers
@@ -391,6 +425,11 @@ Kurzfristige Prioritaet fuer morgen
 - Danach Grosses SQL Notebook weiter polishen, falls beim Test noch etwas auffaellt:
   - Tabellen-Schema/Vorschau-Flow im Spiel testen.
   - Weitere Lerninhalte nach Level-Fortschritt ergaenzen.
+- Danach Level 4 konkret ausarbeiten:
+  - ORDER BY / ASC / DESC / LIMIT als naechstes DQL-Thema.
+  - products um category erweitern oder level4-seitig sauber vorbereiten.
+  - Gemuese und Obst bewusst als anschauliche Kategorien nutzen.
+  - Missionen bauen, die Level-3-Filter weiterverwenden und Sortierung / Begrenzung hinzufuegen.
 - Danach Soundeffekte.
 - Cutscenes und Video-Sammlung eher spaeter planen, wenn Progression und Geld-Sinks klarer sind.
 

@@ -1,37 +1,37 @@
 export const level3ShopLayout = {
     1: {
         sprite: "./assets/sprites/shopItems/apple.png",
-        posX: 180,
+        posX: 175,
         posY: 290,
         scale: 1.0
     },
     2: {
         sprite: "./assets/sprites/shopItems/banana.png",
-        posX: 243,
+        posX: 230,
         posY: 290,
         scale: 1.0
     },
     3: {
         sprite: "./assets/sprites/shopItems/carrot.png",
-        posX: 306,
+        posX: 285,
         posY: 290,
         scale: 1.0
     },
     4: {
         sprite: "./assets/sprites/shopItems/tomato.png",
-        posX: 369,
+        posX: 340,
         posY: 290,
         scale: 1.0
     },
     5: {
         sprite: "./assets/sprites/shopItems/cucumber.png",
-        posX: 432,
+        posX: 395,
         posY: 290,
         scale: 1.0
     },
     6: {
         sprite: "./assets/sprites/shopItems/potato.png",
-        posX: 495,
+        posX: 450,
         posY: 290,
         scale: 1.0
     },
@@ -56,9 +56,22 @@ export const level3ShopLayout = {
     },
     9: {
         sprite: "./assets/sprites/shopItems/protein_shake.png",
-        posX: 55,
+        posX: 32,
         posY: 225,
         scale: 1.6
+    },
+    13: {
+        sprite: "./assets/sprites/shopItems/protein_bar.png",
+        posX: 505,
+
+        posY: 296,
+        scale: 1.5
+    },
+    14: {
+        sprite: "./assets/sprites/shopItems/protein_cookies.png",
+        posX: 80,
+        posY: 291,
+        scale: 1.3
     },
     10: {
         sprite: "./assets/sprites/shopItems/creatine.png",

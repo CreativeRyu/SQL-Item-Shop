@@ -286,7 +286,7 @@ const level2 = {
         "Wenn der Bestand knapp ist, merkt man das nicht erst, wenn der Kunde heulend vor einem Regal steht. " +
         "Gute Händler erkennen Engpässe vorher.",
       task:
-        "Zeige ID und Bestand der kritischen Lagerbestände? Berücksichtige alle Bestände von 2 oder weniger.",
+        "Zeige ID und Bestand der kritischen Lagerbestände. Berücksichtige alle Bestände von 2 oder weniger.",
       hint:
         "Höchstens bedeutet kleiner oder gleich <=.",
       blueprint:
@@ -307,7 +307,7 @@ const level2 = {
       title: "Der Rubin-Check",
       description: "Zeige Name und Preis vom Rubin.",
       story:
-        "Der Rubin ist unser teuerstes Stueck im Regal. Nicht anfassen, nicht anstarren, nur sauber abfragen. " +
+        "Der Rubin ist unser teuerstes Stück im Regal. Nicht anfassen, nicht anstarren, nur sauber abfragen. " +
         "Ein guter Händler weiss, wo der Wert liegt.",
       task:
         "Zeige Name und Preis des Rubins.",

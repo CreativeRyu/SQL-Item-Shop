@@ -9,7 +9,9 @@ VALUES
 (7, 'Rubin', 49.99),
 (9, 'Protein Shake', 4.99),
 (10, 'Creatine', 29.99),
-(11, 'Lifting Belt', 49.99);
+(11, 'Lifting Belt', 49.99),
+(13, 'Protein Bar', 2.99),
+(14, 'Protein Cookies', 5.99);
 
 INSERT INTO inventory (product_id, stock)
 VALUES
@@ -22,7 +24,9 @@ VALUES
 (7, 1),
 (9, 8),
 (10, 2),
-(11, 1);
+(11, 1),
+(13, 12),
+(14, 6);
 
 INSERT INTO customers (name, budget)
 VALUES

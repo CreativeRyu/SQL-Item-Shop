@@ -55,6 +55,13 @@ const SMALL_NOTEBOOK_CATEGORIES = {
 };
 
 const PAGE_SIZE = 12;
+const SMALL_NOTEBOOK_TOPIC_KEYS = {
+    DQL: new Set([
+        "SELECT",
+        "FROM",
+        "WHERE"
+    ])
+};
 const selectedEntries = {};
 const pageOffsets = {};
 let currentPage = "TABLES";
@@ -275,10 +282,16 @@ function attachSmallTableEntryListeners() {
 }
 
 function shouldShowSmallNotebookTopic(topic) {
-    return (
-        isEntryKnown(topic.unlockKey) &&
-        topic.unlockKey !== "COMPARISON_OPERATORS"
-    );
+    const allowedKeys = SMALL_NOTEBOOK_TOPIC_KEYS[currentPage];
+
+    if(allowedKeys) {
+        return (
+            isEntryKnown(topic.unlockKey) &&
+            allowedKeys.has(topic.unlockKey)
+        );
+    }
+
+    return isEntryKnown(topic.unlockKey);
 }
 
 
