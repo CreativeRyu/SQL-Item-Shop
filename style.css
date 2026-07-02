@@ -1343,10 +1343,13 @@ tr:hover td {
 #support-popup-overlay {
     position: fixed;
     inset: 0;
+    padding: 16px;
     display: flex;
     justify-content: center;
     align-items: center;
     background: rgba(0,0,0,0.55);
+    box-sizing: border-box;
+    overflow: auto;
     z-index: 9999;
 }
 
@@ -1356,24 +1359,29 @@ tr:hover td {
 
 #support-popup {
     position: relative;
-    width: min(460px, 94vw);
+    width: min(460px, calc(100vw - 32px), calc((100vh - 32px) * 0.78));
+    aspect-ratio: 460 / 590;
     image-rendering: pixelated;
     animation: popupAppear 0.22s ease-out;
 }
 
 #support-popup-bg {
+    position: absolute;
+    inset: 0;
     width: 100%;
+    height: 100%;
     display: block;
+    object-fit: fill;
     image-rendering: pixelated;
     filter: drop-shadow(0 10px 14px rgba(0,0,0,0.45));
 }
 
 #support-popup-close {
     position: absolute;
-    top: 44px;
-    right: 48px;
-    width: 28px;
-    height: 28px;
+    top: 7.5%;
+    right: 10.4%;
+    width: clamp(22px, 6.1vw, 28px);
+    height: clamp(22px, 6.1vw, 28px);
     padding: 0;
     display: flex;
     align-items: center;
@@ -1384,7 +1392,7 @@ tr:hover td {
     box-shadow: none;
     color: #5a3920;
     font-family: Arial, sans-serif;
-    font-size: 18px;
+    font-size: clamp(14px, 3.9vw, 18px);
     line-height: 0;
     text-shadow: none;
     z-index: 2;
@@ -1398,26 +1406,27 @@ tr:hover td {
 
 #support-popup-title {
     position: absolute;
-    top: 72px;
-    left: 42px;
-    right: 42px;
+    top: 12.2%;
+    left: 9.1%;
+    right: 9.1%;
     text-align: center;
     font-family: 'Ithaca', sans-serif;
-    font-size: 34px;
+    font-size: clamp(25px, 7vw, 34px);
+    line-height: 1;
     letter-spacing: 1px;
     color: #5a3920;
 }
 
 #support-popup-description {
     position: absolute;
-    top: 146px;
-    left: 58px;
-    right: 58px;
-    bottom: 264px;
+    top: 24.7%;
+    left: 12.6%;
+    right: 12.6%;
+    bottom: 44.7%;
     overflow: auto;
     text-align: center;
     font-family: 'superhelio _regular', sans-serif;
-    font-size: 14px;
+    font-size: clamp(11px, 3vw, 14px);
     line-height: 1.42;
     color: #4b3824;
 }
@@ -1425,9 +1434,9 @@ tr:hover td {
 #support-popup-heart {
     position: absolute;
     left: 50%;
-    bottom: 224px;
-    width: 34px;
-    height: 34px;
+    bottom: 37.9%;
+    width: clamp(24px, 7.4vw, 34px);
+    height: clamp(24px, 7.4vw, 34px);
     transform: translateX(-50%);
     object-fit: contain;
     image-rendering: pixelated;
@@ -1436,17 +1445,20 @@ tr:hover td {
 #support-link-list {
     position: absolute;
     left: 50%;
-    bottom: 116px;
-    width: 232px;
+    bottom: 19.7%;
+    width: min(232px, 56%);
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: clamp(7px, 1.7vw, 10px);
     transform: translateX(-50%);
 }
 
-.support-popup-link {
+.support-popup-link,
+#support-coffee-link,
+#support-paypal-link {
     width: 100%;
-    padding: 10px 12px;
+    min-height: clamp(41px, 9.1vw, 50px);
+    padding: clamp(8px, 2vw, 10px) 12px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -1459,18 +1471,22 @@ tr:hover td {
     box-sizing: border-box;
     color: white;
     font-family: 'superhelio _regular', sans-serif;
-    font-size: 15px;
+    font-size: clamp(12px, 3.25vw, 15px);
+    line-height: 1.1;
     text-align: center;
     text-decoration: none;
     text-shadow: 1px 1px 0 rgba(0,0,0,0.4);
     box-shadow: 0 3px 0 #045c36, 0 0 10px rgba(20,200,120,0.18);
 }
 
-.support-popup-link:hover {
+.support-popup-link:hover,
+#support-coffee-link:hover,
+#support-paypal-link:hover {
     filter: brightness(1.08);
 }
 
-#support-coffee-link {
+#support-coffee-link,
+#support-coffee-link:visited {
     background:
         linear-gradient(180deg, #ffd76a 0%, #e09a32 58%, #9a5624 100%);
     border-color: #ffeaa6;
@@ -1481,12 +1497,12 @@ tr:hover td {
 
 #support-popup-note {
     position: absolute;
-    left: 52px;
-    right: 52px;
-    bottom: 58px;
+    left: 11.3%;
+    right: 11.3%;
+    bottom: 9.8%;
     text-align: center;
     font-family: 'superhelio _regular', sans-serif;
-    font-size: 10px;
+    font-size: clamp(8px, 2.2vw, 10px);
     line-height: 1.35;
     color: rgba(75,56,36,0.72);
 }
