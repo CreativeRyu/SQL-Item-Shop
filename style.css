@@ -1413,12 +1413,12 @@ tr:hover td {
     top: 146px;
     left: 58px;
     right: 58px;
-    bottom: 270px;
+    bottom: 264px;
     overflow: auto;
     text-align: center;
     font-family: 'superhelio _regular', sans-serif;
-    font-size: 13px;
-    line-height: 1.48;
+    font-size: 14px;
+    line-height: 1.42;
     color: #4b3824;
 }
 
