@@ -41,7 +41,7 @@ const RADIO_PRICE = 100;
 const RADIO_DECORATION_VISUAL = {
     sprite: "./assets/sprites/shopItems/radio.png",
     posX: 56,
-    posY: 154,
+    posY: 149,
     scale: 1.5
 };
 const TUTORIAL_ONLY_NOTEBOOK_ENTRIES = [
