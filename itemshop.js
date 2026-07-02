@@ -81,6 +81,7 @@ let gameState = {
     hasRadio: false,
     musicEnabled: false,
     currentTrackIndex: 0,
+    completedLevels: [],
     helpPurchases: {}
 };
 
@@ -290,6 +291,7 @@ async function startNewGame() {
         hasRadio: false,
         musicEnabled: false,
         currentTrackIndex: 0,
+        completedLevels: [],
         helpPurchases: {}
     };
 
@@ -312,6 +314,7 @@ async function continueGame() {
     currentMissionIndex = save.missionIndex;
     gameState = normalizeGameState(save.gameState);
     gameState.musicEnabled = false;
+    migrateSavedProgress(save);
     loadNotebookState(save.notebookState);
 
     await initCurrentLevelDatabase();
@@ -458,6 +461,7 @@ function completeCurrentLevel() {
 
     const completedLevel = currentLevel;
     const nextLevel = getNextLevel(completedLevel);
+    markLevelCompleted(completedLevel.levelId);
 
     if(!nextLevel) {
         currentMissionIndex = currentLevel.missions.length - 1;
@@ -495,6 +499,22 @@ function getNextLevel(level) {
         return null;
 
     return levels[currentIndex + 1] || null;
+}
+
+function migrateSavedProgress(save) {
+    const hadCompletedLevels = Array.isArray(save.gameState?.completedLevels);
+    const nextLevel = getNextLevel(currentLevel);
+    const isAtLastMission =
+        currentMissionIndex >= currentLevel.missions.length - 1;
+
+    if(!hadCompletedLevels && nextLevel && isAtLastMission) {
+        markLevelCompleted(currentLevel.levelId);
+    }
+
+    if(isLevelCompleted(currentLevel.levelId) && nextLevel) {
+        currentLevel = nextLevel;
+        currentMissionIndex = 0;
+    }
 }
 
 function showLevelTransition(completedLevel, nextLevel, onComplete) {
@@ -827,8 +847,22 @@ function normalizeGameState(state = {}) {
         hasRadio: !!state.hasRadio,
         musicEnabled: !!state.musicEnabled,
         currentTrackIndex: state.currentTrackIndex || 0,
+        completedLevels: Array.isArray(state.completedLevels)
+            ? state.completedLevels
+            : [],
         helpPurchases: state.helpPurchases || {}
     };
+}
+
+function markLevelCompleted(levelId) {
+    if(!levelId || isLevelCompleted(levelId))
+        return;
+
+    gameState.completedLevels.push(levelId);
+}
+
+function isLevelCompleted(levelId) {
+    return gameState.completedLevels.includes(levelId);
 }
 
 function getDb() {
