@@ -1398,7 +1398,7 @@ tr:hover td {
 
 #support-popup-title {
     position: absolute;
-    top: 84px;
+    top: 72px;
     left: 42px;
     right: 42px;
     text-align: center;
@@ -1410,22 +1410,22 @@ tr:hover td {
 
 #support-popup-description {
     position: absolute;
-    top: 154px;
+    top: 146px;
     left: 58px;
     right: 58px;
-    bottom: 240px;
+    bottom: 270px;
     overflow: auto;
     text-align: center;
     font-family: 'superhelio _regular', sans-serif;
-    font-size: 14px;
-    line-height: 1.55;
+    font-size: 13px;
+    line-height: 1.48;
     color: #4b3824;
 }
 
 #support-popup-heart {
     position: absolute;
     left: 50%;
-    bottom: 204px;
+    bottom: 224px;
     width: 34px;
     height: 34px;
     transform: translateX(-50%);
@@ -1433,22 +1433,30 @@ tr:hover td {
     image-rendering: pixelated;
 }
 
-#support-paypal-link {
+#support-link-list {
     position: absolute;
     left: 50%;
-    bottom: 142px;
-    width: 215px;
+    bottom: 116px;
+    width: 232px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transform: translateX(-50%);
+}
+
+.support-popup-link {
+    width: 100%;
     padding: 10px 12px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
-    transform: translateX(-50%);
     background:
         linear-gradient(180deg, #14c878 0%, #0ca864 100%);
     border: 2px solid #1fdd8b;
     border-bottom: 4px solid #067847;
     border-radius: 7px;
+    box-sizing: border-box;
     color: white;
     font-family: 'superhelio _regular', sans-serif;
     font-size: 15px;
@@ -1458,8 +1466,17 @@ tr:hover td {
     box-shadow: 0 3px 0 #045c36, 0 0 10px rgba(20,200,120,0.18);
 }
 
-#support-paypal-link:hover {
+.support-popup-link:hover {
     filter: brightness(1.08);
+}
+
+#support-coffee-link {
+    background:
+        linear-gradient(180deg, #ffd76a 0%, #e09a32 58%, #9a5624 100%);
+    border-color: #ffeaa6;
+    border-bottom-color: #6f3518;
+    color: #fff6d5;
+    box-shadow: 0 3px 0 #4d220f, 0 0 10px rgba(255,205,80,0.22);
 }
 
 #support-popup-note {
