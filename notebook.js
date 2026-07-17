@@ -66,6 +66,7 @@ const selectedEntries = {};
 const pageOffsets = {};
 let currentPage = "TABLES";
 let currentDetailPage = 1;
+let largeNotebookTransitionActive = false;
 let getDatabase = () => null;
 let runSchemaQuery = () => {};
 
@@ -108,10 +109,37 @@ function initLargeNotebook() {
 
     largeNotebookTabs.forEach(tab => {
         tab.onclick = () => {
+            if(tab.dataset.page === currentPage || largeNotebookTransitionActive) {
+                return;
+            }
+
             playNotebookRegisterSound();
-            selectPage(tab.dataset.page);
+            animateLargeNotebookPageTurn(() => selectPage(tab.dataset.page));
         };
     });
+}
+
+function animateLargeNotebookPageTurn(updatePage) {
+    if(largeNotebookTransitionActive) {
+        return;
+    }
+
+    if(window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        updatePage();
+        return;
+    }
+
+    largeNotebookTransitionActive = true;
+    largeNotebookContent.classList.add("page-turning");
+
+    window.setTimeout(() => {
+        updatePage();
+    }, 260);
+
+    window.setTimeout(() => {
+        largeNotebookContent.classList.remove("page-turning");
+        largeNotebookTransitionActive = false;
+    }, 540);
 }
 
 function selectPage(page) {
@@ -607,42 +635,57 @@ function attachLargeEntryListeners(page, entries) {
         .querySelectorAll(".large-notebook-entry")
         .forEach(button => {
             button.onclick = () => {
+                if(
+                    largeNotebookTransitionActive ||
+                    selectedEntries[page] === button.dataset.entryId
+                ) {
+                    return;
+                }
+
                 playNotebookRegisterSound();
-                selectedEntries[page] = button.dataset.entryId;
-                currentDetailPage = 1;
-                renderLargeNotebookPage();
+                animateLargeNotebookPageTurn(() => {
+                    selectedEntries[page] = button.dataset.entryId;
+                    currentDetailPage = 1;
+                    renderLargeNotebookPage();
+                });
             };
         });
 
     const nextButton = largeNotebookContent.querySelector(".large-notebook-next-page");
     if(nextButton) {
         nextButton.onclick = () => {
-            playNotebookPageSound();
-
-            if(page === "TABLES" && hasSchema(selectedEntries.TABLES)) {
-                toggleTableDetailPage();
-                renderLargeNotebookPage();
+            if(largeNotebookTransitionActive) {
                 return;
             }
 
-            const detailPageCount = getCurrentTopicDetailPageCount(page);
-            if(detailPageCount > 1) {
-                if(currentDetailPage < detailPageCount || entries.length <= PAGE_SIZE) {
-                    currentDetailPage =
-                        currentDetailPage >= detailPageCount
-                            ? 1
-                            : currentDetailPage + 1;
+            playNotebookPageSound();
+
+            animateLargeNotebookPageTurn(() => {
+                if(page === "TABLES" && hasSchema(selectedEntries.TABLES)) {
+                    toggleTableDetailPage();
                     renderLargeNotebookPage();
                     return;
                 }
-            }
 
-            const currentOffset = pageOffsets[page] || 0;
-            const nextOffset = currentOffset + PAGE_SIZE;
-            pageOffsets[page] = nextOffset >= entries.length ? 0 : nextOffset;
-            selectedEntries[page] = entries[pageOffsets[page]]?.id || "";
-            currentDetailPage = 1;
-            renderLargeNotebookPage();
+                const detailPageCount = getCurrentTopicDetailPageCount(page);
+                if(detailPageCount > 1) {
+                    if(currentDetailPage < detailPageCount || entries.length <= PAGE_SIZE) {
+                        currentDetailPage =
+                            currentDetailPage >= detailPageCount
+                                ? 1
+                                : currentDetailPage + 1;
+                        renderLargeNotebookPage();
+                        return;
+                    }
+                }
+
+                const currentOffset = pageOffsets[page] || 0;
+                const nextOffset = currentOffset + PAGE_SIZE;
+                pageOffsets[page] = nextOffset >= entries.length ? 0 : nextOffset;
+                selectedEntries[page] = entries[pageOffsets[page]]?.id || "";
+                currentDetailPage = 1;
+                renderLargeNotebookPage();
+            });
         };
     }
 }
